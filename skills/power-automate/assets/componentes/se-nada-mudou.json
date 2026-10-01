@@ -1,0 +1,89 @@
+{
+  "nodeId": "Se_nada_mudou_gravar",
+  "serializedValue": {
+    "type": "If",
+    "expression": {
+      "and": [
+        {
+          "equals": [
+            "@and(equals(trim(string(first(body('Estado_antes_gravar')?['value'])?['Des_Pedido'])),outputs('Normalizar_gravar')?['descricao']),equals(string(coalesce(first(body('Estado_antes_gravar')?['value'])?['Qtd_Pedido'],0)),string(outputs('Normalizar_gravar')?['quantidade'])))",
+            "@true"
+          ]
+        }
+      ]
+    },
+    "actions": {
+      "Avisa_nada_mudou": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "warning",
+            "description": "Nenhuma alteração a registrar.",
+            "id": "@{outputs('Normalizar_gravar')?['id']}",
+            "url": ""
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000069"
+        }
+      },
+      "Avisa_nada_mudou_fim": {
+        "type": "Terminate",
+        "inputs": {
+          "runStatus": "Succeeded"
+        },
+        "runAfter": {
+          "Avisa_nada_mudou": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000070"
+        }
+      }
+    },
+    "else": {
+      "actions": {}
+    },
+    "runAfter": {
+      "Bloco_validar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000071"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

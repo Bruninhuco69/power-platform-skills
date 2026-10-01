@@ -1,0 +1,5 @@
+CREATE OR ALTER FUNCTION dbo.tvf_APP_Item_Ativos ()
+RETURNS TABLE
+AS
+RETURN (SELECT i.Id_Item FROM dbo.APP_Item AS i WHERE i.Flg_Situacao = 1);
+GO

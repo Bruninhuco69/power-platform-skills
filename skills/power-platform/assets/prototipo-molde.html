@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="pt-BR" data-prototipo="v1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protótipo navegável · Pedidos</title>
+<link rel="icon" href="data:,">
+<!--
+  MOLDE DE PROTÓTIPO NAVEGÁVEL (power-platform)
+  Valida o sistema inteiro com o usuário antes de qualquer tela no Power Apps. Só mostra o que o
+  Canvas constrói: ManualLayout 1920x1080, controles Classic, tokens fx*.
+
+  Ordem do método: primeiro os mockups em imagem (scripts/desenhar-mockups.py + assets/mockups-molde.json);
+  este protótipo vem DEPOIS dos mockups aprovados e é construído em cima deles: toda tela tem um mockup
+  de origem (data-mockups com os ids de tela do spec). Onde mockup e protótipo divergem, vale o
+  catálogo, e a divergência é registrada no inventário de telas. No projeto:
+  docs/planejamento/prototipo/index.html, imagens em docs/planejamento/mockups/<id>.png (PASTA_MOCKUPS).
+
+  Como adaptar (copie para o projeto e troque, nesta ordem):
+  0. Mockups: para cada <id>.png aprovado, leia a imagem, mapeie cada região (cabeçalho, menu, filtros,
+     galeria, modal, toast) para um componente do catálogo e reproduza textos, hierarquia e estado com
+     os tokens fx*. Cor não sai da imagem: vem dos tokens. O que a imagem mostra e o Canvas não faz
+     vira divergência registrada no inventário de telas, não HTML.
+  1. Entidade: troque `Pedido` nos textos, em gerarPedidos(), nas colunas da galeria e no CSV.
+  2. Telas: cada section com data-tela é uma tela do inventário; o menu lê data-titulo e data-perfis.
+  3. Perfis: PERFIS (flags) e data-perfis. A tela decide pela flag, nunca pelo nome do perfil.
+  4. Dados: UNIDADES, STATUS, SEMENTE e as listas de exemplo (só nomes fictícios, e-mail @contoso.com).
+  5. Roteiro: ROTEIRO, passos curtos por perfil.
+  6. Cor e medida: só em :root, com o nome do token de powerapps-canvas/assets/app-formulas-tokens.md.
+  7. Vínculo: data-mockups de toda tela com os ids do spec; "Comparar com o mockup" abre a imagem.
+  Cada data-componente aponta para powerapps-canvas/assets/componentes/<nome>.md: mesmo papel,
+  posição, textos e estados. Fidelidade: nada só no hover, sem arrastar, sem reflow; animação só
+  no spinner e no fade. Abre por duplo clique (file://), sem recurso externo.
+-->
+<style>
+/* ---------- TOKENS fx* (únicos valores de cor e medida do arquivo) ---------- */
+:root {
+  /* marca e superfície */
+  --fxColorPrimary: rgb(15 108 189); --fxColorPrimaryDark: rgb(12 59 94); --fxColorPrimaryLight: rgb(235 243 252);
+  --fxColorBackground: rgb(249 250 251); --fxColorSurface: rgb(255 255 255); --fxColorTransparent: rgb(0 0 0 / 0);
+  --fxColorOverlay: rgb(0 0 0 / 0.5); --fxColorOverlayDark: rgb(0 0 0 / 0.6);
+  /* texto */
+  --fxColorTextPrimary: rgb(17 24 39); --fxColorTextSecondary: rgb(77 77 77); --fxColorTextBody: rgb(75 85 99);
+  --fxColorTextOnPrimary: rgb(255 255 255); --fxColorTextOnWarning: rgb(17 24 39);
+  /* borda e estado (verde é estado, nunca ação) */
+  --fxColorBorder: rgb(166 166 166); --fxColorBorderInteractive: rgb(117 117 117); --fxColorDivider: rgb(229 231 235);
+  --fxColorSuccess: rgb(21 128 61); --fxColorWarning: rgb(255 193 7); --fxColorError: rgb(200 35 51);
+  /* botão, aba e cabeçalho de tabela */
+  --fxColorButtonCancel: rgb(108 117 125); --fxColorButtonCancelHover: rgb(90 98 104);
+  --fxColorDisabled: rgb(206 212 218); --fxColorDisabledText: rgb(134 142 150); --fxColorTabInactive: rgb(237 237 237);
+  --fxColorTableHeaderBg: rgb(235 243 252); --fxColorTableHeaderText: rgb(17 94 163);
+  /* badge: texto escuro sobre pastel da mesma matiz */
+  --fxBadgeSuccessText: rgb(22 101 52); --fxBadgeSuccessBg: rgb(220 252 231); --fxBadgeInfoText: rgb(15 84 140); --fxBadgeInfoBg: rgb(207 228 250);
+  --fxBadgeWarningText: rgb(146 64 14); --fxBadgeWarningBg: rgb(255 218 185); --fxBadgeDangerText: rgb(139 0 0); --fxBadgeDangerBg: rgb(255 182 193);
+  --fxBadgeProgressText: rgb(133 77 14); --fxBadgeProgressBg: rgb(255 230 100); --fxBadgeNeutralText: rgb(52 58 64); --fxBadgeNeutralBg: rgb(206 212 218);
+  /* toast e menu */
+  --fxColorToastBg: rgb(33 37 41); --fxColorToastText: rgb(173 181 189);
+  --fxColorToastTrack: rgb(77 81 84); /* ColorFade(fxColorToastBg; 20%) */
+  --fxColorMenuBg: var(--fxColorPrimaryDark); --fxColorMenuItemActive: var(--fxColorPrimary);
+  /* medidas: canvas de 1920, logo fxIsCompact = false */
+  --fxLayoutMargin: 100px; --fxLayoutGutter: 16px; --fxRowHeight: 50px; --fxTableHeaderHeight: 50px; --fxFilterHeight: 50px;
+  --fxKPIWidth: 150px; --fxKPIHeight: 85px; --fxKPITitleHeight: 35px; --fxKPIValueHeight: 50px; --fxHeaderHeight: 100px;
+  --fxMenuWidth: 260px; --fxMenuItemHeight: 52px; --fxBtnHeight: 45px; --fxBtnRadius: 8px; --fxBtnWidth: 210px; --fxBtnWidthFilter: 128px;
+  --fxModalRadius: 12px; --fxModalPadding: 20px; --fxModalWidthS: 450px; --fxModalWidthM: 520px; --fxModalWidthL: 620px;
+  --fxPillHeight: 26px; --fxToastWidth: 420px; --fxLoadingCardWidth: 250px; --fxLoadingCardHeight: 140px; --fxLoadingSpinnerSize: 60px;
+  /* tipografia: uma família; o Size do Power Apps é em pt */
+  --fxFont: "Segoe UI", system-ui, sans-serif;
+  --fxFontSizeTitle: 35pt; --fxFontSizeKPI: 25pt; --fxFontSizeKPITitle: 11pt; --fxFontSizeBody: 14pt; --fxFontSizeFilter: 14pt;
+  --fxFontSizeTable: 13pt; --fxFontSizeTableSmall: 12pt; --fxFontSizeHeader: 13pt; --fxFontSizeSemAcesso: 20pt;
+  --fxFontSizeToastIcon: 18pt; --fxFontSizeToastTitle: 15pt; --fxFontSizeToast: 12pt; --fxBtnFontSize: 14pt; --fxModalTitleSize: 16pt;
+}
+
+/* ---------- BASE ---------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--fxColorDivider); color: var(--fxColorTextPrimary); font-family: var(--fxFont); overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+p, h1, h2, h3, dl, dd { margin: 0; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--fxColorPrimary); outline-offset: 2px; }
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; } /* foco programático do título, só para o leitor de tela */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.oculto { visibility: hidden; }
+
+/* ---------- BARRA DO PROTÓTIPO (fora do canvas, não é o app) ---------- */
+.pt-barra { position: relative; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 9px 16px; background: var(--fxColorToastBg); color: var(--fxColorTextOnPrimary); font-size: 12px; }
+.pt-barra :focus-visible, .menu :focus-visible, .toast :focus-visible { outline-color: var(--fxColorTextOnPrimary); }
+.pt-aviso { padding: 5px 12px; border-radius: 999px; background: var(--fxColorWarning); color: var(--fxColorTextOnWarning); font-weight: 700; white-space: nowrap; }
+.pt-campo { display: flex; align-items: center; gap: 6px; color: var(--fxColorToastText); white-space: nowrap; }
+.pt-campo select { height: 30px; padding: 0 6px; border: 1px solid var(--fxColorBorderInteractive); background: var(--fxColorSurface); color: var(--fxColorTextPrimary); }
+.pt-dir { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.pt-btn[aria-expanded="true"] { background: var(--fxColorButtonCancelHover); }
+.pt-btn-forte[aria-expanded="true"] { background: var(--fxColorPrimaryDark); border-color: var(--fxColorPrimaryLight); }
+.pt-btn { height: 30px; padding: 0 12px; border: 1px solid var(--fxColorToastText); border-radius: var(--fxBtnRadius); background: var(--fxColorTransparent); color: var(--fxColorTextOnPrimary); white-space: nowrap; }
+.pt-btn:hover { background: var(--fxColorButtonCancelHover); }
+.pt-btn-forte { border-color: var(--fxColorPrimary); background: var(--fxColorPrimary); }
+.pt-btn-forte:hover { background: var(--fxColorPrimary); filter: brightness(0.8); }
+.pt-versao { color: var(--fxColorToastText); }
+.pt-painel { position: fixed; right: 0; bottom: 0; width: 440px; max-width: 100%; overflow-y: auto; padding: 20px 24px 32px; background: var(--fxColorSurface); color: var(--fxColorTextPrimary); border-left: 1px solid var(--fxColorBorder); box-shadow: -10px 0 30px -12px var(--fxColorOverlay); font-size: 14px; line-height: 1.5; }
+.pt-comparar { width: min(900px, 66vw); }
+.pt-painel-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.pt-painel h2 { font-size: 18px; }
+.pt-painel h3 { margin: 20px 0 6px; color: var(--fxColorPrimaryDark); font-size: 15px; }
+.pt-painel ol { margin: 0; padding-left: 22px; }
+.pt-painel li { margin-bottom: 6px; color: var(--fxColorTextBody); }
+.pt-painel .pt-nota { color: var(--fxColorTextSecondary); }
+.pt-painel .pt-btn { border-color: var(--fxColorBorderInteractive); color: var(--fxColorTextPrimary); }
+.pt-painel .pt-btn:hover { background: var(--fxColorDivider); }
+.pt-btn:disabled { border-color: var(--fxColorButtonCancel); background: var(--fxColorTransparent); color: var(--fxColorButtonCancel); cursor: not-allowed; }
+.pt-mockup-campo { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; font-weight: 600; }
+.pt-mockup-campo select { height: 32px; padding: 0 8px; border: 1px solid var(--fxColorBorderInteractive); background: var(--fxColorSurface); }
+.pt-comparar img { display: block; width: 100%; height: auto; margin-top: 14px; border: 1px solid var(--fxColorBorder); }
+.pt-erro { margin-top: 14px; padding: 12px 14px; border-radius: var(--fxBtnRadius); background: var(--fxBadgeWarningBg); color: var(--fxBadgeWarningText); font-weight: 600; overflow-wrap: anywhere; }
+.pt-pular { position: absolute; left: 16px; top: -60px; z-index: 9; padding: 8px 14px; border: 0; background: var(--fxColorPrimary); color: var(--fxColorTextOnPrimary); }
+.pt-pular:focus { top: 8px; }
+
+/* ---------- CANVAS 1920x1080 (escala por transform, sem reflow) ---------- */
+.palco { position: relative; overflow: hidden; }
+main[data-canvas] { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--fxColorBackground); box-shadow: 0 10px 30px -10px var(--fxColorOverlay); font-size: var(--fxFontSizeBody); }
+
+/* menu-lateral */
+.menu { position: absolute; inset: 0 auto 0 0; width: var(--fxMenuWidth); background: var(--fxColorMenuBg); color: var(--fxColorTextOnPrimary); }
+.menu-logo { position: absolute; left: 20px; top: 24px; width: 40px; height: 40px; }
+.menu-titulo { position: absolute; left: 20px; top: 76px; font-weight: 700; font-size: var(--fxFontSizeBody); }
+.menu-sub { position: absolute; left: 20px; top: 104px; color: var(--fxColorPrimaryLight); font-size: var(--fxFontSizeTableSmall); }
+.menu-lista { position: absolute; top: 160px; left: 0; right: 0; margin: 0; padding: 0; list-style: none; }
+.menu-item { display: block; height: var(--fxMenuItemHeight); padding: 0 20px; line-height: var(--fxMenuItemHeight); color: var(--fxColorTextOnPrimary); font-size: var(--fxFontSizeBody); text-decoration: none; }
+.menu-item:hover, .menu-item[aria-current="page"] { background: var(--fxColorMenuItemActive); }
+.menu-item[aria-current="page"] { font-weight: 700; }
+.menu-rodape { position: absolute; left: 20px; right: 20px; bottom: 28px; display: flex; flex-direction: column; gap: 4px; padding-top: 16px; border-top: 1px solid var(--fxColorMenuItemActive); }
+.menu-usuario { font-weight: 600; font-size: var(--fxFontSizeFilter); }
+.menu-perfil { color: var(--fxColorToastText); font-size: var(--fxFontSizeTableSmall); line-height: 1.35; }
+
+/* telas e cabecalho-tela */
+.tela { position: absolute; top: 0; bottom: 0; left: var(--fxMenuWidth); right: 0; background: var(--fxColorBackground); }
+.tela.tela-cheia { left: 0; }
+.cab { display: flex; align-items: center; justify-content: space-between; height: var(--fxHeaderHeight); padding: 0 var(--fxLayoutMargin); background: var(--fxColorSurface); border-bottom: 1px solid var(--fxColorDivider); }
+.cab h1 { color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeTitle); line-height: 60px; }
+.cab-usuario { color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeBody); }
+.conteudo { padding: var(--fxLayoutGutter) var(--fxLayoutMargin) 0; }
+.secao { margin: 32px 0 12px; color: var(--fxColorTextPrimary); font-weight: 600; font-size: var(--fxFontSizeBody); }
+.escopo-txt { color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeFilter); }
+
+/* card-kpi e pares de badge */
+.inicio-topo { display: flex; align-items: center; gap: 32px; }
+.kpis { display: flex; gap: var(--fxLayoutGutter); }
+.kpi { width: var(--fxKPIWidth); height: var(--fxKPIHeight); overflow: hidden; border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); box-shadow: 0 3px 8px -4px var(--fxColorOverlay); }
+.kpi-titulo, .kpi-valor { display: flex; align-items: center; justify-content: center; }
+.kpi-titulo { height: var(--fxKPITitleHeight); font-weight: 600; font-size: var(--fxFontSizeKPITitle); }
+.kpi-valor { height: var(--fxKPIValueHeight); font-weight: 700; font-size: var(--fxFontSizeKPI); font-variant-numeric: tabular-nums; }
+.t-neutral { background: var(--fxBadgeNeutralBg); color: var(--fxBadgeNeutralText); }
+.t-info { background: var(--fxBadgeInfoBg); color: var(--fxBadgeInfoText); }
+.t-progress { background: var(--fxBadgeProgressBg); color: var(--fxBadgeProgressText); }
+.t-success { background: var(--fxBadgeSuccessBg); color: var(--fxBadgeSuccessText); }
+.t-danger { background: var(--fxBadgeDangerBg); color: var(--fxBadgeDangerText); }
+
+/* botoes: primário, secundário, destrutivo, neutro (hover escurece, pressed nunca inverte) */
+.btn { height: var(--fxBtnHeight); padding: 0 20px; border: 1px solid transparent; border-radius: var(--fxBtnRadius); font-weight: 600; font-size: var(--fxBtnFontSize); white-space: nowrap; }
+.btn-primario { min-width: var(--fxBtnWidth); border-color: var(--fxColorPrimary); background: var(--fxColorPrimary); color: var(--fxColorTextOnPrimary); }
+.btn-destrutivo { border-color: var(--fxColorError); background: var(--fxColorError); color: var(--fxColorTextOnPrimary); }
+.btn-primario:hover, .btn-destrutivo:hover { filter: brightness(0.8); }
+.btn-primario:active, .btn-destrutivo:active { filter: brightness(0.7); }
+.btn-secundario { border-color: var(--fxColorButtonCancel); background: var(--fxColorButtonCancel); color: var(--fxColorTextOnPrimary); }
+.btn-secundario:hover, .btn-secundario:active { border-color: var(--fxColorButtonCancelHover); background: var(--fxColorButtonCancelHover); }
+.btn-neutro { border-color: var(--fxBadgeInfoBg); background: var(--fxColorPrimaryLight); color: var(--fxColorTableHeaderText); font-weight: 400; }
+.btn-neutro:hover { filter: brightness(0.92); }
+.btn:disabled { border-color: var(--fxColorDisabled); background: var(--fxColorDisabled); color: var(--fxColorDisabledText); cursor: not-allowed; filter: none; }
+.btn-filtro { width: var(--fxBtnWidthFilter); min-width: 0; height: var(--fxFilterHeight); font-size: var(--fxFontSizeFilter); }
+.btn-linha { min-width: 0; height: 34px; padding: 0 10px; font-size: var(--fxFontSizeTableSmall); }
+.atalhos { display: flex; gap: var(--fxLayoutGutter); }
+.atalhos .btn-neutro { min-width: 190px; }
+
+/* abas + seletor-unidade */
+.linha-abas { display: flex; align-items: flex-start; justify-content: space-between; height: 50px; }
+.abas { display: flex; gap: 8px; }
+.aba { width: 240px; height: 49px; border: 0; border-bottom: 3px solid transparent; border-radius: var(--fxBtnRadius) var(--fxBtnRadius) 0 0; background: var(--fxColorTabInactive); color: var(--fxColorTextSecondary); font-weight: 600; font-size: var(--fxFontSizeFilter); }
+.aba:hover { background: var(--fxColorSurface); color: var(--fxColorPrimary); }
+.aba[aria-selected="true"] { border-bottom-color: var(--fxColorPrimary); background: var(--fxColorSurface); color: var(--fxColorPrimary); font-weight: 700; }
+.seletor { display: flex; align-items: center; gap: 8px; height: var(--fxFilterHeight); }
+.seletor-escopo { width: 260px; text-align: right; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeFilter); }
+
+/* barra-filtros e campos Classic (input retangular, borda interativa) */
+.filtros { display: flex; align-items: flex-end; gap: var(--fxLayoutGutter); height: 104px; margin-top: var(--fxLayoutGutter); padding: 16px 20px 10px; border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); }
+.campo { display: flex; flex-direction: column; gap: 8px; }
+.campo > label, .rotulo { height: 20px; color: var(--fxColorTextSecondary); font-weight: 600; font-size: var(--fxFontSizeHeader); }
+.combo, .texto { height: var(--fxFilterHeight); padding: 0 12px; border: 1px solid var(--fxColorBorderInteractive); border-radius: 0; background: var(--fxColorSurface); color: var(--fxColorTextPrimary); font-size: var(--fxFontSizeFilter); }
+.texto { border-radius: var(--fxBtnRadius); }
+textarea.texto { height: auto; padding: 10px 12px; resize: none; line-height: 1.35; }
+.combo:focus, .texto:focus { border-color: var(--fxColorPrimary); outline-offset: 0; }
+.combo:disabled { background: var(--fxColorBackground); color: var(--fxColorTextBody); }
+.invalido, .invalido:focus { border-color: var(--fxColorError); }
+.erro { min-height: 20px; color: var(--fxColorError); font-size: var(--fxFontSizeTableSmall); }
+.ajuda { color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeTableSmall); }
+.w180 { width: 180px; } .w300 { width: 300px; }
+.exportar { height: var(--fxFilterHeight); margin-left: auto; }
+
+/* barra de ações: selecao-em-lote + novo */
+.barra-acoes { display: flex; align-items: center; height: var(--fxBtnHeight); margin-top: var(--fxLayoutGutter); }
+.lote { display: flex; align-items: center; gap: 20px; }
+.chk { display: flex; align-items: center; gap: 10px; font-size: var(--fxFontSizeFilter); }
+input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var(--fxColorPrimary); }
+.lote-contador { min-width: 230px; color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeFilter); }
+.lote .btn { height: 40px; }
+.barra-acoes > .btn:last-child { margin-left: auto; }
+
+/* galeria-tabela, ordenacao-coluna, linha-expansivel, badge-status */
+.gal { margin-top: var(--fxLayoutGutter); border: 1px solid var(--fxColorBorder); background: var(--fxColorSurface); }
+.gal-cab, .linha-topo { display: grid; align-items: center; }
+.gal-pedidos .gal-cab, .gal-pedidos .linha-topo { grid-template-columns: 44px 120px 195px 1fr 90px 130px 150px 115px 343px 44px; }
+.gal-pedidos.sem-lote .gal-cab, .gal-pedidos.sem-lote .linha-topo { grid-template-columns: 16px 120px 195px 1fr 90px 130px 150px 115px 343px 44px; }
+.gal-recentes .gal-cab, .gal-recentes .linha-topo { grid-template-columns: 130px 230px 1fr 100px 150px 120px 130px; }
+.gal-hist .gal-cab, .gal-hist .linha-topo { grid-template-columns: 150px 200px 180px 1fr; }
+.gal-unidades { width: 1000px; }
+.gal-unidades .gal-cab, .gal-unidades .linha-topo { grid-template-columns: 200px repeat(5, 1fr); white-space: nowrap; }
+.gal-unidades .gal-corpo { height: auto; overflow: visible; }
+.gal-cab { height: var(--fxTableHeaderHeight); overflow-y: hidden; scrollbar-gutter: stable; background: var(--fxColorTableHeaderBg); color: var(--fxColorTableHeaderText); font-weight: 700; font-size: var(--fxFontSizeHeader); }
+.gal-cab > span { display: flex; align-items: center; height: 100%; padding: 0 12px; }
+.gal-cab > span.ord-cel { padding: 0; }
+.ord { width: 100%; height: 100%; padding: 0 12px; border: 0; background: var(--fxColorTableHeaderBg); color: var(--fxColorTableHeaderText); font-weight: 700; text-align: left; }
+.ord:hover { filter: brightness(0.95); }
+.gal-corpo { height: 550px; overflow-y: auto; scrollbar-gutter: stable; }
+.gal-recentes .gal-corpo { height: auto; overflow: visible; }
+.gal-recentes .gal-cab, .gal-unidades .gal-cab { scrollbar-gutter: auto; } /* sem rolagem, sem calha: cabeçalho alinha com a célula */
+.linha { height: var(--fxRowHeight); border-bottom: 1px solid var(--fxColorDivider); }
+.gal-expandida .linha { height: calc(var(--fxRowHeight) * 4); }
+.linha-topo { height: var(--fxRowHeight); cursor: pointer; }
+.linha-simples { border-bottom: 1px solid var(--fxColorDivider); cursor: default; }
+.linha-topo:hover, .linha.aberta .linha-topo { background: var(--fxColorPrimaryLight); }
+.cel { overflow: hidden; padding: 0 12px; color: var(--fxColorTextBody); font-size: var(--fxFontSizeTable); text-overflow: ellipsis; white-space: nowrap; }
+.cel-prot { color: var(--fxColorPrimary); font-weight: 600; }
+.cel-chk { display: flex; justify-content: center; padding: 0; }
+.sem-lote .cel-chk input { display: none; }
+.cel-status { display: flex; justify-content: center; padding: 0 8px; }
+.cel-acoes { display: grid; grid-template-columns: 84px 60px 84px 84px; gap: 5px; padding: 0 8px; overflow: visible; }
+.gal-recentes .cel-acoes { grid-template-columns: 84px; }
+.cel-acoes .btn-linha { padding: 0; }
+.cel-exp { display: flex; justify-content: center; padding: 0; }
+.dir { justify-content: flex-end; text-align: right; }
+.dir .ord { text-align: right; }
+.centro .ord { text-align: center; }
+.centro { justify-content: center; text-align: center; }
+.num { color: var(--fxColorTextPrimary); font-variant-numeric: tabular-nums; }
+.peq { color: var(--fxColorTextPrimary); font-size: var(--fxFontSizeTableSmall); }
+.btn-exp { width: 32px; height: 32px; border: 0; border-radius: var(--fxBtnRadius); background: var(--fxColorTransparent); color: var(--fxColorPrimary); font-weight: 700; font-size: var(--fxFontSizeBody); }
+.linha-detalhe { display: grid; grid-template-columns: 200px 200px 180px 1fr; gap: 6px 24px; height: calc(var(--fxRowHeight) * 3); padding: 14px 16px; background: var(--fxColorBackground); font-size: var(--fxFontSizeTableSmall); }
+.linha-detalhe span, .det-grade dt { color: var(--fxColorTextSecondary); font-weight: 600; font-size: var(--fxFontSizeTableSmall); }
+.linha-detalhe strong { display: block; margin-top: 4px; color: var(--fxColorTextBody); font-weight: 400; }
+.badge { display: inline-flex; align-items: center; justify-content: center; width: 134px; height: var(--fxPillHeight); border-radius: calc(var(--fxPillHeight) / 2); font-weight: 600; font-size: var(--fxFontSizeTableSmall); }
+
+/* estado-vazio, paginacao-cursor, rodape-contagem */
+.vazio { padding: 80px 20px 0; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeBody); text-align: center; white-space: pre-line; line-height: 1.6; }
+.gal-recentes .vazio { padding: 40px 20px; }
+.gal-rodape { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 34px; margin-top: 8px; }
+.pag { display: flex; align-items: center; gap: 10px; }
+.pag .btn { width: 150px; height: 34px; }
+.pag-txt { width: 160px; text-align: center; font-size: var(--fxFontSizeBody); }
+.rodape { justify-self: end; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeTableSmall); }
+
+/* modais: véu + card (o véu bloqueia o clique, como o botão transparente do Canvas) */
+.veu { position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: var(--fxColorOverlayDark); }
+.card { display: flex; flex-direction: column; padding: var(--fxModalPadding); border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); box-shadow: 0 16px 40px -8px var(--fxColorOverlay); }
+.card:focus-visible { outline-offset: 4px; }
+.card h2 { color: var(--fxColorPrimaryDark); font-weight: 700; font-size: var(--fxModalTitleSize); line-height: 32px; }
+.card h2.destrutivo { color: var(--fxColorError); }
+.card-s { width: var(--fxModalWidthS); min-height: 240px; }
+.card-m { width: var(--fxModalWidthM); min-height: 340px; }
+.card-l { width: var(--fxModalWidthL); }
+.card-xl { width: calc(var(--fxModalWidthL) + 260px); min-height: 560px; }
+.card-msg { margin: 18px 0 20px; color: var(--fxColorTextBody); font-size: var(--fxFontSizeBody); line-height: 1.45; }
+.card-botoes { display: flex; gap: var(--fxModalPadding); margin-top: auto; padding-top: var(--fxModalPadding); }
+.card-botoes .btn { flex: 1; min-width: 0; padding: 0 8px; }
+.card-botoes.centro .btn { flex: 0 0 var(--fxBtnWidth); }
+.obrig-nota { margin: 2px 0 16px; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeTableSmall); }
+.form-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 30px; }
+.form-grade .campo { gap: 6px; }
+.form-grade .campo-largo { grid-column: 1 / -1; }
+.det-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 24px; margin: 16px 0 18px; }
+.det-grade dd { margin-top: 4px; color: var(--fxColorTextPrimary); font-size: var(--fxFontSizeTable); }
+.det-grade .largo { grid-column: 1 / -1; }
+.det-sub { margin-bottom: 8px; color: var(--fxColorTextPrimary); font-size: var(--fxFontSizeBody); }
+.gal-hist { margin-top: 0; }
+.gal-hist .gal-corpo { height: 200px; }
+.gal-hist .linha-topo { height: auto; min-height: var(--fxRowHeight); padding: 6px 0; cursor: default; border-bottom: 1px solid var(--fxColorDivider); }
+.gal-hist .cel { white-space: normal; } /* galeria flexível: o motivo quebra linha, não some */
+.gal-hist .linha-topo:hover { background: var(--fxColorTransparent); }
+
+/* overlay-loading (spinner é a única animação contínua) */
+.loading { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: var(--fxColorOverlay); }
+.loading-card { display: flex; flex-direction: column; align-items: center; gap: 10px; width: var(--fxLoadingCardWidth); height: var(--fxLoadingCardHeight); padding: 20px 10px 0; border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); box-shadow: 0 16px 40px -8px var(--fxColorOverlay); }
+.spinner { width: var(--fxLoadingSpinnerSize); height: var(--fxLoadingSpinnerSize); border: 6px solid var(--fxColorPrimaryLight); border-top-color: var(--fxColorPrimary); border-radius: 50%; animation: girar 0.9s linear infinite; }
+.loading-txt { color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeBody); text-align: center; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* toast (último na ordem: acima de modal e loading) */
+.toast { position: absolute; top: 20px; right: 20px; z-index: 40; display: grid; grid-template-columns: 40px 1fr 30px; gap: 0 12px; width: var(--fxToastWidth); min-height: 80px; overflow: hidden; padding: 16px 10px 18px 18px; border-radius: var(--fxModalRadius); background: var(--fxColorToastBg); box-shadow: 0 16px 40px -8px var(--fxColorOverlay); opacity: 0; visibility: hidden; transition: opacity 0.2s ease-out, visibility 0.2s; }
+.toast.visivel { opacity: 1; visibility: visible; }
+.toast-acento { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+.toast-icone { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 20px; color: var(--fxColorTextOnPrimary); font-weight: 700; font-size: var(--fxFontSizeToastIcon); }
+.toast-titulo { color: var(--fxColorTextOnPrimary); font-weight: 700; font-size: var(--fxFontSizeToastTitle); line-height: 26px; }
+.toast-msg { margin-top: 2px; color: var(--fxColorToastText); font-size: var(--fxFontSizeToast); line-height: 1.4; white-space: pre-line; }
+.toast-fechar { width: 30px; height: 30px; border: 0; border-radius: 15px; background: var(--fxColorTransparent); color: var(--fxColorToastText); font-size: var(--fxFontSizeBody); }
+.toast-fechar:hover { color: var(--fxColorTextOnPrimary); }
+.toast-trilha { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--fxColorToastTrack); }
+.toast-barra { display: block; width: 100%; height: 100%; }
+.toast-success .toast-acento, .toast-success .toast-icone, .toast-success .toast-barra { background: var(--fxColorSuccess); }
+.toast-warning .toast-acento, .toast-warning .toast-icone, .toast-warning .toast-barra { background: var(--fxColorWarning); }
+.toast-warning .toast-icone { color: var(--fxColorTextOnWarning); }
+.toast-error .toast-acento, .toast-error .toast-icone, .toast-error .toast-barra { background: var(--fxColorError); }
+
+/* painel-sem-acesso */
+.sem-acesso { display: flex; flex-direction: column; align-items: center; height: 100%; padding-top: 400px; background: var(--fxColorBackground); text-align: center; }
+.sem-acesso h1 { width: 700px; color: var(--fxColorPrimary); font-weight: 700; font-size: var(--fxFontSizeSemAcesso); line-height: 40px; }
+.sem-acesso h1.so-permissao { color: var(--fxColorTextPrimary); font-weight: 400; font-size: var(--fxFontSizeBody); }
+.sem-acesso p { width: 700px; margin-top: 10px; color: var(--fxColorTextBody); font-size: var(--fxFontSizeBody); line-height: 1.5; }
+
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } .spinner { animation-duration: 2.4s; } }
+</style>
+</head>
+<body>
+<button type="button" class="pt-pular" data-acao="pular">Pular para o conteúdo</button>
+
+<!-- ===== BARRA DE CONTROLES DO PROTÓTIPO (fora do canvas) ===== -->
+<div class="pt-barra" data-prototipo-controles role="region" aria-label="Controles do protótipo">
+  <strong class="pt-aviso" data-prototipo-aviso>Protótipo para validação — não é o app</strong>
+  <label class="pt-campo">Perfil <select id="ctl-perfil"></select></label>
+  <label class="pt-campo">Unidade <select id="ctl-unidade" aria-label="Unidade do usuário"></select></label>
+  <label class="pt-campo">Resposta do flow <select id="ctl-resposta"></select></label>
+  <label class="pt-campo">Latência <select id="ctl-latencia"></select></label>
+  <div class="pt-dir">
+    <button type="button" class="pt-btn" data-acao="restaurar">Restaurar dados</button>
+    <span class="pt-versao" id="pt-versao"></span>
+    <button type="button" class="pt-btn" id="pt-comparar-btn" data-prototipo-comparar data-acao="comparar" aria-expanded="false" aria-controls="pt-comparar">Comparar com o mockup</button>
+    <button type="button" class="pt-btn pt-btn-forte" id="pt-roteiro-btn" data-acao="roteiro" aria-expanded="false" aria-controls="pt-roteiro">Roteiro de validação</button>
+  </div>
+  <aside class="pt-painel" id="pt-roteiro" aria-labelledby="pt-roteiro-titulo" hidden>
+    <div class="pt-painel-topo">
+      <h2 id="pt-roteiro-titulo" tabindex="-1">Roteiro de validação</h2>
+      <button type="button" class="pt-btn" data-acao="roteiro">Fechar</button>
+    </div>
+    <p class="pt-nota">Siga os passos do perfil escolhido na barra. Anote o que o usuário estranhar: isso vira requisito ou história.</p>
+    <div id="roteiro-corpo"></div>
+  </aside>
+  <!-- comparar: mostra o mockup aprovado da tela atual (PASTA_MOCKUPS + id + ".png", só caminho relativo) -->
+  <aside class="pt-painel pt-comparar" id="pt-comparar" aria-labelledby="pt-comparar-titulo" hidden>
+    <div class="pt-painel-topo">
+      <h2 id="pt-comparar-titulo" tabindex="-1">Mockup aprovado</h2>
+      <button type="button" class="pt-btn" data-acao="comparar">Fechar</button>
+    </div>
+    <p class="pt-nota">Compare com a tela ao lado. Onde divergirem, vale o catálogo de componentes; registre a divergência no inventário de telas.</p>
+    <label class="pt-mockup-campo" id="pt-mockup-campo" hidden>Mockup <select id="pt-mockup-sel"></select></label>
+    <img id="pt-mockup-img" alt="" hidden>
+    <p class="pt-erro" id="pt-mockup-erro" role="status" hidden></p>
+  </aside>
+</div>
+
+<div class="palco" id="palco">
+<main id="canvas" data-canvas="1920x1080">
+
+  <!-- menu-lateral: some com varSemAcesso; item oculto sem permissão -->
+  <nav class="menu" id="menu" data-componente="menu-lateral" aria-label="Menu principal">
+    <svg class="menu-logo" viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="2" width="36" height="36" rx="9" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 29V11h7a5.5 5.5 0 0 1 0 11h-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>
+    <div class="menu-titulo" id="menu-titulo"></div>
+    <div class="menu-sub" id="menu-sub"></div>
+    <ul class="menu-lista">
+      <li><a class="menu-item" href="#/tela-inicio" data-alvo="tela-inicio">Início</a></li>
+      <li><a class="menu-item" href="#/tela-pedidos" data-alvo="tela-pedidos">Pedidos</a></li>
+    </ul>
+    <div class="menu-rodape"><div class="menu-usuario" id="menu-usuario"></div><div class="menu-perfil" id="menu-perfil"></div></div>
+  </nav>
+
+  <!-- ===== TELA: Início ===== -->
+  <section class="tela" id="tela-inicio" data-tela="tela-inicio" data-titulo="Início" data-perfis="administrador,gestor,operador" data-mockups="tl-03-inicio">
+    <header class="cab" data-componente="cabecalho-tela"><h1 tabindex="-1">Início</h1><span class="cab-usuario" data-usuario></span></header>
+    <div class="conteudo">
+      <div class="inicio-topo">
+        <div class="kpis" data-componente="card-kpi" role="group" aria-label="Resumo do escopo">
+          <div class="kpi"><div class="kpi-titulo t-neutral">Total</div><div class="kpi-valor" data-kpi="total">0</div></div>
+          <div class="kpi"><div class="kpi-titulo t-info">Abertos</div><div class="kpi-valor" data-kpi="aberto">0</div></div>
+          <div class="kpi"><div class="kpi-titulo t-progress">Em andamento</div><div class="kpi-valor" data-kpi="em_andamento">0</div></div>
+          <div class="kpi"><div class="kpi-titulo t-success">Encerrados</div><div class="kpi-valor" data-kpi="encerrado">0</div></div>
+        </div>
+        <p class="escopo-txt" data-escopo></p>
+      </div>
+      <h2 class="secao">Atalhos</h2>
+      <div class="atalhos" data-componente="botoes">
+        <button type="button" class="btn btn-primario" data-acao="novo" data-foco="novo-inicio" data-flag="flgCriar">Novo pedido</button>
+        <button type="button" class="btn btn-neutro" data-acao="ir-pedidos" data-aba="0">Abertos (<span data-atalho="aberto">0</span>)</button>
+        <button type="button" class="btn btn-neutro" data-acao="ir-pedidos" data-aba="1">Em andamento (<span data-atalho="em_andamento">0</span>)</button>
+        <button type="button" class="btn btn-neutro" data-acao="ir-pedidos" data-aba="3">Todos os pedidos</button>
+      </div>
+      <h2 class="secao">Mais recentes</h2>
+      <div class="gal gal-recentes" data-componente="galeria-tabela" role="table" aria-label="Cinco pedidos mais recentes">
+        <div class="gal-cab" role="row"><span role="columnheader">Protocolo</span><span role="columnheader">Solicitante</span><span role="columnheader">Descrição</span><span role="columnheader">Unidade</span><span role="columnheader" class="centro">Status</span><span role="columnheader" class="centro">Inclusão</span><span role="columnheader">Ações</span></div>
+        <div class="gal-corpo" role="rowgroup" id="recentes-linhas"></div>
+        <p class="vazio" data-componente="estado-vazio" id="recentes-vazio" hidden>Nenhum pedido no escopo.</p>
+      </div>
+      <h2 class="secao">Por unidade</h2>
+      <div class="gal gal-unidades" data-componente="galeria-tabela" role="table" aria-label="Pedidos por unidade no escopo">
+        <div class="gal-cab" role="row"><span role="columnheader">Unidade</span><span role="columnheader" class="dir">Abertos</span><span role="columnheader" class="dir">Em andamento</span><span role="columnheader" class="dir">Encerrados</span><span role="columnheader" class="dir">Cancelados</span><span role="columnheader" class="dir">Total</span></div>
+        <div class="gal-corpo" role="rowgroup" id="unidades-linhas"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TELA: Pedidos ===== -->
+  <section class="tela" id="tela-pedidos" data-tela="tela-pedidos" data-titulo="Pedidos" data-perfis="administrador,gestor,operador" data-mockups="tl-01-lista-pedidos,tl-01-lista-confirmar-encerrar,tl-01-lista-toast-sucesso,tl-02-novo-pedido" hidden>
+    <header class="cab" data-componente="cabecalho-tela"><h1 tabindex="-1">Pedidos</h1><span class="cab-usuario" data-usuario></span></header>
+    <div class="conteudo">
+      <div class="linha-abas">
+        <div class="abas" data-componente="abas" role="tablist" aria-label="Situação dos pedidos">
+          <button type="button" class="aba" role="tab" data-acao="aba" data-aba="0" aria-controls="gal-pedidos"></button>
+          <button type="button" class="aba" role="tab" data-acao="aba" data-aba="1" aria-controls="gal-pedidos"></button>
+          <button type="button" class="aba" role="tab" data-acao="aba" data-aba="2" aria-controls="gal-pedidos"></button>
+          <button type="button" class="aba" role="tab" data-acao="aba" data-aba="3" aria-controls="gal-pedidos"></button>
+        </div>
+        <div class="seletor" data-componente="seletor-unidade">
+          <label class="seletor-escopo" for="sel-unidade" data-escopo></label>
+          <select class="combo w180" id="sel-unidade" data-flag="flgGlobal"></select>
+        </div>
+      </div>
+      <form class="filtros" id="form-filtros" data-componente="barra-filtros" aria-label="Filtros (aplicam ao clicar em Filtrar)">
+        <div class="campo"><label for="f-status">Status</label><select class="combo w180" id="f-status"></select></div>
+        <div class="campo"><label for="f-busca">Protocolo ou solicitante</label><input class="texto w300" id="f-busca" placeholder="Ex.: PD-0001 ou Contoso" autocomplete="off"></div>
+        <div class="campo"><label for="f-de">De</label><input type="date" class="combo w180" id="f-de"></div>
+        <div class="campo"><label for="f-ate">Até</label><input type="date" class="combo w180" id="f-ate"></div>
+        <button type="submit" class="btn btn-primario btn-filtro" data-fx="fxTxtFiltrar">Filtrar</button>
+        <button type="button" class="btn btn-secundario btn-filtro" data-acao="limpar" data-fx="fxTxtLimpar">Limpar</button>
+        <button type="button" class="btn btn-primario exportar" id="btn-exportar" data-componente="exportar" data-acao="exportar" data-foco="exportar" data-flag="flgExportar" data-fx="fxTxtExportar">Exportar</button>
+      </form>
+      <div class="barra-acoes">
+        <div class="lote" data-componente="selecao-em-lote" data-flag="flgEncerrar">
+          <label class="chk"><input type="checkbox" id="chk-todos" data-foco="chk-todos"> Selecionar todos</label>
+          <span class="lote-contador" id="lote-contador" aria-live="polite"></span>
+          <button type="button" class="btn btn-primario" id="btn-lote" data-acao="lote" data-foco="lote" disabled>Encerrar selecionados</button>
+        </div>
+        <button type="button" class="btn btn-primario" data-acao="novo" data-foco="novo-pedidos" data-flag="flgCriar">Novo pedido</button>
+      </div>
+      <div class="gal gal-pedidos" id="gal-pedidos" data-componente="galeria-tabela" role="table" aria-label="Pedidos" aria-describedby="rodape">
+        <div class="gal-cab" role="row">
+          <span role="columnheader"><span class="sr">Seleção</span></span>
+          <span role="columnheader" class="ord-cel" data-componente="ordenacao-coluna" data-coluna="protocolo"><button type="button" class="ord" data-acao="ordenar" data-coluna="protocolo">Protocolo</button></span>
+          <span role="columnheader" class="ord-cel" data-componente="ordenacao-coluna" data-coluna="solicitante"><button type="button" class="ord" data-acao="ordenar" data-coluna="solicitante">Solicitante</button></span>
+          <span role="columnheader">Descrição</span>
+          <span role="columnheader">Unidade</span>
+          <span role="columnheader" class="ord-cel dir" data-componente="ordenacao-coluna" data-coluna="valor"><button type="button" class="ord" data-acao="ordenar" data-coluna="valor">Valor</button></span>
+          <span role="columnheader" class="centro">Status</span>
+          <span role="columnheader" class="ord-cel centro" data-componente="ordenacao-coluna" data-coluna="dtInclusao"><button type="button" class="ord" data-acao="ordenar" data-coluna="dtInclusao">Inclusão</button></span>
+          <span role="columnheader">Ações</span>
+          <span role="columnheader"><span class="sr">Detalhe</span></span>
+        </div>
+        <div class="gal-corpo" id="gal-corpo">
+          <div role="rowgroup" id="gal-linhas"></div>
+          <p class="vazio" id="gal-vazio" data-componente="estado-vazio" hidden></p>
+        </div>
+      </div>
+      <div class="gal-rodape">
+        <span></span>
+        <div class="pag" data-componente="paginacao-cursor" role="group" aria-label="Paginação">
+          <button type="button" class="btn btn-neutro" data-acao="pag-ant" data-foco="pag-ant" data-fx="fxTxtAnterior">‹ Anterior</button>
+          <span class="pag-txt" id="pag-txt" aria-live="polite"></span>
+          <button type="button" class="btn btn-neutro" data-acao="pag-prox" data-foco="pag-prox" data-fx="fxTxtProxima">Próxima ›</button>
+        </div>
+        <p class="rodape" id="rodape" data-componente="rodape-contagem"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TELA: sem acesso (fail-closed; também cobre tela sem permissão) ===== -->
+  <section class="tela" id="tela-sem-acesso" data-tela="tela-sem-acesso" data-titulo="Sem acesso" data-perfis="administrador,gestor,operador,sem-acesso" data-mockups="tl-00-sem-acesso" hidden>
+    <div class="sem-acesso" data-componente="painel-sem-acesso">
+      <h1 tabindex="-1" id="sa-titulo">Acesso não liberado</h1>
+      <p id="sa-hint">Seu usuário não tem perfil ou unidade cadastrados. Procure o administrador do app.</p>
+    </div>
+  </section>
+
+  <!-- ===== MODAIS (z-order: conteúdo, sem acesso, modais, loading, toast) ===== -->
+  <div class="veu" id="mod-form" data-componente="modal-formulario" hidden>
+    <form class="card card-l" id="form-pedido" role="dialog" aria-modal="true" aria-labelledby="form-titulo" tabindex="-1" novalidate>
+      <h2 id="form-titulo">Novo pedido</h2>
+      <p class="obrig-nota">Campos com * são obrigatórios.</p>
+      <div class="form-grade">
+        <div class="campo"><label for="ff-unidade">Unidade *</label><select class="combo" id="ff-unidade" aria-describedby="er-unidade"></select><span class="erro" id="er-unidade" aria-live="polite"></span></div>
+        <div class="campo"><label for="ff-solicitante">Solicitante *</label><select class="combo" id="ff-solicitante" aria-describedby="er-solicitante"></select><span class="erro" id="er-solicitante" aria-live="polite"></span></div>
+        <div class="campo"><label for="ff-valor">Valor (R$) *</label><input class="texto" id="ff-valor" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-describedby="er-valor"><span class="erro" id="er-valor" aria-live="polite"></span></div>
+        <div class="campo campo-largo"><label for="ff-descricao">Descrição *</label><textarea class="texto" id="ff-descricao" rows="4" maxlength="1000" placeholder="Mínimo de 10 caracteres" aria-describedby="er-descricao"></textarea><span class="erro" id="er-descricao" aria-live="polite"></span></div>
+      </div>
+      <div class="card-botoes">
+        <button type="button" class="btn btn-secundario" data-acao="fechar" data-fx="fxTxtCancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primario" data-fx="fxTxtSalvar">Salvar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="veu" id="mod-confirmar" data-componente="modal-confirmacao" hidden>
+    <div class="card card-s" role="dialog" aria-modal="true" aria-labelledby="conf-titulo" aria-describedby="conf-msg" tabindex="-1">
+      <h2 id="conf-titulo">Encerrar o pedido</h2>
+      <p class="card-msg" id="conf-msg"></p>
+      <div class="card-botoes">
+        <button type="button" class="btn btn-secundario" data-acao="fechar" data-fx="fxTxtVoltar">Voltar</button>
+        <button type="button" class="btn btn-primario" data-acao="confirmar-ok" data-fx="fxTxtEncerrar">Encerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="veu" id="mod-cancelar" data-componente="modal-destrutivo-motivo" hidden>
+    <div class="card card-m" role="dialog" aria-modal="true" aria-labelledby="canc-titulo" aria-describedby="canc-msg" tabindex="-1">
+      <h2 class="destrutivo" id="canc-titulo">Cancelar o pedido</h2>
+      <p class="card-msg" id="canc-msg"></p>
+      <div class="campo">
+        <label for="canc-motivo">Motivo (obrigatório)</label>
+        <textarea class="texto" id="canc-motivo" rows="3" maxlength="500" placeholder="Descreva o motivo (mínimo de 5 caracteres)" aria-describedby="canc-ajuda"></textarea>
+        <span class="ajuda" id="canc-ajuda" aria-live="polite"></span>
+      </div>
+      <div class="card-botoes">
+        <button type="button" class="btn btn-secundario" data-acao="fechar" data-fx="fxTxtVoltar">Voltar</button>
+        <button type="button" class="btn btn-destrutivo" id="canc-ok" data-acao="cancelar-ok" disabled>Confirmar cancelamento</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="veu" id="mod-detalhes" data-componente="modal-informativo" hidden>
+    <div class="card card-xl" role="dialog" aria-modal="true" aria-labelledby="det-titulo" tabindex="-1">
+      <h2 id="det-titulo"></h2>
+      <dl class="det-grade">
+        <div><dt>Solicitante</dt><dd data-det="solicitante"></dd></div> <div><dt>Unidade</dt><dd data-det="unidade"></dd></div> <div><dt>Valor</dt><dd data-det="valor"></dd></div>
+        <div><dt>Status</dt><dd><span class="badge" data-componente="badge-status" id="det-status"></span></dd></div> <div><dt>Responsável</dt><dd data-det="responsavel"></dd></div> <div><dt>Inclusão</dt><dd data-det="inclusao"></dd></div>
+        <div><dt>Última alteração</dt><dd data-det="alteracao"></dd></div> <div><dt>Eventos</dt><dd data-det="eventos"></dd></div> <div class="largo"><dt>Descrição</dt><dd data-det="descricao"></dd></div>
+      </dl>
+      <h3 class="det-sub">Histórico</h3>
+      <div class="gal gal-hist" role="table" aria-label="Histórico do pedido">
+        <div class="gal-cab" role="row"><span role="columnheader">Data</span><span role="columnheader">Evento</span><span role="columnheader">Usuário</span><span role="columnheader">Descrição</span></div>
+        <div class="gal-corpo" role="rowgroup" id="det-hist"></div>
+      </div>
+      <div class="card-botoes centro"><button type="button" class="btn btn-secundario" data-acao="fechar" data-fx="fxTxtFechar">Fechar</button></div>
+    </div>
+  </div>
+
+  <!-- overlay-loading: bloqueia a interação enquanto o flow roda -->
+  <div class="loading" id="loading" data-componente="overlay-loading" hidden>
+    <div class="loading-card" role="status"><div class="spinner" aria-hidden="true"></div><p class="loading-txt" id="loading-txt">Processando, aguarde...</p></div>
+  </div>
+
+  <!-- toast: lê o description da resposta do flow -->
+  <div class="toast" id="toast" data-componente="toast" role="status" aria-live="polite" aria-atomic="true">
+    <span class="toast-acento" aria-hidden="true"></span>
+    <span class="toast-icone" aria-hidden="true"></span>
+    <div><p class="toast-titulo"></p><p class="toast-msg"></p></div>
+    <button type="button" class="toast-fechar" data-acao="toast-fechar" aria-label="Fechar notificação" title="Fechar notificação">✕</button>
+    <span class="toast-trilha" aria-hidden="true"><span class="toast-barra"></span></span>
+  </div>
+</main>
+</div>
+
+<!-- moldes de linha: o JS clona; os data-componente ficam visíveis no HTML -->
+<template id="tpl-linha">
+  <div class="linha" role="none" data-componente="linha-expansivel">
+    <div class="linha-topo" role="row">
+      <span class="cel cel-chk" role="cell"><input type="checkbox" class="chk-linha" data-componente="selecao-em-lote"></span>
+      <span class="cel cel-prot" role="cell" data-campo="protocolo"></span>
+      <span class="cel" role="cell" data-campo="solicitante"></span>
+      <span class="cel" role="cell" data-campo="descricao"></span>
+      <span class="cel" role="cell" data-campo="unidade"></span>
+      <span class="cel dir num" role="cell" data-campo="valor"></span>
+      <span class="cel cel-status" role="cell"><span class="badge" data-componente="badge-status"></span></span>
+      <span class="cel centro peq" role="cell" data-campo="inclusao"></span>
+      <span class="cel cel-acoes" role="cell" data-componente="botoes">
+        <button type="button" class="btn btn-secundario btn-linha" data-acao="detalhes">Detalhes</button>
+        <button type="button" class="btn btn-neutro btn-linha" data-acao="editar">Editar</button>
+        <button type="button" class="btn btn-primario btn-linha" data-acao="avancar"></button>
+        <button type="button" class="btn btn-destrutivo btn-linha" data-acao="cancelar">Cancelar</button>
+      </span>
+      <span class="cel cel-exp" role="cell"><button type="button" class="btn-exp" data-acao="expandir" aria-expanded="false">▾</button></span>
+    </div>
+    <div class="linha-detalhe" role="row" hidden>
+      <div role="cell"><span>Responsável</span><strong data-campo="responsavel"></strong></div>
+      <div role="cell"><span>Última alteração</span><strong data-campo="alteracao"></strong></div>
+      <div role="cell"><span>Histórico</span><strong data-campo="eventos"></strong></div>
+      <div role="cell"><span>Descrição completa</span><strong data-campo="descricao"></strong></div>
+    </div>
+  </div>
+</template>
+<template id="tpl-recente">
+  <div class="linha-topo linha-simples" role="row">
+    <span class="cel cel-prot" role="cell" data-campo="protocolo"></span>
+    <span class="cel" role="cell" data-campo="solicitante"></span>
+    <span class="cel" role="cell" data-campo="descricao"></span>
+    <span class="cel" role="cell" data-campo="unidade"></span>
+    <span class="cel cel-status" role="cell"><span class="badge" data-componente="badge-status"></span></span>
+    <span class="cel centro peq" role="cell" data-campo="inclusao"></span>
+    <span class="cel cel-acoes" role="cell"><button type="button" class="btn btn-secundario btn-linha" data-acao="detalhes">Detalhes</button></span>
+  </div>
+</template>
+
+<script>
+'use strict';
+/* ===== 1. CONSTANTES DO PROJETO (troque aqui ao adaptar) ===== */
+const PROJETO = { nome: 'Gestão de Pedidos', modulo: 'Protótipo navegável', versao: 'v1', chave: 'prototipo-pedidos' };
+const PASTA_MOCKUPS = "../mockups/"; // relativa ao protótipo: docs/planejamento/prototipo/ -> docs/planejamento/mockups/
+const UNIDADES = ['AAA', 'BBB', 'CCC'];
+// a tela lê a flag, nunca o nome do perfil; null = sem perfil (fail-closed)
+const PERFIS = {
+  administrador: { rotulo: 'Administrador', flgCriar: true, flgEditar: true, flgEncerrar: true, flgCancelar: true, flgExportar: true, flgGlobal: true },
+  gestor: { rotulo: 'Gestor', flgCriar: true, flgEditar: true, flgEncerrar: true, flgCancelar: true, flgExportar: true, flgGlobal: false },
+  operador: { rotulo: 'Operador', flgCriar: true, flgEditar: true, flgEncerrar: false, flgCancelar: false, flgExportar: false, flgGlobal: false },
+  'sem-acesso': null
+};
+const STATUS = {
+  aberto: { rotulo: 'Aberto', tom: 'info' },
+  em_andamento: { rotulo: 'Em andamento', tom: 'progress' },
+  encerrado: { rotulo: 'Encerrado', tom: 'success' },
+  cancelado: { rotulo: 'Cancelado', tom: 'neutral' }
+};
+const SEMENTE = 20261001;
+const ROTEIRO = {
+  administrador: [
+    'Em cada tela, abra "Comparar com o mockup": a tela tem de reproduzir a imagem aprovada; anote as divergências.',
+    'Em Início, confira os cards e os 5 mais recentes no escopo "todas as unidades".',
+    'Em Pedidos, troque o seletor de unidade para BBB: cards, abas, lista e rodapé passam a contar só BBB.',
+    'Clique em "Novo pedido" e em Salvar sem preencher: cada campo mostra o erro. Depois crie o pedido.',
+    'Edite o pedido, clique em Iniciar e depois em Encerrar (pede confirmação).',
+    'Cancele um pedido aberto: o botão só habilita com 5 caracteres de motivo.',
+    'Marque 3 pedidos e use "Encerrar selecionados".',
+    'Expanda uma linha: todas as linhas crescem, porque no Canvas a altura do item é da galeria.',
+    'Filtre por "Contoso" e por um intervalo de datas: nada muda até clicar em Filtrar.',
+    'Ordene por Valor (▲/▼), passe de página e exporte o CSV do conjunto filtrado.',
+    'Na barra, ponha Resposta do flow = error e repita uma ação: nada é gravado. Com timeout, confira a lista antes de repetir.'
+  ],
+  gestor: [
+    'O escopo fica fixo na unidade do usuário: não há seletor de unidade.',
+    'Pedidos de outras unidades não aparecem; troque a unidade na barra e veja a lista mudar.',
+    'Abra #/tela-pedidos direto no endereço: o deep link abre a lista; o voltar do navegador funciona.',
+    'Com Resposta do flow = warning, encerre 4 selecionados: só parte é gravada e o toast explica.'
+  ],
+  operador: [
+    'Não há Encerrar, Cancelar, Exportar nem seleção em lote: a tela esconde pela flag.',
+    'Como gestor, abra Cancelar num pedido; troque o perfil para operador na barra e confirme: o flow também nega.'
+  ],
+  'sem-acesso': [
+    'Qualquer endereço cai no painel "Acesso não liberado" e o menu some.',
+    'Volte para um perfil válido: a tela pedida no endereço reaparece.'
+  ]
+};
+// textos e tempos com os mesmos nomes e valores dos tokens fx* (app-formulas-tokens.md)
+const fx = {
+  fxTxtVoltar: 'Voltar', fxTxtFechar: 'Fechar', fxTxtCancelar: 'Cancelar', fxTxtSalvar: 'Salvar', fxTxtEncerrar: 'Encerrar',
+  fxTxtFiltrar: 'Filtrar', fxTxtLimpar: 'Limpar', fxTxtProcessando: 'Processando...', fxTxtExportar: 'Exportar',
+  fxTxtToastSuccess: 'Sucesso', fxTxtToastWarning: 'Parcialmente concluído', fxTxtToastError: 'Erro',
+  fxTxtOrdemAsc: ' ▲', fxTxtOrdemDesc: ' ▼', fxTxtAnterior: '‹ Anterior', fxTxtProxima: 'Próxima ›', fxTxtExibindo: 'Exibindo', fxTxtTeto: '2.000+',
+  fxMsgLoadingDefault: 'Processando, aguarde...',
+  fxMsgNoResultsError: 'Nenhum resultado encontrado.', fxMsgNoResultsHint: 'Revise os filtros e tente novamente.',
+  fxMsgFalhaFlow: 'Não foi possível concluir a operação. Nada foi gravado.', fxMsgFalhaFlowHint: 'Tente novamente; se persistir, avise o suporte.',
+  fxMsgTimeoutError: 'A operação demorou mais que o esperado.', fxMsgTimeoutHint: 'Confira o resultado na lista antes de repetir.',
+  fxMsgSemPermissao: 'Você não tem permissão para esta ação.',
+  fxMsgSemAcessoTitulo: 'Acesso não liberado', fxMsgSemAcessoHint: 'Seu usuário não tem perfil ou unidade cadastrados. Procure o administrador do app.',
+  fxMsgCampoObrigatorio: 'Preencha os campos obrigatórios.', fxMsgFormatoInvalido: 'Formato inválido. Revise o valor informado.',
+  fxMsgSalvoComSucesso: 'Registro salvo com sucesso.',
+  fxToastDurationShort: 6000, fxToastDurationLong: 12000, fxToastDurationError: 15000, fxLimiteLinhas: 2000
+};
+const ABAS = [
+  { rotulo: 'Abertos', status: 'aberto', conta: 'aberto' },
+  { rotulo: 'Em andamento', status: 'em_andamento', conta: 'em_andamento' },
+  { rotulo: 'Encerrados', status: 'encerrado', conta: 'encerrado' },
+  { rotulo: 'Todos', status: '', conta: 'total' }
+];
+const RESPOSTAS = ['success', 'warning', 'error', 'timeout'];
+const LATENCIAS = [{ ms: 300, rotulo: '0,3 s' }, { ms: 1500, rotulo: '1,5 s' }, { ms: 4000, rotulo: '4 s' }];
+const PAGINA = 20;            // no app real a página é fxPageSize
+const MOTIVO_MIN = 5;             // o mesmo do catálogo (modal-destrutivo-motivo) e do flow
+const DESCRICAO_MIN = 10;
+const QTD_SEMENTE = 60;
+const DATA_BASE = '2026-09-30T18:00:00';
+const DIA_MS = 86400000;
+const ATIVOS = ['aberto', 'em_andamento'];
+const SOLICITANTES = ['Contoso', 'Fabrikam', 'Northwind Traders', 'Adventure Works', 'Tailspin Toys', 'Wide World Importers', 'Woodgrove Bank', 'Litware', 'Proseware', 'Fourth Coffee', 'Relecloud'];
+const DESCRICOES = ['Reposição de material de escritório', 'Manutenção preventiva de equipamentos', 'Compra de licenças de software', 'Serviço de transporte de documentos', 'Treinamento da equipe de atendimento', 'Aquisição de mobiliário para a sala de reunião', 'Renovação do contrato de suporte técnico', 'Instalação de pontos de rede no segundo andar', 'Troca de cartuchos e toners das impressoras', 'Contratação de serviço de limpeza extra'];
+const MOTIVOS = ['Pedido duplicado no sistema', 'Solicitante desistiu da compra', 'Orçamento não aprovado no mês'];
+const CHAVE_DADOS = PROJETO.chave + ':dados:v1';
+const CHAVE_CONTROLES = PROJETO.chave + ':controles:v1';
+
+/* ===== 2. UTILITÁRIOS ===== */
+const $ = (sel, raiz = document) => raiz.querySelector(sel);
+const $$ = (sel, raiz = document) => [...raiz.querySelectorAll(sel)];
+const porId = id => document.getElementById(id);
+const esperar = ms => new Promise(ok => setTimeout(ok, ms));
+const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const dois = n => String(n).padStart(2, '0');
+const isoLocal = d => `${d.getFullYear()}-${dois(d.getMonth() + 1)}-${dois(d.getDate())}T${dois(d.getHours())}:${dois(d.getMinutes())}:00`;
+const fmtData = iso => `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`;
+const fmtDataHora = iso => `${fmtData(iso)} ${iso.slice(11, 16)}`;
+const fmtN = n => (n >= fx.fxLimiteLinhas ? fx.fxTxtTeto : n.toLocaleString('pt-BR'));
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const protocolo = id => 'PD-' + String(id + 100).padStart(6, '0');
+const rotuloStatus = s => (STATUS[s] ? STATUS[s].rotulo : s);
+const opcao = (valor, texto) => Object.assign(document.createElement('option'), { value: valor, textContent: texto });
+const perfilAtual = () => PERFIS[estado.perfil];
+const flag = nome => Boolean(perfilAtual() && perfilAtual()[nome]);
+const usuario = () => (perfilAtual() ? `${perfilAtual().rotulo} ${estado.lotacao}` : `Usuário ${estado.lotacao}`);
+const buscar = id => DADOS.pedidos.find(p => p.id === id);
+const escopoPadrao = () => (flag('flgGlobal') ? '' : estado.lotacao);
+function prng(semente) { // mulberry32: mesma semente, mesmos dados
+  let a = semente >>> 0;
+  return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const armazenamento = { // a página funciona sem storage (modo privado, arquivo bloqueado)
+  ler(chave) { try { return JSON.parse(localStorage.getItem(chave)); } catch (erro) { return null; } },
+  gravar(chave, valor) { try { localStorage.setItem(chave, JSON.stringify(valor)); } catch (erro) { /* sem storage: segue em memória */ } }
+};
+
+/* ===== 3. DADOS (seed determinístico + persistência local) ===== */
+const evento = (dt, quem, acao, de, para, motivo) => ({ dt, usuario: quem, acao, de, para, motivo });
+function gerarPedidos() {
+  const sortear = prng(SEMENTE);
+  const pegar = lista => lista[Math.floor(sortear() * lista.length)];
+  const base = new Date(DATA_BASE).getTime();
+  const pedidos = [];
+  for (let id = 1; id <= QTD_SEMENTE; id++) {
+    const unidade = UNIDADES[(id - 1) % UNIDADES.length];
+    let t = base - Math.floor((2 + sortear() * 88) * DIA_MS);
+    const passo = () => { t = Math.min(base, t + Math.floor((0.2 + sortear() * 2) * DIA_MS)); return isoLocal(new Date(t)); };
+    const sorteio = sortear();
+    const status = sorteio < 0.35 ? 'aberto' : sorteio < 0.65 ? 'em_andamento' : sorteio < 0.9 ? 'encerrado' : 'cancelado';
+    const historico = [evento(isoLocal(new Date(t)), `Operador ${unidade}`, 'Criação', '', 'aberto', '')];
+    if (status === 'em_andamento' || status === 'encerrado') historico.push(evento(passo(), `Gestor ${unidade}`, 'Início do atendimento', 'aberto', 'em_andamento', ''));
+    if (status === 'encerrado') historico.push(evento(passo(), `Gestor ${unidade}`, 'Encerramento', 'em_andamento', 'encerrado', ''));
+    if (status === 'cancelado') historico.push(evento(passo(), `Gestor ${unidade}`, 'Cancelamento', 'aberto', 'cancelado', pegar(MOTIVOS)));
+    pedidos.push({
+      id, protocolo: protocolo(id), unidade, solicitante: pegar(SOLICITANTES), descricao: pegar(DESCRICOES),
+      valor: Math.round((350 + sortear() * 24000) * 100) / 100, dtInclusao: historico[0].dt,
+      dtAlteracao: historico[historico.length - 1].dt, status, responsavel: `Operador ${unidade}`, historico
+    });
+  }
+  return { pedidos, proximoId: QTD_SEMENTE + 1 };
+}
+function carregarDados() {
+  const salvo = armazenamento.ler(CHAVE_DADOS);
+  return salvo && Array.isArray(salvo.pedidos) && Number.isInteger(salvo.proximoId) ? salvo : gerarPedidos();
+}
+const salvarDados = () => armazenamento.gravar(CHAVE_DADOS, DADOS);
+// gravação imutável: troca o objeto do pedido e acrescenta o evento ao histórico
+function alterarPedido(id, mudanca, acao, motivo = '') {
+  const agora = isoLocal(new Date());
+  DADOS = { ...DADOS, pedidos: DADOS.pedidos.map(p => {
+    if (p.id !== id) return p;
+    const novo = { ...p, ...mudanca, dtAlteracao: agora };
+    return { ...novo, historico: [...p.historico, evento(agora, usuario(), acao, p.status, novo.status, motivo)] };
+  }) };
+}
+
+/* ===== 4. ESTADO DA TELA (equivale às variáveis var* do OnStart) ===== */
+let DADOS = carregarDados();
+const estado = {
+  perfil: 'administrador', lotacao: 'AAA', resposta: 'success', latencia: 1500,
+  unidadeFiltro: '', aba: 0, filtros: { status: '', busca: '', de: '', ate: '' }, ordem: { coluna: 'dtInclusao', asc: false },
+  pagina: 1, selecionados: new Set(), expandida: null, pedidoSel: null, confirmarIds: [], formModo: 'criar',
+  tentouSalvar: false, modal: null, abridor: null, focoAntes: null, carregando: false, tela: 'tela-inicio'
+};
+const criterioAtual = () => ({ unidade: estado.unidadeFiltro, aba: ABAS[estado.aba].status, ...estado.filtros });
+function filtrar(lista, c) {
+  const busca = norm(c.busca || '');
+  return lista.filter(p => (!c.unidade || p.unidade === c.unidade) && (!c.aba || p.status === c.aba)
+    && (!c.status || p.status === c.status)
+    && (!busca || norm(p.protocolo).startsWith(busca) || norm(p.solicitante).startsWith(busca))
+    && (!c.de || p.dtInclusao.slice(0, 10) >= c.de) && (!c.ate || p.dtInclusao.slice(0, 10) <= c.ate));
+}
+function ordenar(lista, { coluna, asc }) {
+  return [...lista].sort((a, b) => {
+    const r = typeof a[coluna] === 'number' ? a[coluna] - b[coluna] : String(a[coluna]).localeCompare(String(b[coluna]), 'pt-BR');
+    return asc ? r : -r;
+  });
+}
+function contar() {
+  const escopo = filtrar(DADOS.pedidos, { unidade: estado.unidadeFiltro });
+  const n = s => escopo.filter(p => p.status === s).length;
+  return { total: escopo.length, aberto: n('aberto'), em_andamento: n('em_andamento'), encerrado: n('encerrado') };
+}
+
+/* ===== 5. ESCALA DO CANVAS (1920x1080 fixo; só a escala acompanha a janela) ===== */
+function escalar() {
+  const barra = $('[data-prototipo-controles]').offsetHeight;
+  const largura = window.innerWidth, altura = Math.max(window.innerHeight - barra, 120);
+  const escala = Math.min(largura / 1920, altura / 1080);
+  porId('palco').style.height = altura + 'px';
+  porId('canvas').style.transform = `translate(${(largura - 1920 * escala) / 2}px, ${(altura - 1080 * escala) / 2}px) scale(${escala})`;
+  $$('.pt-painel').forEach(p => { p.style.top = barra + 'px'; });
+}
+
+/* ===== 6. ROTEAMENTO POR HASH (#/tela-xxx) ===== */
+const podeVer = secao => secao.dataset.perfis.split(',').includes(estado.perfil);
+function telaDoHash() {
+  const secao = porId(location.hash.replace(/^#\//, ''));
+  return secao && secao.matches('[data-tela]') ? secao : porId('tela-inicio');
+}
+function rotear() {
+  const pedida = telaDoHash();
+  const alvo = podeVer(pedida) ? pedida : porId('tela-sem-acesso');
+  estado.tela = alvo.id;
+  $$('[data-tela]').forEach(s => { s.hidden = s !== alvo; });
+  const semPerfil = !perfilAtual();
+  porId('tela-sem-acesso').classList.toggle('tela-cheia', semPerfil);
+  porId('sa-titulo').textContent = semPerfil ? fx.fxMsgSemAcessoTitulo : fx.fxMsgSemPermissao;
+  porId('sa-titulo').classList.toggle('so-permissao', !semPerfil);
+  porId('sa-hint').textContent = fx.fxMsgSemAcessoHint;
+  porId('sa-hint').hidden = !semPerfil;
+  document.title = `${alvo.dataset.titulo} · ${PROJETO.nome} (protótipo)`;
+}
+const focarTitulo = () => { const h1 = $('[data-tela]:not([hidden]) h1'); if (h1) h1.focus(); };
+function irPara(tela) { if (location.hash === '#/' + tela) renderTudo(); else location.hash = '#/' + tela; }
+
+/* ===== 7. RENDERIZAÇÃO ===== */
+function renderTudo() {
+  const chave = document.activeElement && document.activeElement.dataset.foco;
+  rotear();
+  renderMenu();
+  atualizarComparar();
+  const escopo = `Escopo: ${estado.unidadeFiltro || 'todas as unidades'}`;
+  $$('[data-escopo]').forEach(e => { e.textContent = escopo; });
+  $$('[data-usuario]').forEach(e => { e.textContent = usuario(); });
+  $$('[data-flag]').forEach(e => { e.hidden = !flag(e.dataset.flag); });
+  renderInicio();
+  renderPedidos();
+  atualizarInert();
+  if (chave && !estado.modal) focarChave(chave);
+}
+function renderMenu() {
+  porId('menu').hidden = !perfilAtual(); // varSemAcesso
+  $$('.menu-item').forEach(a => {
+    a.parentElement.hidden = !podeVer(porId(a.dataset.alvo));
+    if (a.dataset.alvo === estado.tela) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  porId('menu-usuario').textContent = usuario();
+  porId('menu-perfil').textContent = `${perfilAtual() ? perfilAtual().rotulo : 'Sem perfil'} · ${estado.unidadeFiltro || 'Todas as unidades'}`;
+}
+function pintarBadge(el, status) {
+  el.textContent = rotuloStatus(status);
+  el.className = 'badge t-' + (STATUS[status] ? STATUS[status].tom : 'neutral');
+}
+function valorCampo(p, campo) {
+  if (campo === 'valor') return moeda.format(p.valor);
+  if (campo === 'inclusao') return fmtData(p.dtInclusao);
+  if (campo === 'alteracao') return fmtDataHora(p.dtAlteracao);
+  if (campo === 'eventos') return p.historico.length === 1 ? '1 evento' : `${p.historico.length} eventos`;
+  return p[campo];
+}
+function preencher(raiz, p, prefixo = '') { // prefixo: a chave de foco é única no app inteiro
+  $$('[data-campo]', raiz).forEach(c => { c.textContent = valorCampo(p, c.dataset.campo); });
+  pintarBadge($('.badge', raiz), p.status);
+  $$('button[data-acao]', raiz).forEach(b => { b.dataset.id = p.id; b.dataset.foco = `${prefixo}${b.dataset.acao}-${p.id}`; });
+}
+function renderInicio() {
+  const c = contar();
+  $$('[data-kpi]').forEach(e => { e.textContent = fmtN(c[e.dataset.kpi]); });
+  $$('[data-atalho]').forEach(e => { e.textContent = fmtN(c[e.dataset.atalho]); });
+  const recentes = ordenar(filtrar(DADOS.pedidos, { unidade: estado.unidadeFiltro }), { coluna: 'dtInclusao', asc: false }).slice(0, 5);
+  porId('recentes-linhas').replaceChildren(...recentes.map(p => {
+    const linha = porId('tpl-recente').content.firstElementChild.cloneNode(true);
+    preencher(linha, p, 'inicio-');
+    return linha;
+  }));
+  porId('recentes-vazio').hidden = recentes.length > 0;
+  const unidades = estado.unidadeFiltro ? [estado.unidadeFiltro] : UNIDADES;
+  porId('unidades-linhas').replaceChildren(...unidades.map(u => {
+    const daUnidade = filtrar(DADOS.pedidos, { unidade: u });
+    const n = s => daUnidade.filter(p => p.status === s).length;
+    return linhaTexto([u, ...['aberto', 'em_andamento', 'encerrado', 'cancelado'].map(n), daUnidade.length].map((v, i) => (i ? fmtN(v) : v)),
+      i => (i ? 'cel dir num' : 'cel cel-prot'));
+  }));
+}
+function linhaTexto(textos, classe) { // linha só de leitura (galeria sem ação)
+  const linha = Object.assign(document.createElement('div'), { className: 'linha-topo linha-simples' });
+  linha.setAttribute('role', 'row');
+  linha.append(...textos.map((texto, i) => {
+    const cel = Object.assign(document.createElement('span'), { className: classe(i), textContent: texto });
+    cel.setAttribute('role', 'cell');
+    return cel;
+  }));
+  return linha;
+}
+function linhaPedido(p) {
+  const linha = porId('tpl-linha').content.firstElementChild.cloneNode(true);
+  const ativo = ATIVOS.includes(p.status), aberta = estado.expandida === p.id;
+  linha.dataset.id = p.id;
+  linha.classList.toggle('aberta', aberta);
+  preencher(linha, p);
+  const chk = $('.chk-linha', linha);
+  Object.assign(chk, { checked: estado.selecionados.has(p.id), disabled: !ativo });
+  Object.assign(chk.dataset, { id: p.id, foco: 'chk-' + p.id });
+  chk.setAttribute('aria-label', 'Selecionar ' + p.protocolo);
+  const [, editar, avancar, cancelar] = $$('.cel-acoes button', linha);
+  editar.classList.toggle('oculto', !(ativo && flag('flgEditar')));
+  avancar.textContent = p.status === 'aberto' ? 'Iniciar' : 'Encerrar';
+  avancar.dataset.foco = 'avancar-' + p.id; // mesmo slot nos dois estados: o foco não se perde
+  avancar.classList.toggle('oculto', !(p.status === 'aberto' ? flag('flgEditar') : p.status === 'em_andamento' && flag('flgEncerrar')));
+  cancelar.classList.toggle('oculto', !(ativo && flag('flgCancelar')));
+  const exp = $('.btn-exp', linha);
+  exp.textContent = aberta ? '▴' : '▾';
+  exp.setAttribute('aria-expanded', aberta);
+  exp.setAttribute('aria-label', (aberta ? 'Recolher detalhes de ' : 'Expandir detalhes de ') + p.protocolo);
+  $('.linha-detalhe', linha).hidden = !aberta;
+  return linha;
+}
+function renderPedidos() {
+  const c = contar();
+  $$('[data-acao="aba"]').forEach((b, i) => {
+    b.textContent = `${ABAS[i].rotulo} (${fmtN(c[ABAS[i].conta])})`;
+    b.setAttribute('aria-selected', i === estado.aba);
+  });
+  porId('sel-unidade').value = estado.unidadeFiltro;
+  $$('[data-componente="ordenacao-coluna"]').forEach(cel => {
+    const ativa = estado.ordem.coluna === cel.dataset.coluna;
+    const seta = ativa ? (estado.ordem.asc ? fx.fxTxtOrdemAsc : fx.fxTxtOrdemDesc) : '';
+    cel.setAttribute('aria-sort', ativa ? (estado.ordem.asc ? 'ascending' : 'descending') : 'none');
+    const b = $('button', cel);
+    b.textContent = b.textContent.replace(/ [▲▼]$/, '') + seta;
+  });
+  const lista = ordenar(filtrar(DADOS.pedidos, criterioAtual()), estado.ordem);
+  const paginas = Math.max(1, Math.ceil(lista.length / PAGINA));
+  estado.pagina = Math.min(estado.pagina, paginas);
+  const visiveis = lista.slice((estado.pagina - 1) * PAGINA, estado.pagina * PAGINA);
+  porId('gal-linhas').replaceChildren(...visiveis.map(linhaPedido));
+  const gal = porId('gal-pedidos');
+  gal.classList.toggle('gal-expandida', visiveis.some(p => p.id === estado.expandida)); // TemplateSize é da galeria inteira
+  gal.classList.toggle('sem-lote', !flag('flgEncerrar'));
+  porId('gal-vazio').textContent = `${fx.fxMsgNoResultsError}\n${fx.fxMsgNoResultsHint}`;
+  porId('gal-vazio').hidden = visiveis.length > 0;
+  porId('pag-txt').textContent = `Página ${estado.pagina} de ${paginas}`;
+  $('[data-acao="pag-ant"]').disabled = estado.pagina <= 1;
+  $('[data-acao="pag-prox"]').disabled = estado.pagina >= paginas;
+  porId('rodape').textContent = `${fx.fxTxtExibindo} ${visiveis.length} de ${fmtN(lista.length)} pedidos `
+    + (estado.unidadeFiltro ? 'da unidade ' + estado.unidadeFiltro : 'de todas as unidades');
+  porId('btn-exportar').disabled = lista.length === 0;
+  const n = estado.selecionados.size, elegiveis = visiveis.filter(p => ATIVOS.includes(p.status));
+  porId('lote-contador').textContent = n === 0 ? '' : n === 1 ? '1 pedido selecionado' : `${n} pedidos selecionados`;
+  porId('btn-lote').disabled = n === 0;
+  Object.assign(porId('chk-todos'), { checked: elegiveis.length > 0 && elegiveis.every(p => estado.selecionados.has(p.id)), disabled: elegiveis.length === 0 });
+}
+function renderRoteiro() {
+  porId('roteiro-corpo').replaceChildren(...Object.entries(ROTEIRO).flatMap(([perfil, passos]) => {
+    const titulo = document.createElement('h3');
+    titulo.textContent = (PERFIS[perfil] ? PERFIS[perfil].rotulo : 'Sem acesso') + (perfil === estado.perfil ? ' (perfil atual)' : '');
+    const lista = document.createElement('ol');
+    lista.append(...passos.map(passo => Object.assign(document.createElement('li'), { textContent: passo })));
+    return [titulo, lista];
+  }));
+}
+
+/* ===== 8. MODAIS, LOADING E TOAST ===== */
+function atualizarInert() { // véu do Canvas: nada atrás do modal ou do loading responde
+  $$('.menu, .tela').forEach(e => { e.inert = Boolean(estado.modal) || estado.carregando; });
+  $$('.veu').forEach(e => { e.inert = estado.carregando; });
+}
+function focarChave(chave, reserva) {
+  const alvo = chave && $(`[data-foco="${chave}"]`);
+  if (alvo && !alvo.closest('[hidden]') && !alvo.disabled && !alvo.classList.contains('oculto')) alvo.focus();
+  else if (reserva) reserva.focus(); else focarTitulo();
+}
+function abrirModal(id) {
+  estado.abridor = document.activeElement && document.activeElement.dataset.foco;
+  estado.modal = id;
+  porId(id).hidden = false;
+  atualizarInert();
+  $('.card', porId(id)).focus();
+}
+function fecharModal() {
+  if (!estado.modal || estado.carregando) return;
+  porId(estado.modal).hidden = true;
+  Object.assign(estado, { modal: null, pedidoSel: null, confirmarIds: [] }); // limpa o estado ao fechar
+  atualizarInert();
+  focarChave(estado.abridor);
+}
+function mostrarLoading(mensagem) {
+  estado.focoAntes = document.activeElement;
+  estado.carregando = true;
+  porId('loading-txt').textContent = mensagem || fx.fxMsgLoadingDefault;
+  porId('loading').hidden = false;
+  const verbo = estado.modal && $('.card-botoes .btn:last-child', porId(estado.modal));
+  if (verbo) { verbo.dataset.texto = verbo.textContent; verbo.textContent = fx.fxTxtProcessando; } // If(varShowLoading; fxTxtProcessando; verbo)
+  atualizarInert();
+}
+function esconderLoading() {
+  estado.carregando = false;
+  porId('loading').hidden = true;
+  $$('[data-texto]').forEach(b => { b.textContent = b.dataset.texto; delete b.dataset.texto; });
+  atualizarInert();
+}
+let toastFim = null, toastTique = null, toastTexto = null;
+function esconderToast() { clearTimeout(toastFim); clearTimeout(toastTexto); clearInterval(toastTique); porId('toast').classList.remove('visivel'); }
+function mostrarToast(tipo, mensagem) {
+  const t = porId('toast'), status = ['success', 'warning', 'error'].includes(tipo) ? tipo : 'error';
+  esconderToast();
+  t.classList.remove('toast-success', 'toast-warning', 'toast-error');
+  t.classList.add('toast-' + status, 'visivel');
+  $('.toast-icone', t).textContent = { success: '✓', warning: '!', error: '✕' }[status];
+  const duracao = status === 'error' ? fx.fxToastDurationError : status === 'warning' || mensagem.length > 100 ? fx.fxToastDurationLong : fx.fxToastDurationShort;
+  toastTexto = setTimeout(() => { // texto depois de visível: o leitor de tela anuncia
+    $('.toast-titulo', t).textContent = { success: fx.fxTxtToastSuccess, warning: fx.fxTxtToastWarning, error: fx.fxTxtToastError }[status];
+    $('.toast-msg', t).textContent = mensagem;
+  }, 60);
+  const inicio = Date.now(), barra = $('.toast-barra', t);
+  barra.style.width = '100%';
+  toastTique = setInterval(() => { barra.style.width = Math.max(0, 100 - ((Date.now() - inicio) / duracao) * 100) + '%'; }, 250);
+  toastFim = setTimeout(esconderToast, duracao);
+}
+
+/* ===== 9. FLOW SIMULADO: simularFlow(acao, parametros) -> {status, description, id, url} ===== */
+const resposta = (status, description, id = '', url = '') => ({ status, description, id, url });
+const ativo = p => ATIVOS.includes(p.status);
+const primeiroErro = erros => Object.values(erros)[0] || '';
+const avisoParcial = texto => `${texto} O aviso por e-mail ao solicitante não foi enviado; avise-o manualmente.`;
+function parseValor(texto) {
+  const limpo = String(texto).trim();
+  if (!/^(\d{1,3}(\.\d{3})+|\d+)(,\d{1,2})?$/.test(limpo)) return NaN;
+  const n = Number(limpo.replace(/\./g, '').replace(',', '.'));
+  return n > 0 ? n : NaN;
+}
+function validarCampos(d) {
+  const e = {};
+  if (!d.unidade) e.unidade = fx.fxMsgCampoObrigatorio;
+  if (!d.solicitante) e.solicitante = fx.fxMsgCampoObrigatorio;
+  if (!d.valor) e.valor = fx.fxMsgCampoObrigatorio; else if (Number.isNaN(parseValor(d.valor))) e.valor = fx.fxMsgFormatoInvalido;
+  if (!d.descricao) e.descricao = fx.fxMsgCampoObrigatorio;
+  else if (d.descricao.length < DESCRICAO_MIN) e.descricao = `Descreva com pelo menos ${DESCRICAO_MIN} caracteres.`;
+  return e;
+}
+// cada ação: flag exigida, validação do servidor e gravação (o flow decide; a tela só facilita)
+const REGRAS = {
+  criar: { flag: 'flgCriar', grava: true,
+    validar: p => primeiroErro(validarCampos(p)) || (!flag('flgGlobal') && p.unidade !== estado.lotacao ? fx.fxMsgSemPermissao : ''),
+    executar: (p, alvos, parcial) => {
+      const id = DADOS.proximoId, agora = isoLocal(new Date());
+      const novo = { id, protocolo: protocolo(id), unidade: p.unidade, solicitante: p.solicitante, descricao: p.descricao, valor: parseValor(p.valor),
+        dtInclusao: agora, dtAlteracao: agora, status: 'aberto', responsavel: usuario(), historico: [evento(agora, usuario(), 'Criação', '', 'aberto', '')] };
+      DADOS = { pedidos: [novo, ...DADOS.pedidos], proximoId: id + 1 };
+      const texto = `Pedido ${novo.protocolo} criado com sucesso.`;
+      return { id: String(id), description: parcial ? avisoParcial(texto) : texto };
+    } },
+  editar: { flag: 'flgEditar', grava: true,
+    validar: (p, [ped]) => (!ativo(ped) ? 'Este pedido não pode mais ser alterado.' : primeiroErro(validarCampos(p))),
+    executar: (p, [ped], parcial) => {
+      alterarPedido(ped.id, { solicitante: p.solicitante, descricao: p.descricao, valor: parseValor(p.valor) }, 'Edição', 'Dados do pedido atualizados');
+      return { id: String(ped.id), description: parcial ? avisoParcial(fx.fxMsgSalvoComSucesso) : fx.fxMsgSalvoComSucesso };
+    } },
+  iniciar: { flag: 'flgEditar', grava: true,
+    validar: (p, [ped]) => (ped.status !== 'aberto' ? 'Só pedidos abertos podem ser iniciados.' : ''),
+    executar: (p, [ped], parcial) => {
+      alterarPedido(ped.id, { status: 'em_andamento' }, 'Início do atendimento');
+      const texto = `Pedido ${ped.protocolo} em andamento.`;
+      return { id: String(ped.id), description: parcial ? avisoParcial(texto) : texto };
+    } },
+  encerrar: { flag: 'flgEncerrar', grava: true,
+    validar: (p, alvos) => (alvos.length === 0 ? 'Selecione ao menos um pedido.' : alvos.some(x => !ativo(x)) ? 'Só pedidos abertos ou em andamento podem ser encerrados.' : ''),
+    executar: (p, alvos, parcial) => {
+      const feitos = parcial && alvos.length > 1 ? alvos.slice(0, Math.ceil(alvos.length / 2)) : alvos;
+      feitos.forEach(ped => alterarPedido(ped.id, { status: 'encerrado' }, 'Encerramento'));
+      if (alvos.length === 1) {
+        const texto = `Pedido ${alvos[0].protocolo} encerrado.`;
+        return { id: String(alvos[0].id), description: parcial ? avisoParcial(texto) : texto };
+      }
+      return { id: feitos.map(x => x.id).join(','), description: parcial
+        ? `${feitos.length} de ${alvos.length} pedidos encerrados. Os demais não foram processados; selecione-os e tente de novo.`
+        : `${alvos.length} pedidos encerrados.` };
+    } },
+  cancelar: { flag: 'flgCancelar', grava: true,
+    validar: (p, [ped]) => (!ativo(ped) ? 'Este pedido não pode mais ser cancelado.' : (p.motivo || '').length < MOTIVO_MIN ? `Informe o motivo com pelo menos ${MOTIVO_MIN} caracteres.` : ''),
+    executar: (p, [ped], parcial) => {
+      alterarPedido(ped.id, { status: 'cancelado' }, 'Cancelamento', p.motivo);
+      const texto = `Pedido ${ped.protocolo} cancelado.`;
+      return { id: String(ped.id), description: parcial ? avisoParcial(texto) : texto };
+    } },
+  exportar: { flag: 'flgExportar', grava: false, validar: () => '',
+    executar: (p, alvos, parcial) => { // lê "no servidor" o conjunto completo do filtro, não a página
+      const unidade = flag('flgGlobal') ? p.unidade : estado.lotacao;
+      const linhas = ordenar(filtrar(DADOS.pedidos, { ...p, unidade }), estado.ordem);
+      const q = v => `"${String(v).replace(/"/g, '""')}"`;
+      const csv = [['Protocolo', 'Unidade', 'Solicitante', 'Descrição', 'Valor', 'Status', 'Responsável', 'Inclusão', 'Alteração'].map(q).join(';'),
+        ...linhas.map(x => [x.protocolo, x.unidade, x.solicitante, x.descricao, x.valor.toFixed(2).replace('.', ','), rotuloStatus(x.status), x.responsavel, fmtDataHora(x.dtInclusao), fmtDataHora(x.dtAlteracao)].map(q).join(';'))];
+      const url = URL.createObjectURL(new Blob(['﻿' + csv.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+      const texto = `Arquivo gerado com ${linhas.length} pedidos.`;
+      return { url, description: parcial ? `${texto} A cópia por e-mail não foi enviada.` : texto };
+    } }
+};
+const MSG_LOADING = { criar: 'Criando pedido...', editar: 'Salvando alterações...', iniciar: 'Iniciando atendimento...', encerrar: 'Encerrando...', cancelar: 'Cancelando pedido...', exportar: 'Gerando arquivo...' };
+async function simularFlow(acao, parametros) {
+  const regra = REGRAS[acao];
+  mostrarLoading(MSG_LOADING[acao]);                                                      // 1. overlay
+  try {
+    await esperar(estado.latencia);                                                       // 2. latência
+    const perfil = perfilAtual();                                                         // 3. o flow autoriza de novo
+    if (!perfil || !perfil[regra.flag]) return resposta('error', fx.fxMsgSemPermissao);
+    const alvos = (parametros.ids || []).map(buscar);
+    if (alvos.some(p => !p || (!perfil.flgGlobal && p.unidade !== estado.lotacao))) return resposta('error', fx.fxMsgSemPermissao);
+    const invalido = regra.validar(parametros, alvos);                                    // 4. campos obrigatórios
+    if (invalido) return resposta('error', invalido);
+    if (estado.resposta === 'error') return resposta('error', `${fx.fxMsgFalhaFlow}\n${fx.fxMsgFalhaFlowHint}`); // nada gravado
+    const r = regra.executar(parametros, alvos, estado.resposta === 'warning');           // 5. grava + histórico
+    if (regra.grava) salvarDados();
+    // timeout: o servidor concluiu, mas a resposta não chegou ao app
+    if (estado.resposta === 'timeout') return resposta('error', `${fx.fxMsgTimeoutError}\n${fx.fxMsgTimeoutHint}`);
+    return resposta(estado.resposta === 'warning' ? 'warning' : 'success', r.description, r.id, r.url);
+  } finally {
+    esconderLoading();
+  }
+}
+
+/* ===== 10. AÇÕES DA TELA (equivalem aos OnSelect) ===== */
+async function executarAcao(acao, parametros, aoConcluir) {
+  const chave = document.activeElement && document.activeElement.dataset.foco;
+  let ret;
+  try { ret = await simularFlow(acao, parametros); } catch (erro) {
+    console.error('Falha no flow simulado:', erro); // equivale ao IfError + Trace
+    ret = resposta('error', `${fx.fxMsgFalhaFlow}\n${fx.fxMsgFalhaFlowHint}`);
+  }
+  mostrarToast(ret.status, ret.description);
+  const sucesso = ret.status !== 'error';
+  if (sucesso && aoConcluir) aoConcluir(ret);
+  renderTudo();
+  if (sucesso && estado.modal) fecharModal();                  // sucesso e aviso fecham; erro mantém aberto
+  else if (estado.modal) focarChave(null, estado.focoAntes && estado.focoAntes.isConnected ? estado.focoAntes : $('.card', porId(estado.modal)));
+  else focarChave(chave);
+  return ret;
+}
+function reiniciarLista() { // filtro, aba, ordem ou escopo novos: volta à página 1 e zera a seleção
+  Object.assign(estado, { pagina: 1, expandida: null });
+  estado.selecionados.clear();
+  renderTudo();
+}
+function lerFormulario() {
+  const v = id => porId(id).value.trim();
+  return { unidade: v('ff-unidade'), solicitante: v('ff-solicitante'), valor: v('ff-valor'), descricao: v('ff-descricao') };
+}
+function pintarErros(erros) {
+  ['unidade', 'solicitante', 'valor', 'descricao'].forEach(campo => {
+    const entrada = porId('ff-' + campo);
+    porId('er-' + campo).textContent = erros[campo] || '';
+    entrada.classList.toggle('invalido', Boolean(erros[campo]));
+    entrada.setAttribute('aria-invalid', Boolean(erros[campo]));
+  });
+}
+function abrirFormulario(modo, id) {
+  const p = id ? buscar(id) : null, global = flag('flgGlobal');
+  Object.assign(estado, { formModo: modo, tentouSalvar: false });
+  porId('form-titulo').textContent = p ? `Editar pedido ${p.protocolo}` : 'Novo pedido';
+  const unidade = porId('ff-unidade');
+  unidade.replaceChildren(opcao('', 'Selecione a unidade'), ...(global ? UNIDADES : [estado.lotacao]).map(u => opcao(u, u)));
+  unidade.value = p ? p.unidade : global ? '' : estado.lotacao;
+  unidade.disabled = Boolean(p) || !global; // o flow deriva a unidade; edição não muda de unidade
+  porId('ff-solicitante').value = p ? p.solicitante : '';
+  porId('ff-valor').value = p ? p.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '';
+  porId('ff-descricao').value = p ? p.descricao : '';
+  pintarErros({});
+  abrirModal('mod-form');
+  estado.pedidoSel = id || null;
+}
+function salvarFormulario(evento) {
+  evento.preventDefault();
+  if (estado.carregando) return;
+  estado.tentouSalvar = true;
+  const dados = lerFormulario(), erros = validarCampos(dados);
+  pintarErros(erros);
+  const primeiro = Object.keys(erros)[0];
+  if (primeiro) { porId('ff-' + primeiro).focus(); return; }   // erro junto do campo, foco no primeiro
+  executarAcao(estado.formModo, { ...dados, ids: estado.pedidoSel ? [estado.pedidoSel] : [] });
+}
+function abrirConfirmar(ids) {
+  const um = ids.length === 1;
+  porId('conf-titulo').textContent = um ? 'Encerrar o pedido' : 'Encerrar pedidos selecionados';
+  porId('conf-msg').textContent = um ? `Confirma o encerramento do pedido ${buscar(ids[0]).protocolo}?` : `Confirma o encerramento de ${ids.length} pedidos selecionados?`;
+  abrirModal('mod-confirmar');
+  estado.confirmarIds = ids;
+}
+function atualizarMotivo() {
+  const falta = MOTIVO_MIN - porId('canc-motivo').value.trim().length;
+  porId('canc-ok').disabled = falta > 0;
+  porId('canc-ajuda').textContent = falta > 0 ? `Faltam ${falta} caracteres para liberar o cancelamento.` : 'Motivo suficiente.';
+}
+function abrirCancelar(id) {
+  porId('canc-msg').textContent = `O pedido ${buscar(id).protocolo} será cancelado e não poderá ser reaberto.`;
+  porId('canc-motivo').value = '';
+  atualizarMotivo();
+  abrirModal('mod-cancelar');
+  estado.pedidoSel = id;
+}
+function abrirDetalhes(id) {
+  const p = buscar(id);
+  porId('det-titulo').textContent = `Detalhes do pedido ${p.protocolo}`;
+  $$('[data-det]').forEach(e => { e.textContent = valorCampo(p, e.dataset.det); });
+  pintarBadge(porId('det-status'), p.status);
+  porId('det-hist').replaceChildren(...[...p.historico].reverse().map(h => {
+    const mudou = h.de && h.de !== h.para ? `${rotuloStatus(h.de)} → ${rotuloStatus(h.para)}` : h.de ? '' : `Status inicial: ${rotuloStatus(h.para)}`;
+    const descricao = [mudou, h.motivo && (h.acao === 'Cancelamento' ? 'Motivo: ' + h.motivo : h.motivo)].filter(Boolean).join(' · ');
+    return linhaTexto([fmtDataHora(h.dt), h.acao, h.usuario, descricao], i => (i === 0 ? 'cel peq' : 'cel'));
+  }));
+  abrirModal('mod-detalhes');
+  estado.pedidoSel = id;
+}
+async function exportar() {
+  const ret = await executarAcao('exportar', criterioAtual());
+  if (ret.status === 'error' || !ret.url) return;
+  const link = Object.assign(document.createElement('a'), { href: ret.url, download: `pedidos-${isoLocal(new Date()).slice(0, 10)}.csv` });
+  document.body.append(link); link.click(); link.remove(); // equivale ao Download(varRet.url)
+  setTimeout(() => URL.revokeObjectURL(ret.url), 10000);
+}
+function alternarLinha(id) {
+  estado.expandida = estado.expandida === id ? null : id;
+  renderTudo();
+}
+/* painéis da barra (roteiro e comparar): um aberto por vez; fechar devolve o foco ao botão */
+const PAINEIS = { 'pt-roteiro': 'pt-roteiro-btn', 'pt-comparar': 'pt-comparar-btn' };
+const painelAberto = () => Object.keys(PAINEIS).find(id => !porId(id).hidden);
+function alternarPainel(id) {
+  const abrir = porId(id).hidden;
+  Object.entries(PAINEIS).forEach(([painel, botao]) => {
+    porId(painel).hidden = !(abrir && painel === id);
+    porId(botao).setAttribute('aria-expanded', abrir && painel === id);
+  });
+  if (!abrir) { porId(PAINEIS[id]).focus(); return; }
+  if (id === 'pt-roteiro') renderRoteiro(); else mostrarMockup();
+  $('h2', porId(id)).focus();
+}
+const mockupsDaTela = () => (porId(estado.tela).dataset.mockups || '').split(',').map(s => s.trim()).filter(Boolean);
+function atualizarComparar() { // botão e seletor seguem a tela atual
+  const ids = mockupsDaTela(), botao = porId('pt-comparar-btn'), sel = porId('pt-mockup-sel');
+  botao.disabled = ids.length === 0;
+  botao.textContent = ids.length ? 'Comparar com o mockup' : 'Tela sem mockup';
+  if (sel.dataset.daTela === estado.tela) return; // data-da-tela, nunca data-tela: [data-tela] é o roteador
+  sel.dataset.daTela = estado.tela;
+  sel.replaceChildren(...ids.map(id => opcao(id, id)));
+  porId('pt-mockup-campo').hidden = ids.length < 2;
+  if (porId('pt-comparar').hidden) return;
+  if (ids.length) mostrarMockup(); else { porId('pt-comparar').hidden = true; botao.setAttribute('aria-expanded', false); }
+}
+function mostrarMockup() {
+  const img = porId('pt-mockup-img'), erro = porId('pt-mockup-erro'), id = porId('pt-mockup-sel').value;
+  const caminho = PASTA_MOCKUPS + id + '.png';
+  const falhar = texto => { img.hidden = true; img.removeAttribute('src'); erro.textContent = texto; erro.hidden = false; };
+  if (/^([a-z][a-z0-9+.-]*:|\/\/|\\\\)/i.test(PASTA_MOCKUPS)) { falhar('PASTA_MOCKUPS precisa ser um caminho relativo: ' + PASTA_MOCKUPS); return; }
+  erro.hidden = true;
+  img.onload = () => { img.hidden = false; erro.hidden = true; };
+  img.onerror = () => falhar('Mockup não encontrado: ' + caminho); // imagem ausente não quebra nada
+  img.alt = `Mockup aprovado ${id} da tela ${porId(estado.tela).dataset.titulo}`;
+  img.src = caminho;
+}
+const idDe = b => Number(b.dataset.id);
+const ACOES = {
+  pular: focarTitulo,
+  roteiro: () => alternarPainel('pt-roteiro'),
+  comparar: () => alternarPainel('pt-comparar'),
+  restaurar: () => {
+    if (estado.carregando) return;
+    if (estado.modal) fecharModal();
+    DADOS = gerarPedidos(); salvarDados(); reiniciarLista();
+    mostrarToast('success', 'Dados de exemplo restaurados.');
+  },
+  'toast-fechar': esconderToast,
+  aba: b => { estado.aba = Number(b.dataset.aba); reiniciarLista(); },
+  'ir-pedidos': b => { estado.aba = Number(b.dataset.aba); reiniciarLista(); irPara('tela-pedidos'); },
+  ordenar: b => {
+    const coluna = b.dataset.coluna;
+    estado.ordem = estado.ordem.coluna === coluna ? { coluna, asc: !estado.ordem.asc } : { coluna, asc: true };
+    reiniciarLista();
+  },
+  limpar: () => { porId('form-filtros').reset(); estado.filtros = { status: '', busca: '', de: '', ate: '' }; reiniciarLista(); },
+  'pag-ant': () => mudarPagina(-1),
+  'pag-prox': () => mudarPagina(1),
+  expandir: b => alternarLinha(idDe(b)),
+  detalhes: b => abrirDetalhes(idDe(b)),
+  novo: () => abrirFormulario('criar'),
+  editar: b => abrirFormulario('editar', idDe(b)),
+  avancar: b => (buscar(idDe(b)).status === 'aberto' ? executarAcao('iniciar', { ids: [idDe(b)] }) : abrirConfirmar([idDe(b)])),
+  cancelar: b => abrirCancelar(idDe(b)),
+  lote: () => abrirConfirmar([...estado.selecionados]),
+  'confirmar-ok': () => executarAcao('encerrar', { ids: estado.confirmarIds }, () => estado.selecionados.clear()),
+  'cancelar-ok': () => executarAcao('cancelar', { ids: [estado.pedidoSel], motivo: porId('canc-motivo').value.trim() }),
+  exportar,
+  fechar: fecharModal
+};
+function mudarPagina(delta) { // cursor: só anda em sequência; a seleção não atravessa páginas
+  Object.assign(estado, { pagina: estado.pagina + delta, expandida: null });
+  estado.selecionados.clear();
+  renderTudo();
+  porId('gal-corpo').scrollTop = 0;
+}
+
+/* ===== 11. CONTROLES DO PROTÓTIPO E EVENTOS ===== */
+function aplicarControles() {
+  armazenamento.gravar(CHAVE_CONTROLES, { perfil: estado.perfil, lotacao: estado.lotacao, resposta: estado.resposta, latencia: estado.latencia });
+  estado.unidadeFiltro = escopoPadrao();
+  if (!porId('pt-roteiro').hidden) renderRoteiro();
+  reiniciarLista();
+}
+function iniciar() {
+  const salvo = armazenamento.ler(CHAVE_CONTROLES) || {};
+  if (salvo.perfil in PERFIS) estado.perfil = salvo.perfil;
+  if (UNIDADES.includes(salvo.lotacao)) estado.lotacao = salvo.lotacao;
+  if (RESPOSTAS.includes(salvo.resposta)) estado.resposta = salvo.resposta;
+  if (LATENCIAS.some(l => l.ms === salvo.latencia)) estado.latencia = salvo.latencia;
+  const controles = [
+    ['ctl-perfil', Object.keys(PERFIS).map(k => opcao(k, PERFIS[k] ? k : 'sem acesso')), 'perfil', String],
+    ['ctl-unidade', UNIDADES.map(u => opcao(u, u)), 'lotacao', String],
+    ['ctl-resposta', RESPOSTAS.map(r => opcao(r, r)), 'resposta', String],
+    ['ctl-latencia', LATENCIAS.map(l => opcao(String(l.ms), l.rotulo)), 'latencia', Number]
+  ];
+  controles.forEach(([id, opcoes, campo, converter]) => {
+    const sel = porId(id);
+    sel.replaceChildren(...opcoes);
+    sel.value = String(estado[campo]);
+    sel.addEventListener('change', () => { estado[campo] = converter(sel.value); if (campo === 'perfil' || campo === 'lotacao') aplicarControles(); else armazenamento.gravar(CHAVE_CONTROLES, { perfil: estado.perfil, lotacao: estado.lotacao, resposta: estado.resposta, latencia: estado.latencia }); });
+  });
+  porId('sel-unidade').replaceChildren(opcao('', '(Todas)'), ...UNIDADES.map(u => opcao(u, u)));
+  porId('f-status').replaceChildren(opcao('', 'Todos'), ...Object.keys(STATUS).map(s => opcao(s, rotuloStatus(s))));
+  porId('ff-solicitante').replaceChildren(opcao('', 'Selecione o solicitante'), ...SOLICITANTES.map(s => opcao(s, s)));
+  $$('[data-fx]').forEach(e => { e.textContent = fx[e.dataset.fx]; });
+  porId('menu-titulo').textContent = PROJETO.nome;
+  porId('menu-sub').textContent = PROJETO.modulo;
+  porId('pt-versao').textContent = PROJETO.versao;
+  estado.unidadeFiltro = escopoPadrao();
+
+  document.addEventListener('click', e => {
+    const alvo = e.target.closest('[data-acao]');
+    if (alvo) { if (!alvo.disabled && ACOES[alvo.dataset.acao]) ACOES[alvo.dataset.acao](alvo); return; }
+    const linha = e.target.closest('.linha[data-id]');
+    if (linha && !e.target.closest('input, button')) alternarLinha(Number(linha.dataset.id)); // fundo da linha é botão no Canvas
+  });
+  document.addEventListener('change', e => {
+    if (e.target.classList.contains('chk-linha')) {
+      const id = Number(e.target.dataset.id);
+      if (e.target.checked) estado.selecionados.add(id); else estado.selecionados.delete(id);
+      renderTudo();
+    } else if (e.target.id === 'chk-todos') {
+      const visiveis = $$('.linha[data-id]').map(l => buscar(Number(l.dataset.id))).filter(ativo);
+      visiveis.forEach(p => (e.target.checked ? estado.selecionados.add(p.id) : estado.selecionados.delete(p.id)));
+      renderTudo();
+    } else if (e.target.id === 'sel-unidade') {
+      estado.unidadeFiltro = flag('flgGlobal') ? e.target.value : estado.lotacao;
+      reiniciarLista();
+    }
+  });
+  porId('form-filtros').addEventListener('submit', e => { // filtros só valem depois de Filtrar
+    e.preventDefault();
+    estado.filtros = { status: porId('f-status').value, busca: porId('f-busca').value.trim(), de: porId('f-de').value, ate: porId('f-ate').value };
+    reiniciarLista();
+  });
+  porId('form-pedido').addEventListener('submit', salvarFormulario);
+  porId('form-pedido').addEventListener('input', () => { if (estado.tentouSalvar) pintarErros(validarCampos(lerFormulario())); });
+  porId('canc-motivo').addEventListener('input', atualizarMotivo);
+  porId('pt-mockup-sel').addEventListener('change', mostrarMockup);
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || estado.carregando) return;
+    if (estado.modal) { e.preventDefault(); fecharModal(); } else if (painelAberto()) alternarPainel(painelAberto());
+  });
+  window.addEventListener('hashchange', () => { if (estado.modal) fecharModal(); renderTudo(); focarTitulo(); });
+  window.addEventListener('resize', escalar);
+  if (!location.hash) history.replaceState(null, '', '#/tela-inicio');
+  escalar();
+  renderTudo();
+}
+iniciar();
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+ "nodeId": "Compor",
+ "nodeData": {
+  "id": "Outro_nome",
+  "nodeInputs": {
+   "parameterGroups": {}
+  }
+ },
+ "nodeTokenData": {
+  "tokens": [
+   {
+    "key": "outputs.$",
+    "outputInfo": {
+     "actionName": "Compor"
+    }
+   }
+  ],
+  "upstreamNodeIds": []
+ },
+ "nodeOperationInfo": {
+  "connectorId": "DataOperation",
+  "operationId": "Compose",
+  "type": "Compose"
+ },
+ "nodeConnectionData": null,
+ "isScopeNode": false,
+ "mslaNode": true
+}

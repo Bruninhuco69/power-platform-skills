@@ -1,0 +1,113 @@
+{
+  "nodeId": "Bloco_derivar_destino",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Derivar_destino_gravar": {
+        "type": "Switch",
+        "expression": "@toLower(trim(coalesce(trim(coalesce(triggerBody()['text_6'],'')),'')))",
+        "cases": {
+          "Caso_destino_aberto": {
+            "case": "aberto",
+            "actions": {
+              "Destino_aberto": {
+                "type": "Compose",
+                "inputs": "Em atendimento",
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000072"
+                }
+              }
+            }
+          },
+          "Caso_destino_fechado": {
+            "case": "fechado",
+            "actions": {
+              "Destino_fechado": {
+                "type": "Compose",
+                "inputs": "Arquivado",
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000073"
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "actions": {
+            "Nega_situacao": {
+              "type": "Response",
+              "kind": "PowerApp",
+              "inputs": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "title": "status",
+                      "x-ms-dynamically-added": true,
+                      "type": "string"
+                    },
+                    "description": {
+                      "title": "description",
+                      "x-ms-dynamically-added": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "title": "id",
+                      "x-ms-dynamically-added": true,
+                      "type": "string"
+                    },
+                    "url": {
+                      "title": "url",
+                      "x-ms-dynamically-added": true,
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": {}
+                },
+                "statusCode": 200,
+                "body": {
+                  "status": "error",
+                  "description": "Situação desconhecida.",
+                  "id": "",
+                  "url": ""
+                }
+              },
+              "metadata": {
+                "operationMetadataId": "00000000-0000-0000-0000-000000000074"
+              }
+            },
+            "Nega_situacao_fim": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Succeeded"
+              },
+              "runAfter": {
+                "Nega_situacao": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "00000000-0000-0000-0000-000000000075"
+              }
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000076"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_normalizar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000077"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

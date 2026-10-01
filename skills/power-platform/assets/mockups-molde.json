@@ -1,0 +1,91 @@
+{
+  "app": "Pedidos",
+  "idioma": "pt-BR",
+  "canvas": "1920x1080",
+  "design_system": {
+    "paleta": {
+      "primaria (fxColorPrimary)": "#0F6CBD",
+      "primaria escura, menu (fxColorPrimaryDark)": "#0C3B5E",
+      "primaria clara, cabeçalho de tabela (fxColorPrimaryLight)": "#EBF3FC",
+      "fundo (fxColorBackground)": "#F9FAFB",
+      "superficie, cards e modais (fxColorSurface)": "#FFFFFF",
+      "texto principal (fxColorTextPrimary)": "#111827",
+      "texto secundario (fxColorTextSecondary)": "#4D4D4D",
+      "borda (fxColorBorder)": "#A6A6A6",
+      "sucesso (fxColorSuccess)": "#15803D",
+      "aviso (fxColorWarning)": "#FFC107",
+      "erro (fxColorError)": "#C82333",
+      "fundo do toast (fxColorToastBg)": "#212529"
+    },
+    "fonte": "Segoe UI",
+    "raio": 8,
+    "estilo": "Microsoft Fluent 2, corporativo, limpo, alta densidade de informação, ícones de linha"
+  },
+  "moldura": {
+    "header": "faixa superior de 100 px na cor primária: nome do app e título da tela à esquerda; seletor de unidade, nome do usuário e data e hora à direita; texto branco",
+    "navegacao": "menu lateral à esquerda na primária escura, 260 px, ícone + rótulo por item, item ativo na primária, botão para recolher",
+    "notificacoes": "toast no canto superior direito, fundo escuro, ícone e borda à esquerda na cor do status (verde sucesso, amarelo aviso, vermelho erro), barra de tempo embaixo",
+    "popups": "modal centralizado sobre fundo escurecido a 50%, cartão branco com raio 12: título, texto, botão primário à direita e secundário cinza à esquerda",
+    "carregando": "overlay semitransparente sobre a tela com spinner e a mensagem da ação em andamento",
+    "estados": "lista vazia com ícone e uma frase do que fazer; painel 'sem acesso' com cadeado e o contato do responsável",
+    "rodape": "linha discreta 'Exibindo N de M registros' abaixo da galeria"
+  },
+  "telas": [
+    {
+      "id": "tl-01-lista-pedidos",
+      "inventario": "TL-01",
+      "nome": "Lista de pedidos",
+      "objetivo": "acompanhar os pedidos da unidade e agir sobre um deles",
+      "perfil": "operador da unidade AAA",
+      "componentes": ["cabecalho-tela", "menu-lateral", "card-kpi", "barra-filtros", "galeria-tabela", "badge-status", "rodape-contagem"],
+      "estado": "com dados",
+      "descricao": "quatro cards de KPI (abertos, em andamento, encerrados, total); barra de filtros com status, busca por número e período; galeria em formato de tabela com número, unidade, status em pílula colorida, data de inclusão e um botão de ação por linha"
+    },
+    {
+      "id": "tl-01-lista-confirmar-encerrar",
+      "inventario": "TL-01",
+      "nome": "Lista de pedidos",
+      "perfil": "operador da unidade AAA",
+      "componentes": ["modal-confirmacao"],
+      "estado": "modal de confirmação aberto sobre a lista",
+      "descricao": "a mesma lista ao fundo, escurecida; modal 'Encerrar pedido 000123?' com o resumo do pedido e os botões Cancelar e Encerrar"
+    },
+    {
+      "id": "tl-01-lista-toast-sucesso",
+      "inventario": "TL-01",
+      "nome": "Lista de pedidos",
+      "perfil": "operador da unidade AAA",
+      "componentes": ["toast"],
+      "estado": "toast de sucesso visível depois de encerrar",
+      "descricao": "a lista atualizada, o pedido 000123 agora com status encerrado; toast verde 'Pedido encerrado.' no canto superior direito"
+    },
+    {
+      "id": "tl-02-novo-pedido",
+      "inventario": "TL-02",
+      "nome": "Novo pedido",
+      "perfil": "operador da unidade AAA",
+      "componentes": ["modal-formulario", "botoes"],
+      "estado": "formulário em preenchimento, um campo com erro de validação",
+      "descricao": "modal de formulário largo sobre a lista: unidade (fixa AAA), tipo, descrição e data prevista; o campo descrição com borda vermelha e a mensagem 'Informe a descrição'; botões Cancelar e Salvar"
+    },
+    {
+      "id": "tl-03-inicio",
+      "inventario": "TL-03",
+      "nome": "Início",
+      "objetivo": "ver o panorama da unidade e ir direto para a ação mais comum",
+      "perfil": "gestor da unidade AAA",
+      "componentes": ["cabecalho-tela", "menu-lateral", "card-kpi", "botoes", "galeria-tabela", "badge-status"],
+      "estado": "com dados",
+      "descricao": "quatro cards de KPI da unidade (total, abertos, em andamento, encerrados); linha de atalhos com os botões Novo pedido e Ver pedidos; tabela compacta com os 5 pedidos mais recentes: protocolo, solicitante, status em pílula colorida e data de alteração"
+    },
+    {
+      "id": "tl-00-sem-acesso",
+      "inventario": "TL-00",
+      "nome": "Sem acesso",
+      "perfil": "usuário sem perfil no app",
+      "componentes": ["cabecalho-tela", "painel-sem-acesso"],
+      "estado": "usuário sem permissão",
+      "descricao": "cabeçalho normal sem menu; no centro, painel com cadeado, o texto 'Você ainda não tem acesso a este app' e o contato suporte@contoso.com"
+    }
+  ]
+}

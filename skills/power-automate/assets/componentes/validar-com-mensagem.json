@@ -1,0 +1,109 @@
+{
+  "nodeId": "Bloco_validar",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Validar_gravar": {
+        "type": "Compose",
+        "inputs": "@if(empty(outputs('Normalizar_gravar')?['descricao']),'Informe a descrição.',if(less(outputs('Normalizar_gravar')?['quantidade'],1),'Informe uma quantidade maior que zero.',''))",
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000057"
+        }
+      },
+      "Se_invalido_gravar": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "greater": [
+                "@length(outputs('Validar_gravar'))",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Nega_gravar": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "error",
+                "description": "@{outputs('Validar_gravar')}",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000058"
+            }
+          },
+          "Nega_gravar_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Nega_gravar": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000059"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Validar_gravar": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000060"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_escopo_unidade": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000061"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

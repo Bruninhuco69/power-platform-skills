@@ -1,0 +1,39 @@
+{
+  "nodeId": "Bloco_mapeamento",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Mapear_lote": {
+        "type": "Select",
+        "description": "Única cópia do mapeamento: nome lógico à esquerda, valor à direita.",
+        "inputs": {
+          "from": "@coalesce(triggerBody()?['dados'],json('[]'))",
+          "select": {
+            "<prefixo>_numero": "@item()?['Num_Pedido']",
+            "<prefixo>_descricao": "@item()?['Des_Pedido']",
+            "<prefixo>_dataevento": "@if(equals(item()?['Dat_Evento'],'0001-01-01T00:00:00'),'1753-01-01T00:00:00Z',item()?['Dat_Evento'])",
+            "<prefixo>_prazo": "@if(equals(item()?['Dat_Prazo'],'0001-01-01T00:00:00'),'1753-01-01T00:00:00Z',item()?['Dat_Prazo'])",
+            "<prefixo>_ativo": "@if(equals(item()?['Flg_Ativo'],true),1,0)",
+            "<prefixo>_codigo": "@if(equals(item()?['Cod_Item'],null),null,string(item()?['Cod_Item']))",
+            "<prefixo>_rota": "@if(empty(trim(coalesce(item()?['Cod_Rota'],''))),0,int(trim(coalesce(item()?['Cod_Rota'],''))))"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000153"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_config": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000154"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

@@ -1,0 +1,369 @@
+# Validação de token com cache e resposta pelo status real
+
+> **Arquivo**: `token-cache-e-resposta-http.json` · **Frequência**: cache: rara; resposta HTTP: ocasional · **Maturidade**: único (cache); estável (respostas); credencial no cabeçalho [não verificado]
+> **Depende de**: `config-recebimento`; conector de validação de token; tabela de cache; 2 `Initialize variable` na raiz
+
+## Propósito
+
+`Escopo_Principal` com `Scope_Token` (lê o cache; valida de verdade quando não há token, o token difere ou a linha tem 1 h ou mais; regrava o cache), `Resposta_sucesso` (200 em `Succeeded`) e `Resposta_token_invalido` (401 em `Failed` ou `TimedOut`).
+
+## Quando usar / quando não usar
+
+**Usar**
+
+- Entrada de sistema externo por trigger HTTP próprio (C6).
+
+**Não usar**
+
+- Flow chamado pelo app (a identidade é do contexto).
+- Quando a validação é barata: dispense o cache.
+
+## Onde colar
+
+Raiz do flow, depois das duas variáveis (`Inicializar_erros_lote`, `Inicializar_linhas_com_erro`). O trabalho de dados pendura em `Resposta_sucesso`.
+
+## Entradas e saídas
+
+**Lê**
+
+- Cabeçalho `Authorization` da requisição, `CONFIG.origemToken`.
+
+**Expõe**
+
+- Resposta HTTP 200 ou 401; status de `Scope_Token` (Failed = recusado).
+
+## JSON
+
+Destino: `Ctrl+V` no ponto de inserção do designer (envelope de escopo do clipboard, `nodeId` `Escopo_Principal`; o mesmo conteúdo está em `token-cache-e-resposta-http.json`). GUIDs fictícios; conexões: `<prefixo>_sharedcommondataserviceforapps`, `<prefixo>_sharedvalidadortoken`.
+
+
+```json
+{
+  "nodeId": "Escopo_Principal",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Scope_Token": {
+        "type": "Scope",
+        "description": "REUTILIZÁVEL: primeira ação dentro do escopo principal. Failed = token recusado.",
+        "actions": {
+          "Token_recebido": {
+            "type": "Compose",
+            "description": "Credencial no cabeçalho, nunca no corpo. Entradas e saídas seguras: não vai para o histórico.",
+            "inputs": "@coalesce(triggerOutputs()?['headers']?['Authorization'],'')",
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000142"
+            }
+          },
+          "Buscar_token_cache": {
+            "type": "OpenApiConnection",
+            "description": "modifiedon da linha = quando o token foi validado pela última vez.",
+            "inputs": {
+              "parameters": {
+                "entityName": "<prefixo>_tokencaches",
+                "$select": "<prefixo>_tokencacheid,<prefixo>_token,modifiedon",
+                "$filter": "@concat('<prefixo>_name eq ''',outputs('CONFIG')?['origemToken'],'''')",
+                "$orderby": "modifiedon desc",
+                "$top": 1
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connection": "shared_commondataserviceforapps",
+                "operationId": "ListRecords"
+              }
+            },
+            "runAfter": {
+              "Token_recebido": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000143"
+            }
+          },
+          "Se_token_novo": {
+            "type": "If",
+            "description": "Sim = o cache não vale (sem token, token diferente, ou validado há 1 h ou mais).",
+            "expression": {
+              "or": [
+                {
+                  "equals": [
+                    "@empty(outputs('Token_recebido'))",
+                    true
+                  ]
+                },
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('Token_recebido')",
+                      "@first(coalesce(body('Buscar_token_cache')?['value'],json('[]')))?['<prefixo>_token']"
+                    ]
+                  }
+                },
+                {
+                  "greaterOrEquals": [
+                    "@sub(ticks(utcNow()),ticks(coalesce(first(coalesce(body('Buscar_token_cache')?['value'],json('[]')))?['modifiedon'],'2000-01-01T00:00:00Z')))",
+                    36000000000
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Validar_token": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "new_token": "@outputs('Token_recebido')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_validadortoken",
+                    "connection": "shared_validadortoken",
+                    "operationId": "VerifyToken"
+                  }
+                },
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000144"
+                }
+              },
+              "Atualizar_token_cache": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "entityName": "<prefixo>_tokencaches",
+                    "recordId": "@first(coalesce(body('Buscar_token_cache')?['value'],json('[]')))?['<prefixo>_tokencacheid']",
+                    "item/<prefixo>_token": "@outputs('Token_recebido')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "connection": "shared_commondataserviceforapps",
+                    "operationId": "UpdateRecord"
+                  }
+                },
+                "runAfter": {
+                  "Validar_token": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000145"
+                }
+              },
+              "Criar_token_cache": {
+                "type": "OpenApiConnection",
+                "description": "Só roda se o Update falhou: a linha do cache ainda não existe.",
+                "inputs": {
+                  "parameters": {
+                    "entityName": "<prefixo>_tokencaches",
+                    "item/<prefixo>_name": "@outputs('CONFIG')?['origemToken']",
+                    "item/<prefixo>_token": "@outputs('Token_recebido')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "connection": "shared_commondataserviceforapps",
+                    "operationId": "CreateRecord"
+                  }
+                },
+                "runAfter": {
+                  "Atualizar_token_cache": [
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000146"
+                }
+              },
+              "Ignorar_falha_cache": {
+                "type": "Compose",
+                "description": "Absorção intencional: falha ao gravar o cache não pode derrubar o recebimento (o token já foi validado). NÃO incluir Skipped no runAfter, senão mascara a falha do Validar_token.",
+                "inputs": "Cache de token não gravado: ver Atualizar_token_cache e Criar_token_cache. A próxima chamada valida de novo.",
+                "runAfter": {
+                  "Criar_token_cache": [
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000147"
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            },
+            "runAfter": {
+              "Buscar_token_cache": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000148"
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000149"
+        }
+      },
+      "Resposta_sucesso": {
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 200,
+          "body": {
+            "code": "Success",
+            "message": "Recebido com sucesso."
+          }
+        },
+        "runAfter": {
+          "Scope_Token": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000150"
+        }
+      },
+      "Resposta_token_invalido": {
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 401,
+          "body": {
+            "error": {
+              "code": "TokenInvalido",
+              "message": "O token enviado não é válido."
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Token": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000151"
+        }
+      }
+    },
+    "runAfter": {
+      "Inicializar_linhas_com_erro": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000152"
+    }
+  },
+  "allConnectionData": {
+    "Buscar_token_cache": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    },
+    "Validar_token": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_validadortoken"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedvalidadortoken"
+        },
+        "connectionName": "<prefixo>_sharedvalidadortoken"
+      },
+      "referenceKey": "shared_validadortoken"
+    },
+    "Atualizar_token_cache": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    },
+    "Criar_token_cache": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}
+```
+
+## Parâmetros a trocar
+
+| Item | Valor no JSON | Trocar por |
+|---|---|---|
+| `<prefixo>_tokencaches` | tabela de cache | tabela AS-BUILT com colunas `name` (primária = origem) e `token` (texto 4000) |
+| conexão `shared_validadortoken` | `<prefixo>_sharedvalidadortoken` | conector de validação do seu ambiente |
+| `36000000000` | 1 h em ticks | TTL desejado em ticks (1 min = 600000000) |
+| `Authorization` | cabeçalho | nome do cabeçalho que o chamador envia |
+
+## runAfter
+
+`Resposta_sucesso` depende de `Scope_Token` em `Succeeded`; `Resposta_token_invalido` em `Failed` e `TimedOut`; o escopo raiz depende de `Inicializar_linhas_com_erro`.
+
+## Armadilhas
+
+- No projeto de referência a `Condição` comparava **constantes** (`equals(200, 200)`): o ramo de token inválido era código morto e o flow respondia 200 com o validador falhando. A resposta sai do resultado real do escopo (F016).
+- Token no corpo (`triggerBody()['headers']['token']`) aparece em logs de payload; o cabeçalho com entradas e saídas seguras é a forma pretendida, e o nome da propriedade `triggerOutputs()?['headers']?['Authorization']` está `[não verificado]`: confira no histórico de execução.
+- O cache guarda o token em claro numa tabela: restrinja a leitura da tabela por Security Role. Alternativa: comparar um hash `[não verificado]: função de hash não consta da lista usada nestes flows`.
+- `Ignorar_falha_cache` **não** inclui `Skipped`: falha de gravar o cache não pode derrubar o recebimento, mas `Skipped` mascararia a falha do validador.
+- Cole `Scope_Token` **dentro** do escopo principal, não na raiz: o `Log` lê `result('Escopo_Principal')` e precisa ver a falha de token lá.
+- Ações independentes do token (mapeamento) sem `runAfter` rodam em paralelo com o escopo do token.
+- `Response` HTTP também não encerra o flow; se houver ação depois, é aceite assíncrono e deve responder 202 (ver a referência `http-entrada-externa`).
+- O 401 com token ausente e com token errado é teste obrigatório.
+
+## Variações
+
+- Token no corpo (como no projeto de referência): troque a expressão de `Token_recebido` por `triggerBody()?['headers']?['token']` e envolva com `Bearer ` ao chamar o validador.
+- Aceite assíncrono: mude `Resposta_sucesso` para 202 com `workflow()?['run']?['name']` e deixe o `Log` marcar a falha.
+
+## Verificação
+
+Destino: terminal, da raiz do repositório.
+
+```text
+python skills/power-automate/scripts/verificar-fluxo.py skills/power-automate/assets/componentes/token-cache-e-resposta-http.json
+```
+
+Resultado esperado: `0 erro(s), 2 aviso(s)`.
+
+Avisos intrínsecos ao componente isolado:
+
+- `F006` (referência a ação fora do trecho colado): `CONFIG`. São as **entradas** do bloco: existem no flow de destino (ver *Entradas e saídas*). Num flow montado, o mesmo trecho passa sem esse aviso.

@@ -1,0 +1,33 @@
+{
+ "value": [
+  {
+   "LogicalName": "abc_situacao",
+   "OptionSet": {
+    "Options": [
+     {
+      "Value": 1,
+      "Label": {
+       "UserLocalizedLabel": {
+        "Label": "Ativo"
+       }
+      }
+     },
+     {
+      "Value": 2,
+      "Label": {
+       "UserLocalizedLabel": {
+        "Label": "Inativo"
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "LogicalName": "abc_categoria",
+   "Targets": [
+    "abc_categoria"
+   ]
+  }
+ ]
+}

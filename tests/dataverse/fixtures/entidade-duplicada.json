@@ -1,0 +1,78 @@
+{
+ "LogicalName": "abc_categoria",
+ "SchemaName": "abc_Categoria",
+ "EntitySetName": "abc_categorias",
+ "PrimaryIdAttribute": "abc_categoriaid",
+ "PrimaryNameAttribute": "abc_nome",
+ "DisplayName": {
+  "LocalizedLabels": [
+   {
+    "Label": "categoria",
+    "LanguageCode": 1046
+   }
+  ],
+  "UserLocalizedLabel": {
+   "Label": "categoria",
+   "LanguageCode": 1046
+  }
+ },
+ "Attributes": [
+  {
+   "LogicalName": "abc_categoriaid",
+   "SchemaName": "abc_categoriaid",
+   "AttributeType": "Uniqueidentifier",
+   "DisplayName": {
+    "LocalizedLabels": [
+     {
+      "Label": "categoria",
+      "LanguageCode": 1046
+     }
+    ],
+    "UserLocalizedLabel": {
+     "Label": "categoria",
+     "LanguageCode": 1046
+    }
+   }
+  },
+  {
+   "LogicalName": "abc_nome",
+   "SchemaName": "abc_nome",
+   "AttributeType": "String",
+   "DisplayName": {
+    "LocalizedLabels": [
+     {
+      "Label": "nome",
+      "LanguageCode": 1046
+     }
+    ],
+    "UserLocalizedLabel": {
+     "Label": "nome",
+     "LanguageCode": 1046
+    }
+   }
+  },
+  {
+   "LogicalName": "abc_nome2",
+   "SchemaName": "abc_nome2",
+   "AttributeType": "String",
+   "DisplayName": {
+    "LocalizedLabels": [
+     {
+      "Label": "nome",
+      "LanguageCode": 1046
+     }
+    ],
+    "UserLocalizedLabel": {
+     "Label": "nome",
+     "LanguageCode": 1046
+    }
+   }
+  },
+  {
+   "LogicalName": "abc_semrotulo",
+   "SchemaName": "abc_semrotulo",
+   "AttributeType": "String",
+   "DisplayName": null
+  }
+ ]
+}

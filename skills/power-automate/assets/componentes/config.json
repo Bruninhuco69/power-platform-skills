@@ -1,0 +1,28 @@
+{
+  "nodeId": "Bloco_config",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "CONFIG": {
+        "type": "Compose",
+        "inputs": {
+          "mailSuporte": "suporte@contoso.com",
+          "cfgEscopoUnidade": true,
+          "cfgDescricaoObrigatoria": true,
+          "pastaSaida": "/Exportacoes",
+          "grupoAcesso": "<grupo-de-acesso>"
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000002"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

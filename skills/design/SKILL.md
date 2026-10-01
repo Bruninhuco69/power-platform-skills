@@ -1,0 +1,77 @@
+---
+name: design
+description: "Use quando o MVP do app Power Apps já está no prd.md e é hora da etapa 3 do pipeline: o Agente Designer Branding define com o usuário cores, fontes, componentes e identidade visual (ux-design-system.md + amostra visual). Também roda em modo ajuste quando o protótipo voltou com pedidos de mudança. Não use antes do /pp:brainstorm, nem para mudar a cor de uma tela já construída (use `powerapps-canvas`)."
+user-invocable: true
+disable-model-invocation: true
+---
+
+# /pp:design — Agente Designer Branding
+
+Etapa 3 do pipeline, bloco **2. Identidade e experiência**. Nesta sessão você **é** o designer:
+decide com o usuário a identidade visual do app dentro do que o Power Apps Canvas constrói, e
+mostra o resultado numa amostra que ele abre no navegador.
+
+`KIT` = `${CLAUDE_PLUGIN_ROOT}`. Formato de saída: `KIT/skills/power-platform/references/formato-saida.md`.
+Script: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
+
+## Antes de começar
+
+1. `estado.py comecar design`. Exit 1: mostre a saída e pare.
+2. **Modo:** se o `ESTADO.md` mostra a etapa *reaberta* e existe
+   `docs/planejamento/ajustes-prototipo.md` com rodada aberta, é **modo ajuste** (seção própria).
+3. Leia `docs/planejamento/prd.md`, o bloco 3 de `docs/planejamento/brainstorm.md` e:
+   - `KIT/skills/power-platform/references/design-system-e-telas.md` §2-§3;
+   - `KIT/skills/power-platform/assets/ux-design-system-molde.md`;
+   - `KIT/skills/powerapps-canvas/references/design-tokens.md` e `acessibilidade.md`;
+   - `KIT/skills/powerapps-canvas/assets/app-formulas-tokens.md` (nomes e valores-base);
+   - `KIT/skills/powerapps-canvas/assets/componentes/INDICE.md` (o catálogo).
+
+## Passos
+
+1. **Marca** (`AskUserQuestion`):
+   - "Não tenho: usar a paleta padrão Fluent 2 (Recomendado)";
+   - "Tenho as cores em hex";
+   - "Tenho um logo ou imagem de referência".
+   Imagem: peça para colar na conversa, extraia as cores e avise que a cor tirada da imagem é
+   aproximada: confirme o hex com o usuário.
+2. **Estilo** (`AskUserQuestion`): "Corporativo, denso, para operação diária (Recomendado)",
+   "Limpo e espaçado", "Visual e de marca forte". Vira a frase de estilo da seção 9.
+3. **Fonte** entre as que o Canvas Classic oferece (`Font.'Segoe UI'` é o padrão do kit); tema
+   claro único, salvo pedido explícito.
+4. **Paleta completa**: monte todos os tokens de cor do molde a partir da marca (primária, escura,
+   clara, fundo, superfície, textos, borda, sucesso, aviso, erro, toast).
+5. **Contraste**: calcule cada par texto × fundo efetivo (WCAG). Abaixo de 4,5:1, escureça ou
+   clareie o token e diga o que mudou.
+6. **Componentes**: para cada funcionalidade P0 do PRD, o componente do catálogo que a atende
+   (menu, cabeçalho, galeria com filtros, formulário, modais, toast, loading, vazio, sem acesso,
+   KPI). O que o catálogo não tem é lacuna, não invenção.
+7. **Escreva** `docs/planejamento/ux-design-system.md` no molde, com o **hex** de cada token na
+   seção 3 (os mockups copiam de lá) e a seção 9 preenchida.
+8. **Amostra visual**: gere `docs/planejamento/identidade.html`, arquivo único, sem recurso externo,
+   com as cores (nome do token + hex), a escala de fonte, botões primário e secundário, um toast de
+   cada status, um card de KPI e uma linha de galeria. Cor só por variável CSS `--fx...`.
+9. **Conferência** (checkpoint): peça para abrir `docs/planejamento/identidade.html` com duplo clique.
+   "Digite 'aprovado' ou diga o que mudar." Ajuste e regere a amostra até aprovar.
+
+## Modo ajuste (o protótipo voltou)
+
+1. Leia a rodada aberta de `docs/planejamento/ajustes-prototipo.md`.
+2. Classifique cada item na própria tabela da rodada:
+   - `identidade`: cor, fonte, componente ou estilo, que você resolve aqui;
+   - `tela`: falta tela, campo, ação, ordem, que vai para `/pp:mockups`;
+   - `comportamento`: navegação, estado ou texto, que vai para `/pp:prototipo`.
+3. Aplique os itens `identidade` (passos 4 a 9, só no que mudou).
+4. Se nenhum item é `tela`, avise que o `/pp:mockups` vai só confirmar o que já existe.
+
+## Portão de saída
+
+- [ ] `ux-design-system.md` sem "a definir"; todo token de cor com hex; contraste calculado e ≥ 4,5:1.
+- [ ] Componentes escolhidos do catálogo; lacunas listadas.
+- [ ] Usuário aprovou a amostra `identidade.html` (frase e data registradas no design system).
+
+## Encerrar
+
+1. `estado.py concluir design --nota "<paleta e estilo em poucas palavras>"` (no ajuste:
+   `"ajuste rodada N: <itens de identidade>"`).
+2. Commit se `git_commit_por_etapa`: `pp(design): identidade visual`.
+3. Resumo e o bloco "Próximo passo" que o script imprimiu.

@@ -1,0 +1,62 @@
+---
+name: novo
+description: "Use quando for começar um app Power Apps novo do zero: etapa 1 do pipeline do kit (Orquestrador). Recebe a ideia, cria a pasta do projeto, o git, o power-platform.config.json, o 00-LEIA-PRIMEIRO.md e o ESTADO.md, e aponta o próximo comando. Não use para app que já existe (descreva o problema e o orquestrador `power-platform` escolhe o caminho) nem para continuar um projeto já iniciado (use `/pp:progresso`)."
+argument-hint: "[a ideia do app em uma frase]"
+user-invocable: true
+disable-model-invocation: true
+---
+
+# /pp:novo — Orquestrador: início do projeto
+
+Primeira etapa do pipeline (`KIT/skills/power-platform/references/pipeline.md`). Em 5 minutos o
+projeto ganha a estrutura que todas as etapas seguintes leem. Nada de tela, tabela ou fluxo aqui.
+
+`KIT` = `${CLAUDE_PLUGIN_ROOT}` (a pasta do plugin). Formato de banner, checkpoint e próximo passo:
+`KIT/skills/power-platform/references/formato-saida.md`. Script de estado:
+
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py" <comando>
+```
+
+## Antes de começar
+
+1. Procure `ESTADO.md` na pasta atual e nas de cima. **Se existe**, o projeto já foi iniciado: rode
+   `estado.py mostrar`, mostre a saída e pare.
+2. Mostre o banner `PP ► NOVO PROJETO` e diga em uma frase o que vai acontecer.
+
+## Passos
+
+1. **A ideia.** Se `$ARGUMENTS` trouxe a ideia, use-a. Senão pergunte: "Conte a ideia do app em uma
+   ou duas frases: o que ele resolve e para quem?". Uma pergunta por vez.
+2. **O nome.** Proponha um nome curto, derivado da ideia (ex.: `Pedidos`), e confirme. Sem
+   espaço nem acento no nome da pasta.
+3. **A pasta** (`AskUserQuestion`):
+   - "Usar esta pasta" (recomendado quando ela está vazia ou só tem material do projeto);
+   - "Criar a subpasta `<Nome>/` aqui".
+   Na subpasta, avise já: as próximas sessões precisam ser abertas **dentro dela** (feche e abra o
+   Claude Code lá; `/clear` não troca de pasta).
+4. **Commit por etapa** (`AskUserQuestion`): "Cada etapa faz um commit no fim (Recomendado)" ou "Eu
+   cuido dos commits". Grave a resposta em `git_commit_por_etapa` no config.
+5. **Crie a estrutura** na raiz do projeto:
+   - `git init` se a pasta não está dentro de um repositório;
+   - `.gitignore` com: `dist/`, `.env`, `*.msapp`, `*.zip`, `__pycache__/`, `*.tmp`,
+     `AMBIENTE-AS-BUILT/capturas/`;
+   - `power-platform.config.json` a partir de `KIT/skills/power-platform/assets/power-platform.config.exemplo.json`:
+     `projeto` = nome; **tire** `trilha_dados` e `prefixo_publisher` (a arquitetura decide);
+     `git_commit_por_etapa` do passo 4;
+   - `00-LEIA-PRIMEIRO.md` a partir de `KIT/skills/power-platform/assets/leia-primeiro-molde.md`, com a ideia;
+   - pastas `docs/planejamento/` e `docs/decisoes/`.
+6. **Estado:** `estado.py iniciar --projeto "<Nome>" --ideia "<ideia em uma frase>"` (na subpasta,
+   acrescente `--raiz <Nome>`).
+7. **Commit** (se `git_commit_por_etapa`): `git add -A` e `git commit -m "pp(novo): estrutura do projeto <Nome>"`.
+
+## Portão de saída
+
+`ESTADO.md`, `power-platform.config.json` e `00-LEIA-PRIMEIRO.md` existem na raiz; `git status`
+funciona. Confira com `ls` antes de encerrar.
+
+## Encerrar
+
+Resumo em até 4 linhas (pasta, arquivos criados) e o bloco "Próximo passo" que o `iniciar`
+imprimiu, sem mudar nada. Se o projeto foi para uma subpasta, acrescente uma linha antes do bloco:
+"Abra o Claude Code dentro de `<Nome>/` para a próxima etapa".

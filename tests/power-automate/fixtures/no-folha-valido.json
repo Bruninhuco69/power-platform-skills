@@ -1,0 +1,237 @@
+{
+ "nodeId": "Compor_exemplo",
+ "nodeData": {
+  "id": "Compor_exemplo",
+  "nodeInputs": {
+   "dynamicLoadStatus": "Succeeded",
+   "parameterGroups": {
+    "default": {
+     "id": "default",
+     "description": "",
+     "parameters": [
+      {
+       "id": "00000000-0000-0000-0000-0000000000a1",
+       "info": {
+        "isDynamic": false
+       },
+       "hideInUI": false,
+       "label": "Entradas",
+       "parameterKey": "inputs.$",
+       "parameterName": "Entradas",
+       "placeholder": "Entradas",
+       "required": true,
+       "schema": {
+        "title": "Entradas",
+        "description": "Entradas",
+        "properties": {}
+       },
+       "showErrors": false,
+       "showTokens": true,
+       "suppressCasting": true,
+       "type": "any",
+       "value": [
+        {
+         "id": "00000000-0000-0000-0000-0000000000a2",
+         "type": "token",
+         "token": {
+          "source": "outputs",
+          "name": "body.text",
+          "key": "outputs.$.body.text",
+          "required": true,
+          "tokenType": "outputs",
+          "title": "acao",
+          "value": "triggerBody()['text']",
+          "type": "string",
+          "schema": {
+           "title": "acao",
+           "type": "string",
+           "x-ms-dynamically-added": true,
+           "description": "Insira sua entrada",
+           "x-ms-content-hint": "TEXT"
+          },
+          "description": "Insira sua entrada",
+          "icon": "https://content.powerapps.com/resource/makerx/static/pauto/images/designeroperations/PowerApps2.05e0cdd0.png",
+          "brandColor": "#742774",
+          "isSecure": false
+         },
+         "value": "triggerBody()['text']"
+        }
+       ],
+       "visibility": "",
+       "validationErrors": []
+      }
+     ],
+     "rawInputs": [
+      {
+       "description": "Entradas",
+       "key": "inputs.$",
+       "name": "Entradas",
+       "required": true,
+       "schema": {
+        "title": "Entradas",
+        "description": "Entradas",
+        "properties": {}
+       },
+       "summary": "",
+       "suppressCasting": true,
+       "title": "Entradas",
+       "type": "any",
+       "visibility": "",
+       "hideInUI": false,
+       "value": "@triggerBody()['text']"
+      }
+     ]
+    }
+   }
+  },
+  "nodeOutputs": {
+   "outputs": {
+    "outputs.$": {
+     "key": "outputs.$",
+     "type": "any",
+     "isAdvanced": false,
+     "name": "key-outputs-output",
+     "title": "Saídas",
+     "schema": {},
+     "source": "outputs",
+     "required": true
+    }
+   }
+  },
+  "nodeDependencies": {
+   "inputs": {},
+   "outputs": {}
+  },
+  "operationMetadata": {
+   "iconUri": "https://content.powerapps.com/resource/makerx/static/pauto/images/designeroperations/dataoperationedit.2c8a4d5e.png",
+   "brandColor": "#8C6CFF",
+   "isConnectToSystemsOperation": false
+  },
+  "settings": {
+   "asynchronous": {
+    "isSupported": false,
+    "value": false
+   },
+   "correlation": {
+    "isSupported": false
+   },
+   "secureInputs": {
+    "isSupported": true
+   },
+   "secureOutputs": {
+    "isSupported": false
+   },
+   "disableAsyncPattern": {
+    "isSupported": false,
+    "value": false
+   },
+   "disableAutomaticDecompression": {
+    "isSupported": false
+   },
+   "splitOn": {
+    "isSupported": false,
+    "value": {
+     "enabled": false
+    }
+   },
+   "retryPolicy": {
+    "isSupported": false
+   },
+   "requestOptions": {
+    "isSupported": false
+   },
+   "sequential": false,
+   "suppressWorkflowHeaders": {
+    "isSupported": false
+   },
+   "suppressWorkflowHeadersOnResponse": {
+    "isSupported": false,
+    "value": false
+   },
+   "concurrency": {
+    "isSupported": false
+   },
+   "singleInstance": false,
+   "timeout": {
+    "isSupported": false
+   },
+   "paging": {
+    "isSupported": false,
+    "value": {
+     "enabled": false
+    }
+   },
+   "uploadChunk": {
+    "isSupported": false,
+    "value": {}
+   },
+   "downloadChunkSize": {
+    "isSupported": false
+   },
+   "trackedProperties": {
+    "isSupported": true
+   },
+   "requestSchemaValidation": {
+    "isSupported": false,
+    "value": false
+   },
+   "conditionExpressions": {
+    "isSupported": false
+   },
+   "runAfter": {
+    "isSupported": false,
+    "value": []
+   },
+   "invokerConnection": {
+    "isSupported": false,
+    "value": {
+     "enabled": false
+    }
+   },
+   "statelessFlow": {
+    "isSupported": false,
+    "value": {
+     "enabled": false
+    }
+   }
+  },
+  "actionMetadata": {
+   "operationMetadataId": "00000000-0000-0000-0000-0000000000a3"
+  },
+  "repetitionInfo": {
+   "repetitionReferences": []
+  }
+ },
+ "nodeTokenData": {
+  "tokens": [
+   {
+    "key": "outputs.$",
+    "brandColor": "#8C6CFF",
+    "icon": "https://content.powerapps.com/resource/makerx/static/pauto/images/designeroperations/dataoperationedit.2c8a4d5e.png",
+    "title": "Saídas",
+    "name": "key-outputs-output",
+    "type": "any",
+    "isAdvanced": false,
+    "outputInfo": {
+     "type": "outputs",
+     "required": true,
+     "source": "outputs",
+     "isSecure": false,
+     "actionName": "Compor_exemplo",
+     "schema": {}
+    }
+   }
+  ],
+  "upstreamNodeIds": [
+   "Quando_o_Power_Apps_chama_um_fluxo_(V2)"
+  ]
+ },
+ "nodeOperationInfo": {
+  "connectorId": "DataOperation",
+  "operationId": "Compose",
+  "type": "Compose"
+ },
+ "nodeConnectionData": null,
+ "isScopeNode": false,
+ "mslaNode": true
+}

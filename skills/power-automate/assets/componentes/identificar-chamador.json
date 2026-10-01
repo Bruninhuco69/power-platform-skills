@@ -1,0 +1,61 @@
+{
+  "nodeId": "Bloco_chamador",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Perfil_do_chamador": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "$select": "mail,userPrincipalName,displayName"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365users",
+            "connection": "shared_office365users",
+            "operationId": "MyProfile_V2"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000005"
+        }
+      },
+      "Chamador": {
+        "type": "Compose",
+        "inputs": "@toLower(trim(coalesce(outputs('Perfil_do_chamador')?['body/mail'],outputs('Perfil_do_chamador')?['body/userPrincipalName'],'')))",
+        "runAfter": {
+          "Perfil_do_chamador": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000006"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_config": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000007"
+    }
+  },
+  "allConnectionData": {
+    "Perfil_do_chamador": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365users"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedoffice365users"
+        },
+        "connectionName": "<prefixo>_sharedoffice365users"
+      },
+      "referenceKey": "shared_office365users"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

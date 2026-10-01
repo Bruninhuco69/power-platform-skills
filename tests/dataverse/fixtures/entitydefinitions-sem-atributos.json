@@ -1,0 +1,23 @@
+{
+ "value": [
+  {
+   "LogicalName": "abc_categoria",
+   "SchemaName": "abc_Categoria",
+   "EntitySetName": "abc_categorias",
+   "PrimaryIdAttribute": "abc_categoriaid",
+   "PrimaryNameAttribute": "abc_nome",
+   "DisplayName": {
+    "LocalizedLabels": [
+     {
+      "Label": "categoria",
+      "LanguageCode": 1046
+     }
+    ],
+    "UserLocalizedLabel": {
+     "Label": "categoria",
+     "LanguageCode": 1046
+    }
+   }
+  }
+ ]
+}

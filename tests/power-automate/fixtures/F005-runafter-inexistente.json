@@ -1,0 +1,633 @@
+{
+ "nodeId": "Escopo_gravar",
+ "serializedValue": {
+  "type": "Scope",
+  "actions": {
+   "CONFIG": {
+    "type": "Compose",
+    "inputs": {
+     "mailSuporte": "suporte@contoso.com",
+     "cfgEscopoUnidade": true
+    },
+    "metadata": {
+     "operationMetadataId": "00000000-0000-0000-0000-000000000023"
+    }
+   },
+   "Perfil_do_chamador": {
+    "type": "OpenApiConnection",
+    "inputs": {
+     "parameters": {
+      "$select": "mail,userPrincipalName,displayName"
+     },
+     "host": {
+      "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365users",
+      "connection": "shared_office365users",
+      "operationId": "MyProfile_V2"
+     }
+    },
+    "runAfter": {
+     "CONFIG": [
+      "Succeeded"
+     ]
+    },
+    "metadata": {
+     "operationMetadataId": "00000000-0000-0000-0000-000000000024"
+    }
+   },
+   "Chamador": {
+    "type": "Compose",
+    "inputs": "@toLower(coalesce(outputs('Perfil_do_chamador')?['body/mail'],outputs('Perfil_do_chamador')?['body/userPrincipalName'],''))",
+    "runAfter": {
+     "Perfil_do_chamador": [
+      "Succeeded"
+     ]
+    },
+    "metadata": {
+     "operationMetadataId": "00000000-0000-0000-0000-000000000025"
+    }
+   },
+   "Try_gravar": {
+    "type": "Scope",
+    "runAfter": {
+     "Chamador": [
+      "Succeeded"
+     ]
+    },
+    "actions": {
+     "Ler_chamador": {
+      "type": "OpenApiConnection",
+      "inputs": {
+       "parameters": {
+        "server": "default",
+        "database": "default",
+        "procedure": "[dbo].[<procedure_obter_chamador>]",
+        "parameters/Email_Chamador": "@outputs('Chamador')"
+       },
+       "host": {
+        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sql",
+        "connection": "shared_sql",
+        "operationId": "ExecuteProcedure_V2"
+       }
+      },
+      "metadata": {
+       "operationMetadataId": "00000000-0000-0000-0000-000000000001"
+      }
+     },
+     "Se_chamador_desconhecido": {
+      "type": "If",
+      "expression": {
+       "and": [
+        {
+         "equals": [
+          "@empty(coalesce(body('Ler_chamador')?['ResultSets']?['Table1'],json('[]')))",
+          "@true"
+         ]
+        }
+       ]
+      },
+      "actions": {
+       "Nega_chamador": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+         "schema": {
+          "type": "object",
+          "properties": {
+           "status": {
+            "title": "status",
+            "x-ms-dynamically-added": true,
+            "type": "string"
+           },
+           "description": {
+            "title": "description",
+            "x-ms-dynamically-added": true,
+            "type": "string"
+           },
+           "id": {
+            "title": "id",
+            "x-ms-dynamically-added": true,
+            "type": "string"
+           },
+           "url": {
+            "title": "url",
+            "x-ms-dynamically-added": true,
+            "type": "string"
+           }
+          },
+          "additionalProperties": {}
+         },
+         "statusCode": 200,
+         "body": {
+          "status": "error",
+          "description": "Seu perfil não permite esta ação.",
+          "id": "",
+          "url": ""
+         }
+        },
+        "metadata": {
+         "operationMetadataId": "00000000-0000-0000-0000-000000000002"
+        }
+       },
+       "Nega_chamador_fim": {
+        "type": "Terminate",
+        "inputs": {
+         "runStatus": "Succeeded"
+        },
+        "runAfter": {
+         "Nega_chamador": [
+          "Succeeded"
+         ]
+        },
+        "metadata": {
+         "operationMetadataId": "00000000-0000-0000-0000-000000000003"
+        }
+       }
+      },
+      "else": {
+       "actions": {}
+      },
+      "runAfter": {
+       "Ler_chamador": [
+        "Succeeded"
+       ]
+      },
+      "metadata": {
+       "operationMetadataId": "00000000-0000-0000-0000-000000000004"
+      }
+     },
+     "Switch_acao": {
+      "type": "Switch",
+      "expression": "@toLower(trim(triggerBody()['text']))",
+      "cases": {
+       "Caso_gravar": {
+        "case": "gravar",
+        "actions": {
+         "Autorizar_gravar": {
+          "type": "If",
+          "expression": {
+           "and": [
+            {
+             "equals": [
+              "@not(or(equals(toLower(string(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Flg_Gravar'],'0'))),'1'),equals(toLower(string(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Flg_Gravar'],'0'))),'true')))",
+              "@true"
+             ]
+            }
+           ]
+          },
+          "actions": {
+           "Nega_perm_grv": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+             "schema": {
+              "type": "object",
+              "properties": {
+               "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+               },
+               "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+               },
+               "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+               },
+               "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+               }
+              },
+              "additionalProperties": {}
+             },
+             "statusCode": 200,
+             "body": {
+              "status": "error",
+              "description": "Seu perfil não permite esta ação.",
+              "id": "",
+              "url": ""
+             }
+            },
+            "metadata": {
+             "operationMetadataId": "00000000-0000-0000-0000-000000000005"
+            }
+           },
+           "Nega_perm_grv_fim": {
+            "type": "Terminate",
+            "inputs": {
+             "runStatus": "Succeeded"
+            },
+            "runAfter": {
+             "Nega_perm_grv": [
+              "Succeeded"
+             ]
+            },
+            "metadata": {
+             "operationMetadataId": "00000000-0000-0000-0000-000000000006"
+            }
+           }
+          },
+          "else": {
+           "actions": {}
+          },
+          "metadata": {
+           "operationMetadataId": "00000000-0000-0000-0000-000000000007"
+          }
+         },
+         "Normalizar_gravar": {
+          "type": "Compose",
+          "inputs": {
+           "id": "@trim(coalesce(triggerBody()['text_1'],''))",
+           "descricao": "@take(trim(coalesce(triggerBody()['text_2'],'')),200)",
+           "unidade": "@toUpper(trim(coalesce(triggerBody()['text_3'],'')))"
+          },
+          "runAfter": {
+           "Acao_que_nao_existe": [
+            "Succeeded"
+           ]
+          },
+          "metadata": {
+           "operationMetadataId": "00000000-0000-0000-0000-000000000008"
+          }
+         },
+         "Validar_gravar": {
+          "type": "Compose",
+          "inputs": "@if(empty(outputs('Normalizar_gravar')?['descricao']),'Informe a descrição.',if(and(outputs('CONFIG')?['cfgEscopoUnidade'],not(or(or(equals(toLower(string(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Flg_TodasUnidades'],'0'))),'1'),equals(toLower(string(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Flg_TodasUnidades'],'0'))),'true')),equals(toUpper(trim(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Nom_Unidade'],''))),outputs('Normalizar_gravar')?['unidade'])))),'Você não tem acesso a esta unidade.',''))",
+          "runAfter": {
+           "Normalizar_gravar": [
+            "Succeeded"
+           ]
+          },
+          "metadata": {
+           "operationMetadataId": "00000000-0000-0000-0000-000000000009"
+          }
+         },
+         "Se_invalido_gravar": {
+          "type": "If",
+          "expression": {
+           "and": [
+            {
+             "greater": [
+              "@length(outputs('Validar_gravar'))",
+              0
+             ]
+            }
+           ]
+          },
+          "actions": {
+           "Nega_grv": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+             "schema": {
+              "type": "object",
+              "properties": {
+               "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+               },
+               "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+               },
+               "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+               },
+               "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+               }
+              },
+              "additionalProperties": {}
+             },
+             "statusCode": 200,
+             "body": {
+              "status": "error",
+              "description": "@{outputs('Validar_gravar')}",
+              "id": "",
+              "url": ""
+             }
+            },
+            "metadata": {
+             "operationMetadataId": "00000000-0000-0000-0000-000000000010"
+            }
+           },
+           "Nega_grv_fim": {
+            "type": "Terminate",
+            "inputs": {
+             "runStatus": "Succeeded"
+            },
+            "runAfter": {
+             "Nega_grv": [
+              "Succeeded"
+             ]
+            },
+            "metadata": {
+             "operationMetadataId": "00000000-0000-0000-0000-000000000011"
+            }
+           }
+          },
+          "else": {
+           "actions": {}
+          },
+          "runAfter": {
+           "Validar_gravar": [
+            "Succeeded"
+           ]
+          },
+          "metadata": {
+           "operationMetadataId": "00000000-0000-0000-0000-000000000012"
+          }
+         },
+         "Gravar_registro": {
+          "type": "OpenApiConnection",
+          "inputs": {
+           "parameters": {
+            "server": "default",
+            "database": "default",
+            "procedure": "[dbo].[<procedure_gravar>]",
+            "parameters/Id_Registro": "@outputs('Normalizar_gravar')?['id']",
+            "parameters/Des_Registro": "@outputs('Normalizar_gravar')?['descricao']",
+            "parameters/Nom_Unidade": "@outputs('Normalizar_gravar')?['unidade']",
+            "parameters/Id_UsuarioChamador": "@int(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Id_Usuario'],0))"
+           },
+           "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sql",
+            "connection": "shared_sql",
+            "operationId": "ExecuteProcedure_V2"
+           }
+          },
+          "runAfter": {
+           "Se_invalido_gravar": [
+            "Succeeded"
+           ]
+          },
+          "metadata": {
+           "operationMetadataId": "00000000-0000-0000-0000-000000000013"
+          }
+         },
+         "Codigo_gravar": {
+          "type": "Compose",
+          "inputs": "@coalesce(body('Gravar_registro')?['ResultSets']?['Table1']?[0]?['description'],'')",
+          "runAfter": {
+           "Gravar_registro": [
+            "Succeeded"
+           ]
+          },
+          "metadata": {
+           "operationMetadataId": "00000000-0000-0000-0000-000000000014"
+          }
+         },
+         "Responder_gravar": {
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+           "schema": {
+            "type": "object",
+            "properties": {
+             "status": {
+              "title": "status",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+             },
+             "description": {
+              "title": "description",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+             },
+             "id": {
+              "title": "id",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+             },
+             "url": {
+              "title": "url",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+             }
+            },
+            "additionalProperties": {}
+           },
+           "statusCode": 200,
+           "body": {
+            "status": "@{if(equals(outputs('Codigo_gravar'),'GRAVADO'),'success',if(equals(outputs('Codigo_gravar'),'NAO_APLICADO'),'warning','error'))}",
+            "description": "@{if(equals(outputs('Codigo_gravar'),'GRAVADO'),'Registro gravado.',if(equals(outputs('Codigo_gravar'),'NAO_APLICADO'),'Nada foi alterado.',concat('Resposta inesperada do sistema: ',outputs('Codigo_gravar'),'.')))}",
+            "id": "@{coalesce(body('Gravar_registro')?['ResultSets']?['Table1']?[0]?['id'],'')}",
+            "url": ""
+           }
+          },
+          "runAfter": {
+           "Codigo_gravar": [
+            "Succeeded"
+           ]
+          },
+          "metadata": {
+           "operationMetadataId": "00000000-0000-0000-0000-000000000015"
+          }
+         }
+        }
+       }
+      },
+      "default": {
+       "actions": {
+        "Nega_acao": {
+         "type": "Response",
+         "kind": "PowerApp",
+         "inputs": {
+          "schema": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "title": "status",
+             "x-ms-dynamically-added": true,
+             "type": "string"
+            },
+            "description": {
+             "title": "description",
+             "x-ms-dynamically-added": true,
+             "type": "string"
+            },
+            "id": {
+             "title": "id",
+             "x-ms-dynamically-added": true,
+             "type": "string"
+            },
+            "url": {
+             "title": "url",
+             "x-ms-dynamically-added": true,
+             "type": "string"
+            }
+           },
+           "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+           "status": "error",
+           "description": "Ação desconhecida.",
+           "id": "",
+           "url": ""
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000016"
+         }
+        },
+        "Nega_acao_fim": {
+         "type": "Terminate",
+         "inputs": {
+          "runStatus": "Succeeded"
+         },
+         "runAfter": {
+          "Nega_acao": [
+           "Succeeded"
+          ]
+         },
+         "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000017"
+         }
+        }
+       }
+      },
+      "runAfter": {
+       "Se_chamador_desconhecido": [
+        "Succeeded"
+       ]
+      },
+      "metadata": {
+       "operationMetadataId": "00000000-0000-0000-0000-000000000018"
+      }
+     }
+    },
+    "metadata": {
+     "operationMetadataId": "00000000-0000-0000-0000-000000000019"
+    }
+   },
+   "Catch_gravar": {
+    "type": "Scope",
+    "runAfter": {
+     "Try_gravar": [
+      "Failed",
+      "TimedOut",
+      "Skipped"
+     ]
+    },
+    "actions": {
+     "Nega_conector": {
+      "type": "Response",
+      "kind": "PowerApp",
+      "inputs": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "status": {
+          "title": "status",
+          "x-ms-dynamically-added": true,
+          "type": "string"
+         },
+         "description": {
+          "title": "description",
+          "x-ms-dynamically-added": true,
+          "type": "string"
+         },
+         "id": {
+          "title": "id",
+          "x-ms-dynamically-added": true,
+          "type": "string"
+         },
+         "url": {
+          "title": "url",
+          "x-ms-dynamically-added": true,
+          "type": "string"
+         }
+        },
+        "additionalProperties": {}
+       },
+       "statusCode": 200,
+       "body": {
+        "status": "error",
+        "description": "O sistema não respondeu. Nenhuma alteração foi feita — tente de novo em instantes.",
+        "id": "",
+        "url": ""
+       }
+      },
+      "metadata": {
+       "operationMetadataId": "00000000-0000-0000-0000-000000000020"
+      }
+     },
+     "Nega_conector_fim": {
+      "type": "Terminate",
+      "inputs": {
+       "runStatus": "Succeeded"
+      },
+      "runAfter": {
+       "Nega_conector": [
+        "Succeeded"
+       ]
+      },
+      "metadata": {
+       "operationMetadataId": "00000000-0000-0000-0000-000000000021"
+      }
+     }
+    },
+    "metadata": {
+     "operationMetadataId": "00000000-0000-0000-0000-000000000022"
+    }
+   }
+  },
+  "runAfter": {},
+  "metadata": {
+   "operationMetadataId": "00000000-0000-0000-0000-000000000026"
+  }
+ },
+ "allConnectionData": {
+  "Perfil_do_chamador": {
+   "connectionReference": {
+    "api": {
+     "id": "/providers/Microsoft.PowerApps/apis/shared_office365users"
+    },
+    "connection": {
+     "id": "<prefixo>_shared_office365users"
+    },
+    "connectionName": "<prefixo>_shared_office365users"
+   },
+   "referenceKey": "shared_office365users"
+  },
+  "Ler_chamador": {
+   "connectionReference": {
+    "api": {
+     "id": "/providers/Microsoft.PowerApps/apis/shared_sql"
+    },
+    "connection": {
+     "id": "<prefixo>_shared_sql"
+    },
+    "connectionName": "<prefixo>_shared_sql"
+   },
+   "referenceKey": "shared_sql"
+  },
+  "Gravar_registro": {
+   "connectionReference": {
+    "api": {
+     "id": "/providers/Microsoft.PowerApps/apis/shared_sql"
+    },
+    "connection": {
+     "id": "<prefixo>_shared_sql"
+    },
+    "connectionName": "<prefixo>_shared_sql"
+   },
+   "referenceKey": "shared_sql"
+  }
+ },
+ "staticResults": {},
+ "isScopeNode": true,
+ "mslaNode": true
+}

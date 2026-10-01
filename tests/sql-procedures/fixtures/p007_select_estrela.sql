@@ -1,0 +1,8 @@
+CREATE OR ALTER PROCEDURE dbo.usp_APP_Item_Listar
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT * FROM dbo.APP_Item;
+END
+GO
