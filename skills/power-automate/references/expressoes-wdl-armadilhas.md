@@ -136,7 +136,15 @@ referência]
 
 ## 9. Outras
 
-- `Initialize variable` só no nível raiz; dentro de escopo use `Compose`.
+- `Initialize variable` só no nível raiz; dentro de escopo use `Compose` (F021). Ao colar, a
+  variável sozinha num campo vira token e pode vir em branco (F022, `formato-clipboard.md` §7).
+- `Definir variável` não lê a própria variável no valor: monte num `Compose`
+  (`setProperty(variables('x'), 'chave', valor)`) e defina a variável com a saída dele.
+- Chave que vem de um campo vazio (`variables('x')?['']`): use um sentinela (`'-'`) no lugar do vazio.
+- `contains(x, '')`: não conte com o resultado. Se a agulha pode vir vazia, decida antes:
+  `or(empty(agulha), contains(x, agulha))`.
+- Objeto com chaves dinâmicas: `json(concat('{', join(pares, ','), '}'))`, escapando `"` e `\` dos
+  rótulos (§8).
 - `item()` serve em `Select`/`Query`/`Filter`; `items('<Foreach>')` só **dentro** do `Foreach`
   nomeado (F007).
 - `result('Escopo')` aceita `Scope`/`Foreach`/`Until`, não `If`, e devolve só o primeiro nível

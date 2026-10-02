@@ -48,6 +48,7 @@ RE_SERVIDOR = re.compile(r"(?i)\b[a-z0-9_-]{3,}\\[a-z0-9_-]{2,}\b|\.database\.wi
 RE_DEV = re.compile(r"(?i)(?<![a-z])dev(?!ice|elop|olv)")
 RE_REF_ACAO = re.compile(r"\b(outputs|body|actions|result)\(\s*'([^']+)'\s*\)")
 RE_ITEMS = re.compile(r"\bitems\(\s*'([^']+)'\s*\)")
+RE_VARIAVEL_PURA = re.compile(r"^(?:@variables\('([^']+)'\)|@\{variables\('([^']+)'\)\})$")
 RE_CONSTANTE = re.compile(r"\bequals\(\s*(-?\d+(?:\.\d+)?|'[^']*')\s*,\s*(-?\d+(?:\.\d+)?|'[^']*')\s*\)")
 
 
@@ -70,6 +71,7 @@ class Contexto:
     fragmento: bool = False
     powerapps: bool = False
     estrito: bool = False
+    colagem: bool = False  # envelope do clipboard: o trecho entra no designer por Ctrl+V
     nomes_config: tuple[str, ...] = NOMES_CONFIG_PADRAO
 
     def erro(self, lugar: str, codigo: str, msg: str) -> None:
@@ -314,6 +316,54 @@ def checar_condicoes(ctx: Contexto, acoes: dict) -> None:
             constante = constante or any(m.group(1) == m.group(2) for m in RE_CONSTANTE.finditer(expr))
         if constante:
             ctx.erro(no.nome, "F016", "condição compara duas constantes iguais (sempre verdadeira): o ramo `else` é código morto")
+        if isinstance(expr, str):
+            ctx.erro(no.nome, "F020", "condição do `If` em texto: o designer novo mostra a condição em branco; escreva como objeto "
+                                      "`{\"and\": [{\"equals\": [\"@<expressão>\", \"@true\"]}]}`")
+        elif isinstance(expr, dict) and (len(expr) != 1 or next(iter(expr)) not in ("and", "or")):
+            ctx.aviso(no.nome, "F020", "condição sem `and`/`or` na raiz: o designer grava sempre um dos dois, e a forma sem eles "
+                                       "não foi vista colando; embrulhe em `{\"and\": [...]}`")
+
+
+def _variaveis_iniciadas(acoes: dict) -> set[str]:
+    return {v.get("name") for no in percorrer(acoes) if no.dados.get("type") == "InitializeVariable"
+            for v in (no.dados.get("inputs") or {}).get("variables") or [] if isinstance(v, dict)}
+
+
+def checar_variaveis(ctx: Contexto, acoes: dict) -> None:
+    """F021 (Inicializar variável fora da raiz) e F022 (`@variables('x')` sozinho num campo, só na colagem)."""
+    for no in percorrer(acoes):
+        if no.dados.get("type") == "InitializeVariable" and no.pai is not None:
+            if ctx.colagem:
+                ctx.aviso(no.nome, "F021", "Inicializar variável dentro do trecho colado: só vale na raiz do flow; arraste para "
+                                           "fora (entre o gatilho e o escopo) antes de salvar")
+            else:
+                ctx.erro(no.nome, "F021", "Inicializar variável só vale na raiz do flow: dentro de escopo, condição ou laço o "
+                                          "flow não salva")
+    if not ctx.colagem:
+        return
+    iniciadas = _variaveis_iniciadas(acoes)
+    for no in percorrer(acoes):
+        for rotulo, texto in textos_de({k: v for k, v in no.dados.items() if k not in ("actions", "else", "cases", "default")}):
+            m = RE_VARIAVEL_PURA.match(texto.strip())
+            if not m:
+                continue
+            nome = m.group(1) or m.group(2)
+            troca = f"use uma expressão com função (`@skip(variables('{nome}'), 0)`, `@equals(variables('{nome}'), true)`)"
+            if nome in iniciadas:
+                ctx.erro(no.nome, "F022", f"`variables('{nome}')` sozinho em {rotulo}: vira token de variável, e a variável é "
+                                          f"iniciada dentro do trecho colado; o token não resolve e o campo cola em branco: {troca}")
+            else:
+                ctx.aviso(no.nome, "F022", f"`variables('{nome}')` sozinho em {rotulo}: vira token de variável na colagem; "
+                                           f"confira o campo depois de colar, ou {troca}")
+
+
+def checar_fazer_ate(ctx: Contexto, acoes: dict) -> None:
+    if not ctx.colagem:
+        return  # na definição exportada o Until em texto é a forma normal
+    for no in percorrer(acoes):
+        if no.dados.get("type") == "Until" and isinstance(no.dados.get("expression"), str):
+            ctx.aviso(no.nome, "F023", "condição do `Fazer até` em texto: ainda não vista colando no designer novo; se vier em "
+                                       "branco, abra o modo avançado e cole a mesma expressão")
 
 
 def checar_expressoes(ctx: Contexto, acoes: dict) -> None:
@@ -386,6 +436,8 @@ def analisar_acoes(ctx: Contexto, acoes: dict, raiz_nome: str | None, conexoes: 
     checar_catch(ctx, acoes)
     checar_respostas(ctx, acoes)
     checar_condicoes(ctx, acoes)
+    checar_variaveis(ctx, acoes)
+    checar_fazer_ate(ctx, acoes)
     checar_expressoes(ctx, acoes)
     checar_literais_de_ambiente(ctx, acoes)
     checar_conectores(ctx, acoes, conexoes)
@@ -406,6 +458,7 @@ def analisar_escopo(ctx: Contexto, dados: dict) -> None:
         ctx.erro(str(nid), "F002", "`serializedValue` não é uma definição de ação (falta `type`)")
         return
     ctx.fragmento = bool(raiz.get("runAfter")) or raiz.get("type") != "Scope"
+    ctx.colagem = True
     conexoes = dados["allConnectionData"] if isinstance(dados["allConnectionData"], dict) else {}
     analisar_acoes(ctx, {nid: raiz}, None, conexoes, raiz_externa=nid)
 
@@ -595,7 +648,9 @@ def main(argv: list[str] | None = None) -> int:
         epilog="Códigos: F001 JSON, F002 envelope, F003 identidade do nó, F004 nome duplicado, F005 runAfter, "
                "F006 referência a ação, F007 items(), F008 caso de Switch, F009 Catch sem Skipped, F010 Response sem os 4 campos, "
                "F011 outputs() de Select/Query, F012 coalesce(string()), F013 tamanho de expressão, F014 literal de ambiente, "
-               "F015 Response sem Terminate, F016 condição constante, F017 conexão ausente, F018 @{} em parâmetro de conector, F019 segmentos/rawInputs de nó folha.")
+               "F015 Response sem Terminate, F016 condição constante, F017 conexão ausente, F018 @{} em parâmetro de conector, F019 segmentos/rawInputs de nó folha, "
+               "F020 condição de If em texto ou sem and/or, F021 Inicializar variável fora da raiz, "
+               "F022 variável sozinha num campo colado, F023 Fazer até em texto colado.")
     ap.add_argument("caminhos", nargs="*", type=Path, help="arquivos ou pastas (default: pastas.flows da config)")
     ap.add_argument("--config", type=Path, help=f"caminho do {NOME_CONFIG}")
     ap.add_argument("--estrito", action="store_true", help="F012 também para coalesce(string(x), '')")

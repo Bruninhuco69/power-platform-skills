@@ -16,8 +16,9 @@ equivalente do `.pa.yaml` colável das telas: **o flow vira arquivo**.
 4. [Envelope de nó folha](#4-envelope-de-nó-folha)
 5. [Entradas: segmentos e rawInputs](#5-entradas-segmentos-e-rawinputs)
 6. [Idioma e o nodeId do trigger](#6-idioma-e-o-nodeid-do-trigger)
-7. [Regras de geração](#7-regras-de-geração)
-8. [O que não está confirmado](#8-o-que-não-está-confirmado)
+7. [Sintomas ao colar](#7-sintomas-ao-colar)
+8. [Regras de geração](#8-regras-de-geração)
+9. [O que não está confirmado](#9-o-que-não-está-confirmado)
 
 ---
 
@@ -312,7 +313,22 @@ todo token que o cita gera diferente. Declare o idioma do ambiente no contrato d
 refaça a amostra se o idioma mudar. Em envelope de escopo isso não importa (os tokens são
 expressões `triggerBody()`).
 
-## 7. Regras de geração
+## 7. Sintomas ao colar
+
+Vistos ao colar no designer novo um escopo gerado por script. O verificador acusa cada um
+(F020–F023).
+
+| Sintoma | Causa | Regra | Estado |
+|---|---|---|---|
+| O flow não salva | `Inicializar variável` dentro do escopo: ela só vale na raiz do flow, e o envelope é **um** escopo | crie as variáveis na raiz antes de colar, ou gere-as como as primeiras ações do escopo e arraste-as para fora (entre o gatilho e o escopo) antes de salvar (F021) | visto |
+| Condição do `If` em branco (`{"and":[{"equals":["",""]}]}`), em todos os `If` | condição escrita como texto (`"@not(equals(…))"`): o designer só lê objeto | `{"and": [{"equals": ["@<expressão>", "@true"]}]}`, sempre com `and` ou `or` na raiz (F020). `Switch` com texto está certo | visto |
+| Campo obrigatório em branco ("'From' é obrigatório") | `@variables('x')` sozinho vira **token de variável**; com a variável dentro do trecho colado, o token não resolve | variável nunca sozinha num campo: `@skip(variables('x'), 0)`, `@equals(variables('x'), true)`, `@coalesce(variables('x')?['a'], 0)`. Expressão com função cola inteira (F022) | sintoma visto; a troca ainda não foi colada |
+| `Definir variável` e `Acrescentar à variável` sem o nome | mesma causa; o campo do nome não aceita expressão | depois de colar, escolha o nome à mão em cada uma; liste essas ações nas instruções do flow | visto com a variável dentro do trecho; com a variável já na raiz, não verificado |
+| `Fazer até` com a condição em texto | a forma usual da exportação, ainda não vista colando | se vier em branco: modo avançado, a mesma expressão (F023) | não verificado |
+
+[verificado: projeto de referência] nas linhas marcadas "visto".
+
+## 8. Regras de geração
 
 | # | Regra | Por quê |
 |--:|---|---|
@@ -325,7 +341,7 @@ expressões `triggerBody()`).
 | 7 | Zero GUID/servidor literal de ambiente fora do `CONFIG` (F014) | Literal aponta para DEV depois de promovido |
 | 8 | Colar de cima para baixo | `upstreamNodeIds` precisa existir |
 
-## 8. O que não está confirmado
+## 9. O que não está confirmado
 
 | Item | Estado |
 |---|---|
@@ -335,3 +351,6 @@ expressões `triggerBody()`).
 | `nodeConnectionData` de **folha** de ação de conector (a amostra só tem `null`) | `[não verificado]`: prefira escopo |
 | `nodeOperationInfo` (`connectorId`/`operationId`/`type`) de ações que não sejam `Compose` | `[não verificado]` em envelope de folha; use escopo |
 | Trigger colável | não é: digite à mão |
+| `If` com a condição em objeto e `and`/`or` na raiz | confirmado (§7) |
+| Variável lida por expressão com função num campo colado | `[não verificado]`: a troca ainda não foi colada |
+| Nome nas ações de variável quando a variável já existe na raiz antes de colar | `[não verificado]` |
