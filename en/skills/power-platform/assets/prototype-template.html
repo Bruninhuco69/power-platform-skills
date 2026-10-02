@@ -1,0 +1,1510 @@
+<!doctype html>
+<html lang="en" data-prototipo="v1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clickable prototype · Orders</title>
+<link rel="icon" href="data:,">
+<!--
+  CLICKABLE PROTOTYPE TEMPLATE (power-platform)
+  Validates the whole system with the user before any screen exists in Power Apps. It only shows what the
+  Canvas builds: ManualLayout 1920x1080, Classic controls, fx* tokens.
+
+  Method order: image mockups first (scripts/desenhar-mockups.py + assets/mockups-template.json);
+  this prototype comes AFTER the approved mockups and is built on top of them: every screen has a source
+  mockup (data-mockups with the screen ids from the spec). Where mockup and prototype diverge, the
+  catalog wins, and the divergence is recorded in the screen inventory. In the project:
+  docs/planning/prototype/index.html, images in docs/planning/mockups/<id>.png (PASTA_MOCKUPS).
+
+  How to adapt (copy it into the project and change, in this order):
+  0. Mockups: for each approved <id>.png, read the image, map each region (header, menu, filters,
+     gallery, modal, toast) to a catalog component and reproduce texts, hierarchy and state with
+     the fx* tokens. Color does not come from the image: it comes from the tokens. What the image shows
+     and the Canvas cannot do becomes a divergence recorded in the screen inventory, not HTML.
+  1. Entity: replace `Order` in the texts, in gerarPedidos(), in the gallery columns and in the CSV.
+  2. Screens: each section with data-tela is a screen of the inventory; the menu reads data-titulo and data-perfis.
+  3. Roles: PERFIS (flags) and data-perfis. The screen decides by the flag, never by the role name.
+  4. Data: UNIDADES, STATUS, SEMENTE and the sample lists (fictional names only, e-mail @contoso.com).
+  5. Walkthrough: ROTEIRO, short steps per role.
+  6. Color and size: only in :root, with the token name from powerapps-canvas/assets/app-formulas-tokens.md.
+  7. Link: data-mockups on every screen with the spec ids; "Compare with the mockup" opens the image.
+  8. Navigation: NAVEGACAO = the pattern from ux-design-system.md §2.1 (lateral-fixo, lateral-recolhivel,
+     gaveta, topo, inicio-cartoes). The side menu is the source of the items: the top bar and the cards
+     on the home screen are generated from it (data-descricao becomes the card sentence). The "Navigation"
+     selector in the bar lets the user compare the five; switching pattern is an identity adjustment (/pp-en:design).
+  The URL accepts ?perfil=<PERFIS key>&nav=<pattern>#/tela-xxx: this is how scripts/capturar-telas.py
+  photographs each screen for the visual check. Do not remove it.
+  Each data-componente points to powerapps-canvas/assets/components/<name>.md: same role,
+  position, texts and states. Fidelity: nothing hover-only, no dragging, no reflow; animation only
+  on the spinner and the fade. Opens by double click (file://), no external resource.
+-->
+<style>
+/* ---------- TOKENS fx* (the only color and size values in the file) ---------- */
+:root {
+  /* brand and surface */
+  --fxColorPrimary: rgb(15 108 189); --fxColorPrimaryDark: rgb(12 59 94); --fxColorPrimaryLight: rgb(235 243 252);
+  --fxColorBackground: rgb(249 250 251); --fxColorSurface: rgb(255 255 255); --fxColorTransparent: rgb(0 0 0 / 0);
+  --fxColorOverlay: rgb(0 0 0 / 0.5); --fxColorOverlayDark: rgb(0 0 0 / 0.6);
+  /* text */
+  --fxColorTextPrimary: rgb(17 24 39); --fxColorTextSecondary: rgb(77 77 77); --fxColorTextBody: rgb(75 85 99);
+  --fxColorTextOnPrimary: rgb(255 255 255); --fxColorTextOnWarning: rgb(17 24 39);
+  /* border and state (green is state, never action) */
+  --fxColorBorder: rgb(166 166 166); --fxColorBorderInteractive: rgb(117 117 117); --fxColorDivider: rgb(229 231 235);
+  --fxColorSuccess: rgb(21 128 61); --fxColorWarning: rgb(255 193 7); --fxColorError: rgb(200 35 51);
+  /* button, tab and table header */
+  --fxColorButtonCancel: rgb(108 117 125); --fxColorButtonCancelHover: rgb(90 98 104);
+  --fxColorDisabled: rgb(206 212 218); --fxColorDisabledText: rgb(134 142 150); --fxColorTabInactive: rgb(237 237 237);
+  --fxColorTableHeaderBg: rgb(235 243 252); --fxColorTableHeaderText: rgb(17 94 163);
+  /* badge: dark text on a pastel of the same hue */
+  --fxBadgeSuccessText: rgb(22 101 52); --fxBadgeSuccessBg: rgb(220 252 231); --fxBadgeInfoText: rgb(15 84 140); --fxBadgeInfoBg: rgb(207 228 250);
+  --fxBadgeWarningText: rgb(146 64 14); --fxBadgeWarningBg: rgb(255 218 185); --fxBadgeDangerText: rgb(139 0 0); --fxBadgeDangerBg: rgb(255 182 193);
+  --fxBadgeProgressText: rgb(133 77 14); --fxBadgeProgressBg: rgb(255 230 100); --fxBadgeNeutralText: rgb(52 58 64); --fxBadgeNeutralBg: rgb(206 212 218);
+  /* toast and menu */
+  --fxColorToastBg: rgb(33 37 41); --fxColorToastText: rgb(173 181 189);
+  --fxColorToastTrack: rgb(77 81 84); /* ColorFade(fxColorToastBg, 20%) */
+  --fxColorMenuBg: var(--fxColorPrimaryDark); --fxColorMenuItemActive: var(--fxColorPrimary);
+  /* sizes: 1920 canvas, so fxIsCompact = false */
+  --fxLayoutMargin: 100px; --fxLayoutGutter: 16px; --fxRowHeight: 50px; --fxTableHeaderHeight: 50px; --fxFilterHeight: 50px;
+  --fxKPIWidth: 150px; --fxKPIHeight: 85px; --fxKPITitleHeight: 35px; --fxKPIValueHeight: 50px; --fxHeaderHeight: 100px;
+  --fxMenuWidth: 260px; --fxMenuItemHeight: 52px; --fxNavWidthRecolhida: 70px; --fxNavWidthExpandida: 284px;
+  --fxTopNavHeight: 56px; --fxTopNavItemWidth: 168px; --fxHubCardWidth: 360px; --fxHubCardHeight: 168px; --fxFontSizeCardTitle: 18pt; --fxBtnHeight: 45px; --fxBtnRadius: 8px; --fxBtnWidth: 210px; --fxBtnWidthFilter: 128px;
+  --fxModalRadius: 12px; --fxModalPadding: 20px; --fxModalWidthS: 450px; --fxModalWidthM: 520px; --fxModalWidthL: 620px;
+  --fxPillHeight: 26px; --fxToastWidth: 420px; --fxLoadingCardWidth: 250px; --fxLoadingCardHeight: 140px; --fxLoadingSpinnerSize: 60px;
+  /* typography: one family; the Power Apps Size is in pt */
+  --fxFont: "Segoe UI", system-ui, sans-serif;
+  --fxFontSizeTitle: 35pt; --fxFontSizeKPI: 25pt; --fxFontSizeKPITitle: 11pt; --fxFontSizeBody: 14pt; --fxFontSizeFilter: 14pt;
+  --fxFontSizeTable: 13pt; --fxFontSizeTableSmall: 12pt; --fxFontSizeHeader: 13pt; --fxFontSizeSemAcesso: 20pt;
+  --fxFontSizeToastIcon: 18pt; --fxFontSizeToastTitle: 15pt; --fxFontSizeToast: 12pt; --fxBtnFontSize: 14pt; --fxModalTitleSize: 16pt;
+}
+
+/* ---------- BASE ---------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--fxColorDivider); color: var(--fxColorTextPrimary); font-family: var(--fxFont); overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+p, h1, h2, h3, dl, dd { margin: 0; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--fxColorPrimary); outline-offset: 2px; }
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; } /* programmatic title focus, for the screen reader only */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.oculto { visibility: hidden; }
+
+/* ---------- PROTOTYPE BAR (outside the canvas, not the app) ---------- */
+.pt-barra { position: relative; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 9px 16px; background: var(--fxColorToastBg); color: var(--fxColorTextOnPrimary); font-size: 12px; }
+.pt-barra :focus-visible, .menu :focus-visible, .toast :focus-visible { outline-color: var(--fxColorTextOnPrimary); }
+.pt-aviso { padding: 5px 12px; border-radius: 999px; background: var(--fxColorWarning); color: var(--fxColorTextOnWarning); font-weight: 700; white-space: nowrap; }
+.pt-campo { display: flex; align-items: center; gap: 6px; color: var(--fxColorToastText); white-space: nowrap; }
+.pt-campo select { height: 30px; padding: 0 6px; border: 1px solid var(--fxColorBorderInteractive); background: var(--fxColorSurface); color: var(--fxColorTextPrimary); }
+.pt-dir { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.pt-btn[aria-expanded="true"] { background: var(--fxColorButtonCancelHover); }
+.pt-btn-forte[aria-expanded="true"] { background: var(--fxColorPrimaryDark); border-color: var(--fxColorPrimaryLight); }
+.pt-btn { height: 30px; padding: 0 12px; border: 1px solid var(--fxColorToastText); border-radius: var(--fxBtnRadius); background: var(--fxColorTransparent); color: var(--fxColorTextOnPrimary); white-space: nowrap; }
+.pt-btn:hover { background: var(--fxColorButtonCancelHover); }
+.pt-btn-forte { border-color: var(--fxColorPrimary); background: var(--fxColorPrimary); }
+.pt-btn-forte:hover { background: var(--fxColorPrimary); filter: brightness(0.8); }
+.pt-versao { color: var(--fxColorToastText); }
+.pt-painel { position: fixed; right: 0; bottom: 0; width: 440px; max-width: 100%; overflow-y: auto; padding: 20px 24px 32px; background: var(--fxColorSurface); color: var(--fxColorTextPrimary); border-left: 1px solid var(--fxColorBorder); box-shadow: -10px 0 30px -12px var(--fxColorOverlay); font-size: 14px; line-height: 1.5; }
+.pt-comparar { width: min(900px, 66vw); }
+.pt-painel-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.pt-painel h2 { font-size: 18px; }
+.pt-painel h3 { margin: 20px 0 6px; color: var(--fxColorPrimaryDark); font-size: 15px; }
+.pt-painel ol { margin: 0; padding-left: 22px; }
+.pt-painel li { margin-bottom: 6px; color: var(--fxColorTextBody); }
+.pt-painel .pt-nota { color: var(--fxColorTextSecondary); }
+.pt-painel .pt-btn { border-color: var(--fxColorBorderInteractive); color: var(--fxColorTextPrimary); }
+.pt-painel .pt-btn:hover { background: var(--fxColorDivider); }
+.pt-btn:disabled { border-color: var(--fxColorButtonCancel); background: var(--fxColorTransparent); color: var(--fxColorButtonCancel); cursor: not-allowed; }
+.pt-mockup-campo { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; font-weight: 600; }
+.pt-mockup-campo select { height: 32px; padding: 0 8px; border: 1px solid var(--fxColorBorderInteractive); background: var(--fxColorSurface); }
+.pt-comparar img { display: block; width: 100%; height: auto; margin-top: 14px; border: 1px solid var(--fxColorBorder); }
+.pt-erro { margin-top: 14px; padding: 12px 14px; border-radius: var(--fxBtnRadius); background: var(--fxBadgeWarningBg); color: var(--fxBadgeWarningText); font-weight: 600; overflow-wrap: anywhere; }
+.pt-pular { position: absolute; left: 16px; top: -60px; z-index: 9; padding: 8px 14px; border: 0; background: var(--fxColorPrimary); color: var(--fxColorTextOnPrimary); }
+.pt-pular:focus { top: 8px; }
+
+/* ---------- CANVAS 1920x1080 (scaled by transform, no reflow) ---------- */
+.palco { position: relative; overflow: hidden; }
+main[data-canvas] { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--fxColorBackground); box-shadow: 0 10px 30px -10px var(--fxColorOverlay); font-size: var(--fxFontSizeBody); }
+
+/* side-menu */
+.menu { position: absolute; inset: 0 auto 0 0; width: var(--fxMenuWidth); background: var(--fxColorMenuBg); color: var(--fxColorTextOnPrimary); }
+.menu-logo { position: absolute; left: 20px; top: 24px; width: 40px; height: 40px; }
+.menu-titulo { position: absolute; left: 20px; top: 76px; font-weight: 700; font-size: var(--fxFontSizeBody); }
+.menu-sub { position: absolute; left: 20px; top: 104px; color: var(--fxColorPrimaryLight); font-size: var(--fxFontSizeTableSmall); }
+.menu-lista { position: absolute; top: 160px; left: 0; right: 0; margin: 0; padding: 0; list-style: none; }
+.menu-item { display: block; height: var(--fxMenuItemHeight); padding: 0 20px; line-height: var(--fxMenuItemHeight); color: var(--fxColorTextOnPrimary); font-size: var(--fxFontSizeBody); text-decoration: none; }
+.menu-item:hover, .menu-item[aria-current="page"] { background: var(--fxColorMenuItemActive); }
+.menu-item[aria-current="page"] { font-weight: 700; }
+.menu-rodape { position: absolute; left: 20px; right: 20px; bottom: 28px; display: flex; flex-direction: column; gap: 4px; padding-top: 16px; border-top: 1px solid var(--fxColorMenuItemActive); }
+.menu-usuario { font-weight: 600; font-size: var(--fxFontSizeFilter); }
+.menu-perfil { color: var(--fxColorToastText); font-size: var(--fxFontSizeTableSmall); line-height: 1.35; }
+
+/* ---------- NAVIGATION: data-navegacao on the canvas, decided in /pp-en:design (ux-design-system.md §2.1) ----------
+   lateral-fixo | lateral-recolhivel | gaveta (side-menu) · topo (top-menu) · inicio-cartoes (home-cards) */
+.menu-alternar, .menu-fechar, .nav-abrir, .nav-veu, .topo, .cartoes, .btn-inicio { display: none; }
+.menu-alternar, .menu-fechar { position: absolute; top: 20px; width: 40px; height: 40px; border: 1px solid var(--fxColorMenuItemActive); border-radius: var(--fxBtnRadius); background: var(--fxColorMenuItemActive); color: var(--fxColorTextOnPrimary); font-weight: 600; font-size: var(--fxBtnFontSize); }
+.menu-alternar:hover, .menu-fechar:hover { border-color: var(--fxColorButtonCancelHover); background: var(--fxColorButtonCancelHover); }
+.menu-alternar { left: 15px; }
+.menu-fechar { right: 16px; }
+[data-navegacao="lateral-recolhivel"] .menu-alternar { display: block; }
+[data-navegacao="lateral-recolhivel"] .menu, [data-navegacao="lateral-recolhivel"] .tela { --nav-largura: var(--fxNavWidthRecolhida); }
+[data-navegacao="lateral-recolhivel"].nav-aberta .menu, [data-navegacao="lateral-recolhivel"].nav-aberta .tela { --nav-largura: var(--fxNavWidthExpandida); }
+[data-navegacao="lateral-recolhivel"] .menu { width: var(--nav-largura); }
+[data-navegacao="lateral-recolhivel"] .tela { left: var(--nav-largura); }
+[data-navegacao="lateral-recolhivel"] .menu-logo, [data-navegacao="lateral-recolhivel"] .menu-sub { display: none; }
+[data-navegacao="lateral-recolhivel"] .menu-titulo { left: 70px; top: 28px; }
+[data-navegacao="lateral-recolhivel"] .menu-lista { top: 100px; }
+[data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-titulo, [data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-rodape, [data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-rot { display: none; }
+[data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-item { padding: 0; text-align: center; }
+[data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-item::before { content: attr(data-inicial); font-weight: 700; }
+[data-navegacao="gaveta"] .tela, [data-navegacao="topo"] .tela, [data-navegacao="inicio-cartoes"] .tela { left: 0; }
+[data-navegacao="gaveta"] .menu { z-index: 12; width: var(--fxNavWidthExpandida); visibility: hidden; box-shadow: 10px 0 30px -12px var(--fxColorOverlayDark); }
+[data-navegacao="gaveta"].nav-aberta .menu { visibility: visible; }
+[data-navegacao="gaveta"] .menu-logo, [data-navegacao="gaveta"] .menu-sub { display: none; }
+[data-navegacao="gaveta"] .menu-titulo { top: 26px; }
+[data-navegacao="gaveta"] .menu-lista { top: 80px; }
+[data-navegacao="gaveta"] .menu-fechar { display: block; }
+[data-navegacao="gaveta"] .nav-abrir { position: absolute; left: 16px; top: calc((var(--fxHeaderHeight) - 48px) / 2); z-index: 4; display: block; width: 48px; height: 48px; border: 0; border-radius: var(--fxBtnRadius); background: var(--fxColorTransparent); color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxBtnFontSize); }
+[data-navegacao="gaveta"] .nav-abrir:hover { background: var(--fxColorPrimaryLight); color: var(--fxColorPrimaryDark); }
+[data-navegacao="gaveta"].nav-aberta .nav-veu { position: absolute; inset: 0; z-index: 11; display: block; background: var(--fxColorOverlay); }
+[data-navegacao="topo"] .menu, [data-navegacao="inicio-cartoes"] .menu { display: none; }
+[data-navegacao="topo"] .topo { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; height: var(--fxTopNavHeight); background: var(--fxColorMenuBg); color: var(--fxColorTextOnPrimary); }
+[data-navegacao="topo"] .tela { top: var(--fxTopNavHeight); }
+.topo-titulo { display: flex; align-items: center; width: 260px; padding-left: 24px; font-weight: 700; font-size: var(--fxFontSizeBody); white-space: nowrap; }
+.topo-lista { display: flex; margin: 0; padding: 0; list-style: none; }
+.topo-item { display: flex; align-items: center; justify-content: center; width: var(--fxTopNavItemWidth); height: var(--fxTopNavHeight); color: var(--fxColorTextOnPrimary); font-size: var(--fxFontSizeBody); text-decoration: none; }
+.topo-item:hover, .topo-item[aria-current="page"] { background: var(--fxColorMenuItemActive); }
+.topo-item[aria-current="page"] { font-weight: 700; }
+.topo-usuario { display: flex; align-items: center; margin-left: auto; padding-right: 24px; color: var(--fxColorPrimaryLight); font-size: var(--fxFontSizeFilter); white-space: nowrap; }
+.topo :focus-visible { outline-color: var(--fxColorTextOnPrimary); }
+[data-navegacao="inicio-cartoes"] .cartoes { display: flex; flex-wrap: wrap; gap: 24px calc(var(--fxLayoutGutter) * 2); margin: 16px 0 8px; }
+.cartao { position: relative; width: var(--fxHubCardWidth); height: var(--fxHubCardHeight); padding: 18px 20px; border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); box-shadow: 0 3px 8px -4px var(--fxColorOverlay); }
+.cartao h3 { color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeCardTitle); line-height: 32px; }
+.cartao p { margin-top: 4px; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeBody); line-height: 1.4; }
+.cartao .btn { position: absolute; left: 20px; bottom: 18px; min-width: 160px; height: 40px; }
+[data-navegacao="inicio-cartoes"] .btn-inicio { display: inline-block; min-width: 104px; height: 40px; margin-right: 16px; border-color: var(--fxColorPrimary); background: var(--fxColorTransparent); color: var(--fxColorPrimary); }
+[data-navegacao="inicio-cartoes"] .btn-inicio:hover { background: var(--fxColorPrimaryLight); }
+.cab h1 { margin-right: auto; }
+
+/* screens and screen-header */
+.tela { position: absolute; top: 0; bottom: 0; left: var(--fxMenuWidth); right: 0; background: var(--fxColorBackground); }
+.tela.tela-cheia { left: 0; top: 0; }
+.cab { display: flex; align-items: center; justify-content: space-between; height: var(--fxHeaderHeight); padding: 0 var(--fxLayoutMargin); background: var(--fxColorSurface); border-bottom: 1px solid var(--fxColorDivider); }
+.cab h1 { color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeTitle); line-height: 60px; }
+.cab-usuario { color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeBody); }
+.conteudo { padding: var(--fxLayoutGutter) var(--fxLayoutMargin) 0; }
+.secao { margin: 32px 0 12px; color: var(--fxColorTextPrimary); font-weight: 600; font-size: var(--fxFontSizeBody); }
+.escopo-txt { color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeFilter); }
+
+/* kpi-card and badge pairs */
+.inicio-topo { display: flex; align-items: center; gap: 32px; }
+.kpis { display: flex; gap: var(--fxLayoutGutter); }
+.kpi { width: var(--fxKPIWidth); height: var(--fxKPIHeight); overflow: hidden; border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); box-shadow: 0 3px 8px -4px var(--fxColorOverlay); }
+.kpi-titulo, .kpi-valor { display: flex; align-items: center; justify-content: center; }
+.kpi-titulo { height: var(--fxKPITitleHeight); font-weight: 600; font-size: var(--fxFontSizeKPITitle); }
+.kpi-valor { height: var(--fxKPIValueHeight); font-weight: 700; font-size: var(--fxFontSizeKPI); font-variant-numeric: tabular-nums; }
+.t-neutral { background: var(--fxBadgeNeutralBg); color: var(--fxBadgeNeutralText); }
+.t-info { background: var(--fxBadgeInfoBg); color: var(--fxBadgeInfoText); }
+.t-progress { background: var(--fxBadgeProgressBg); color: var(--fxBadgeProgressText); }
+.t-success { background: var(--fxBadgeSuccessBg); color: var(--fxBadgeSuccessText); }
+.t-danger { background: var(--fxBadgeDangerBg); color: var(--fxBadgeDangerText); }
+
+/* botoes: primary, secondary, destructive, neutral (hover darkens, pressed never inverts) */
+.btn { height: var(--fxBtnHeight); padding: 0 20px; border: 1px solid transparent; border-radius: var(--fxBtnRadius); font-weight: 600; font-size: var(--fxBtnFontSize); white-space: nowrap; }
+.btn-primario { min-width: var(--fxBtnWidth); border-color: var(--fxColorPrimary); background: var(--fxColorPrimary); color: var(--fxColorTextOnPrimary); }
+.btn-destrutivo { border-color: var(--fxColorError); background: var(--fxColorError); color: var(--fxColorTextOnPrimary); }
+.btn-primario:hover, .btn-destrutivo:hover { filter: brightness(0.8); }
+.btn-primario:active, .btn-destrutivo:active { filter: brightness(0.7); }
+.btn-secundario { border-color: var(--fxColorButtonCancel); background: var(--fxColorButtonCancel); color: var(--fxColorTextOnPrimary); }
+.btn-secundario:hover, .btn-secundario:active { border-color: var(--fxColorButtonCancelHover); background: var(--fxColorButtonCancelHover); }
+.btn-neutro { border-color: var(--fxBadgeInfoBg); background: var(--fxColorPrimaryLight); color: var(--fxColorTableHeaderText); font-weight: 400; }
+.btn-neutro:hover { filter: brightness(0.92); }
+.btn:disabled { border-color: var(--fxColorDisabled); background: var(--fxColorDisabled); color: var(--fxColorDisabledText); cursor: not-allowed; filter: none; }
+.btn-filtro { width: var(--fxBtnWidthFilter); min-width: 0; height: var(--fxFilterHeight); font-size: var(--fxFontSizeFilter); }
+.btn-linha { min-width: 0; height: 34px; padding: 0 10px; font-size: var(--fxFontSizeTableSmall); }
+.atalhos { display: flex; gap: var(--fxLayoutGutter); }
+.atalhos .btn-neutro { min-width: 190px; }
+
+/* abas + unit-selector */
+.linha-abas { display: flex; align-items: flex-start; justify-content: space-between; height: 50px; }
+.abas { display: flex; gap: 8px; }
+.aba { width: 240px; height: 49px; border: 0; border-bottom: 3px solid transparent; border-radius: var(--fxBtnRadius) var(--fxBtnRadius) 0 0; background: var(--fxColorTabInactive); color: var(--fxColorTextSecondary); font-weight: 600; font-size: var(--fxFontSizeFilter); }
+.aba:hover { background: var(--fxColorSurface); color: var(--fxColorPrimary); }
+.aba[aria-selected="true"] { border-bottom-color: var(--fxColorPrimary); background: var(--fxColorSurface); color: var(--fxColorPrimary); font-weight: 700; }
+.seletor { display: flex; align-items: center; gap: 8px; height: var(--fxFilterHeight); }
+.seletor-escopo { width: 260px; text-align: right; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeFilter); }
+
+/* filter-bar and Classic fields (rectangular input, interactive border) */
+.filtros { display: flex; align-items: flex-end; gap: var(--fxLayoutGutter); height: 104px; margin-top: var(--fxLayoutGutter); padding: 16px 20px 10px; border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); }
+.campo { display: flex; flex-direction: column; gap: 8px; }
+.campo > label, .rotulo { height: 20px; color: var(--fxColorTextSecondary); font-weight: 600; font-size: var(--fxFontSizeHeader); }
+.combo, .texto { height: var(--fxFilterHeight); padding: 0 12px; border: 1px solid var(--fxColorBorderInteractive); border-radius: 0; background: var(--fxColorSurface); color: var(--fxColorTextPrimary); font-size: var(--fxFontSizeFilter); }
+.texto { border-radius: var(--fxBtnRadius); }
+textarea.texto { height: auto; padding: 10px 12px; resize: none; line-height: 1.35; }
+.combo:focus, .texto:focus { border-color: var(--fxColorPrimary); outline-offset: 0; }
+.combo:disabled { background: var(--fxColorBackground); color: var(--fxColorTextBody); }
+.invalido, .invalido:focus { border-color: var(--fxColorError); }
+.erro { min-height: 20px; color: var(--fxColorError); font-size: var(--fxFontSizeTableSmall); }
+.ajuda { color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeTableSmall); }
+.w180 { width: 180px; } .w300 { width: 300px; }
+.exportar { height: var(--fxFilterHeight); margin-left: auto; }
+
+/* action bar: bulk-selection + new */
+.barra-acoes { display: flex; align-items: center; height: var(--fxBtnHeight); margin-top: var(--fxLayoutGutter); }
+.lote { display: flex; align-items: center; gap: 20px; }
+.chk { display: flex; align-items: center; gap: 10px; font-size: var(--fxFontSizeFilter); }
+input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var(--fxColorPrimary); }
+.lote-contador { min-width: 230px; color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeFilter); }
+.lote .btn { height: 40px; }
+.barra-acoes > .btn:last-child { margin-left: auto; }
+
+/* table-gallery, column-sort, expandable-row, status-badge */
+.gal { margin-top: var(--fxLayoutGutter); border: 1px solid var(--fxColorBorder); background: var(--fxColorSurface); }
+.gal-cab, .linha-topo { display: grid; align-items: center; }
+.gal-pedidos .gal-cab, .gal-pedidos .linha-topo { grid-template-columns: 44px 120px 195px 1fr 90px 130px 150px 115px 343px 44px; }
+.gal-pedidos.sem-lote .gal-cab, .gal-pedidos.sem-lote .linha-topo { grid-template-columns: 16px 120px 195px 1fr 90px 130px 150px 115px 343px 44px; }
+.gal-recentes .gal-cab, .gal-recentes .linha-topo { grid-template-columns: 130px 230px 1fr 100px 150px 120px 130px; }
+.gal-hist .gal-cab, .gal-hist .linha-topo { grid-template-columns: 150px 200px 180px 1fr; }
+.gal-unidades { width: 1000px; }
+.gal-unidades .gal-cab, .gal-unidades .linha-topo { grid-template-columns: 200px repeat(5, 1fr); white-space: nowrap; }
+.gal-unidades .gal-corpo { height: auto; overflow: visible; }
+.gal-cab { height: var(--fxTableHeaderHeight); overflow-y: hidden; scrollbar-gutter: stable; background: var(--fxColorTableHeaderBg); color: var(--fxColorTableHeaderText); font-weight: 700; font-size: var(--fxFontSizeHeader); }
+.gal-cab > span { display: flex; align-items: center; height: 100%; padding: 0 12px; }
+.gal-cab > span.ord-cel { padding: 0; }
+.ord { width: 100%; height: 100%; padding: 0 12px; border: 0; background: var(--fxColorTableHeaderBg); color: var(--fxColorTableHeaderText); font-weight: 700; text-align: left; }
+.ord:hover { filter: brightness(0.95); }
+.gal-corpo { height: 550px; overflow-y: auto; scrollbar-gutter: stable; }
+.gal-recentes .gal-corpo { height: auto; overflow: visible; }
+.gal-recentes .gal-cab, .gal-unidades .gal-cab { scrollbar-gutter: auto; } /* no scroll, no gutter: the header lines up with the cell */
+.linha { height: var(--fxRowHeight); border-bottom: 1px solid var(--fxColorDivider); }
+.gal-expandida .linha { height: calc(var(--fxRowHeight) * 4); }
+.linha-topo { height: var(--fxRowHeight); cursor: pointer; }
+.linha-simples { border-bottom: 1px solid var(--fxColorDivider); cursor: default; }
+.linha-topo:hover, .linha.aberta .linha-topo { background: var(--fxColorPrimaryLight); }
+.cel { overflow: hidden; padding: 0 12px; color: var(--fxColorTextBody); font-size: var(--fxFontSizeTable); text-overflow: ellipsis; white-space: nowrap; }
+.cel-prot { color: var(--fxColorPrimary); font-weight: 600; }
+.cel-chk { display: flex; justify-content: center; padding: 0; }
+.sem-lote .cel-chk input { display: none; }
+.cel-status { display: flex; justify-content: center; padding: 0 8px; }
+.cel-acoes { display: grid; grid-template-columns: 84px 60px 84px 84px; gap: 5px; padding: 0 8px; overflow: visible; }
+.gal-recentes .cel-acoes { grid-template-columns: 84px; }
+.cel-acoes .btn-linha { padding: 0; }
+.cel-exp { display: flex; justify-content: center; padding: 0; }
+.dir { justify-content: flex-end; text-align: right; }
+.dir .ord { text-align: right; }
+.centro .ord { text-align: center; }
+.centro { justify-content: center; text-align: center; }
+.num { color: var(--fxColorTextPrimary); font-variant-numeric: tabular-nums; }
+.peq { color: var(--fxColorTextPrimary); font-size: var(--fxFontSizeTableSmall); }
+.btn-exp { width: 32px; height: 32px; border: 0; border-radius: var(--fxBtnRadius); background: var(--fxColorTransparent); color: var(--fxColorPrimary); font-weight: 700; font-size: var(--fxFontSizeBody); }
+.linha-detalhe { display: grid; grid-template-columns: 200px 200px 180px 1fr; gap: 6px 24px; height: calc(var(--fxRowHeight) * 3); padding: 14px 16px; background: var(--fxColorBackground); font-size: var(--fxFontSizeTableSmall); }
+.linha-detalhe span, .det-grade dt { color: var(--fxColorTextSecondary); font-weight: 600; font-size: var(--fxFontSizeTableSmall); }
+.linha-detalhe strong { display: block; margin-top: 4px; color: var(--fxColorTextBody); font-weight: 400; }
+.badge { display: inline-flex; align-items: center; justify-content: center; width: 134px; height: var(--fxPillHeight); border-radius: calc(var(--fxPillHeight) / 2); font-weight: 600; font-size: var(--fxFontSizeTableSmall); }
+
+/* empty-state, cursor-pagination, count-footer */
+.vazio { padding: 80px 20px 0; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeBody); text-align: center; white-space: pre-line; line-height: 1.6; }
+.gal-recentes .vazio { padding: 40px 20px; }
+.gal-rodape { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 34px; margin-top: 8px; }
+.pag { display: flex; align-items: center; gap: 10px; }
+.pag .btn { width: 150px; height: 34px; }
+.pag-txt { width: 160px; text-align: center; font-size: var(--fxFontSizeBody); }
+.rodape { justify-self: end; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeTableSmall); }
+
+/* modals: scrim + card (the scrim blocks the click, like the transparent button in Canvas) */
+.veu { position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: var(--fxColorOverlayDark); }
+.card { display: flex; flex-direction: column; padding: var(--fxModalPadding); border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); box-shadow: 0 16px 40px -8px var(--fxColorOverlay); }
+.card:focus-visible { outline-offset: 4px; }
+.card h2 { color: var(--fxColorPrimaryDark); font-weight: 700; font-size: var(--fxModalTitleSize); line-height: 32px; }
+.card h2.destrutivo { color: var(--fxColorError); }
+.card-s { width: var(--fxModalWidthS); min-height: 240px; }
+.card-m { width: var(--fxModalWidthM); min-height: 340px; }
+.card-l { width: var(--fxModalWidthL); }
+.card-xl { width: calc(var(--fxModalWidthL) + 260px); min-height: 560px; }
+.card-msg { margin: 18px 0 20px; color: var(--fxColorTextBody); font-size: var(--fxFontSizeBody); line-height: 1.45; }
+.card-botoes { display: flex; gap: var(--fxModalPadding); margin-top: auto; padding-top: var(--fxModalPadding); }
+.card-botoes .btn { flex: 1; min-width: 0; padding: 0 8px; }
+.card-botoes.centro .btn { flex: 0 0 var(--fxBtnWidth); }
+.obrig-nota { margin: 2px 0 16px; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeTableSmall); }
+.form-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 30px; }
+.form-grade .campo { gap: 6px; }
+.form-grade .campo-largo { grid-column: 1 / -1; }
+.det-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 24px; margin: 16px 0 18px; }
+.det-grade dd { margin-top: 4px; color: var(--fxColorTextPrimary); font-size: var(--fxFontSizeTable); }
+.det-grade .largo { grid-column: 1 / -1; }
+.det-sub { margin-bottom: 8px; color: var(--fxColorTextPrimary); font-size: var(--fxFontSizeBody); }
+.gal-hist { margin-top: 0; }
+.gal-hist .gal-corpo { height: 200px; }
+.gal-hist .linha-topo { height: auto; min-height: var(--fxRowHeight); padding: 6px 0; cursor: default; border-bottom: 1px solid var(--fxColorDivider); }
+.gal-hist .cel { white-space: normal; } /* flexible gallery: the reason wraps, it does not disappear */
+.gal-hist .linha-topo:hover { background: var(--fxColorTransparent); }
+
+/* loading-overlay (the spinner is the only continuous animation) */
+.loading { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: var(--fxColorOverlay); }
+.loading-card { display: flex; flex-direction: column; align-items: center; gap: 10px; width: var(--fxLoadingCardWidth); height: var(--fxLoadingCardHeight); padding: 20px 10px 0; border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); box-shadow: 0 16px 40px -8px var(--fxColorOverlay); }
+.spinner { width: var(--fxLoadingSpinnerSize); height: var(--fxLoadingSpinnerSize); border: 6px solid var(--fxColorPrimaryLight); border-top-color: var(--fxColorPrimary); border-radius: 50%; animation: girar 0.9s linear infinite; }
+.loading-txt { color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeBody); text-align: center; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* toast (last in the order: above modal and loading) */
+.toast { position: absolute; top: 20px; right: 20px; z-index: 40; display: grid; grid-template-columns: 40px 1fr 30px; gap: 0 12px; width: var(--fxToastWidth); min-height: 80px; overflow: hidden; padding: 16px 10px 18px 18px; border-radius: var(--fxModalRadius); background: var(--fxColorToastBg); box-shadow: 0 16px 40px -8px var(--fxColorOverlay); opacity: 0; visibility: hidden; transition: opacity 0.2s ease-out, visibility 0.2s; }
+.toast.visivel { opacity: 1; visibility: visible; }
+.toast-acento { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+.toast-icone { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 20px; color: var(--fxColorTextOnPrimary); font-weight: 700; font-size: var(--fxFontSizeToastIcon); }
+.toast-titulo { color: var(--fxColorTextOnPrimary); font-weight: 700; font-size: var(--fxFontSizeToastTitle); line-height: 26px; }
+.toast-msg { margin-top: 2px; color: var(--fxColorToastText); font-size: var(--fxFontSizeToast); line-height: 1.4; white-space: pre-line; }
+.toast-fechar { width: 30px; height: 30px; border: 0; border-radius: 15px; background: var(--fxColorTransparent); color: var(--fxColorToastText); font-size: var(--fxFontSizeBody); }
+.toast-fechar:hover { color: var(--fxColorTextOnPrimary); }
+.toast-trilha { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--fxColorToastTrack); }
+.toast-barra { display: block; width: 100%; height: 100%; }
+.toast-success .toast-acento, .toast-success .toast-icone, .toast-success .toast-barra { background: var(--fxColorSuccess); }
+.toast-warning .toast-acento, .toast-warning .toast-icone, .toast-warning .toast-barra { background: var(--fxColorWarning); }
+.toast-warning .toast-icone { color: var(--fxColorTextOnWarning); }
+.toast-error .toast-acento, .toast-error .toast-icone, .toast-error .toast-barra { background: var(--fxColorError); }
+
+/* no-access-panel */
+.sem-acesso { display: flex; flex-direction: column; align-items: center; height: 100%; padding-top: 400px; background: var(--fxColorBackground); text-align: center; }
+.sem-acesso h1 { width: 700px; color: var(--fxColorPrimary); font-weight: 700; font-size: var(--fxFontSizeSemAcesso); line-height: 40px; }
+.sem-acesso h1.so-permissao { color: var(--fxColorTextPrimary); font-weight: 400; font-size: var(--fxFontSizeBody); }
+.sem-acesso p { width: 700px; margin-top: 10px; color: var(--fxColorTextBody); font-size: var(--fxFontSizeBody); line-height: 1.5; }
+
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } .spinner { animation-duration: 2.4s; } }
+</style>
+</head>
+<body>
+<button type="button" class="pt-pular" data-acao="pular">Skip to content</button>
+
+<!-- ===== PROTOTYPE CONTROL BAR (outside the canvas) ===== -->
+<div class="pt-barra" data-prototipo-controles role="region" aria-label="Prototype controls">
+  <strong class="pt-aviso" data-prototipo-aviso>Prototype for validation — not the app</strong>
+  <label class="pt-campo">Role <select id="ctl-perfil"></select></label>
+  <label class="pt-campo">Unit <select id="ctl-unidade" aria-label="User unit"></select></label>
+  <label class="pt-campo">Flow response <select id="ctl-resposta"></select></label>
+  <label class="pt-campo">Latency <select id="ctl-latencia"></select></label>
+  <label class="pt-campo">Navigation <select id="ctl-nav"></select></label>
+  <div class="pt-dir">
+    <button type="button" class="pt-btn" data-acao="restaurar">Reset data</button>
+    <span class="pt-versao" id="pt-versao"></span>
+    <button type="button" class="pt-btn" id="pt-comparar-btn" data-prototipo-comparar data-acao="comparar" aria-expanded="false" aria-controls="pt-comparar">Compare with the mockup</button>
+    <button type="button" class="pt-btn pt-btn-forte" id="pt-roteiro-btn" data-acao="roteiro" aria-expanded="false" aria-controls="pt-roteiro">Validation walkthrough</button>
+  </div>
+  <aside class="pt-painel" id="pt-roteiro" aria-labelledby="pt-roteiro-titulo" hidden>
+    <div class="pt-painel-topo">
+      <h2 id="pt-roteiro-titulo" tabindex="-1">Validation walkthrough</h2>
+      <button type="button" class="pt-btn" data-acao="roteiro">Close</button>
+    </div>
+    <p class="pt-nota">Follow the steps for the role chosen in the bar. Write down whatever the user finds strange: it becomes a requirement or a story.</p>
+    <div id="roteiro-corpo"></div>
+  </aside>
+  <!-- compare: shows the approved mockup of the current screen (PASTA_MOCKUPS + id + ".png", relative path only) -->
+  <aside class="pt-painel pt-comparar" id="pt-comparar" aria-labelledby="pt-comparar-titulo" hidden>
+    <div class="pt-painel-topo">
+      <h2 id="pt-comparar-titulo" tabindex="-1">Approved mockup</h2>
+      <button type="button" class="pt-btn" data-acao="comparar">Close</button>
+    </div>
+    <p class="pt-nota">Compare it with the screen beside it. Where they diverge, the component catalog wins; record the divergence in the screen inventory.</p>
+    <label class="pt-mockup-campo" id="pt-mockup-campo" hidden>Mockup <select id="pt-mockup-sel"></select></label>
+    <img id="pt-mockup-img" alt="" hidden>
+    <p class="pt-erro" id="pt-mockup-erro" role="status" hidden></p>
+  </aside>
+</div>
+
+<div class="palco" id="palco">
+<main id="canvas" data-canvas="1920x1080" data-navegacao="lateral-fixo">
+
+  <!-- top-menu: horizontal bar; the items are generated from the side menu -->
+  <nav class="topo" id="menu-topo" data-componente="top-menu" aria-label="Main menu">
+    <div class="topo-titulo" id="topo-titulo"></div>
+    <ul class="topo-lista" id="topo-lista"></ul>
+    <div class="topo-usuario" id="topo-usuario"></div>
+  </nav>
+  <!-- side-menu, drawer variation: ☰ in the header corner and a scrim that closes on tap -->
+  <button type="button" class="nav-abrir" id="nav-abrir" data-componente="side-menu" data-acao="nav-alternar" aria-controls="menu" aria-expanded="false" aria-label="Open menu" title="Open menu">☰</button>
+  <div class="nav-veu" data-componente="side-menu" data-acao="nav-fechar"></div>
+
+  <!-- side-menu: disappears with varSemAcesso; item hidden without permission -->
+  <nav class="menu" id="menu" data-componente="side-menu" aria-label="Main menu">
+    <button type="button" class="menu-alternar" id="menu-alternar" data-acao="nav-alternar" aria-controls="menu" aria-expanded="false" aria-label="Expand menu" title="Expand menu">☰</button>
+    <button type="button" class="menu-fechar" data-acao="nav-fechar" aria-label="Close menu" title="Close menu">✕</button>
+    <svg class="menu-logo" viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="2" width="36" height="36" rx="9" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 29V11h7a5.5 5.5 0 0 1 0 11h-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>
+    <div class="menu-titulo" id="menu-titulo"></div>
+    <div class="menu-sub" id="menu-sub"></div>
+    <ul class="menu-lista">
+      <li><a class="menu-item" href="#/tela-inicio" data-alvo="tela-inicio">Home</a></li>
+      <li><a class="menu-item" href="#/tela-pedidos" data-alvo="tela-pedidos" data-descricao="Create, filter and track the orders of your unit.">Orders</a></li>
+    </ul>
+    <div class="menu-rodape"><div class="menu-usuario" id="menu-usuario"></div><div class="menu-perfil" id="menu-perfil"></div></div>
+  </nav>
+
+  <!-- ===== SCREEN: Home ===== -->
+  <section class="tela" id="tela-inicio" data-tela="tela-inicio" data-titulo="Home" data-perfis="administrador,gestor,operador" data-mockups="tl-03-home">
+    <header class="cab" data-componente="screen-header"><h1 tabindex="-1">Home</h1><span class="cab-usuario" data-usuario></span></header>
+    <div class="conteudo">
+      <!-- home-cards: only with data-navegacao="inicio-cartoes"; one card per menu item, except Home -->
+      <div class="cartoes" id="cartoes" data-componente="home-cards" role="list" aria-label="App areas"></div>
+      <div class="inicio-topo">
+        <div class="kpis" data-componente="kpi-card" role="group" aria-label="Scope summary">
+          <div class="kpi"><div class="kpi-titulo t-neutral">Total</div><div class="kpi-valor" data-kpi="total">0</div></div>
+          <div class="kpi"><div class="kpi-titulo t-info">Open</div><div class="kpi-valor" data-kpi="aberto">0</div></div>
+          <div class="kpi"><div class="kpi-titulo t-progress">In progress</div><div class="kpi-valor" data-kpi="em_andamento">0</div></div>
+          <div class="kpi"><div class="kpi-titulo t-success">Completed</div><div class="kpi-valor" data-kpi="encerrado">0</div></div>
+        </div>
+        <p class="escopo-txt" data-escopo></p>
+      </div>
+      <h2 class="secao">Shortcuts</h2>
+      <div class="atalhos" data-componente="buttons">
+        <button type="button" class="btn btn-primario" data-acao="novo" data-foco="novo-inicio" data-flag="flgCriar">New order</button>
+        <button type="button" class="btn btn-neutro" data-acao="ir-pedidos" data-aba="0">Open (<span data-atalho="aberto">0</span>)</button>
+        <button type="button" class="btn btn-neutro" data-acao="ir-pedidos" data-aba="1">In progress (<span data-atalho="em_andamento">0</span>)</button>
+        <button type="button" class="btn btn-neutro" data-acao="ir-pedidos" data-aba="3">All orders</button>
+      </div>
+      <h2 class="secao">Most recent</h2>
+      <div class="gal gal-recentes" data-componente="table-gallery" role="table" aria-label="Five most recent orders">
+        <div class="gal-cab" role="row"><span role="columnheader">Protocol</span><span role="columnheader">Requester</span><span role="columnheader">Description</span><span role="columnheader">Unit</span><span role="columnheader" class="centro">Status</span><span role="columnheader" class="centro">Created</span><span role="columnheader">Actions</span></div>
+        <div class="gal-corpo" role="rowgroup" id="recentes-linhas"></div>
+        <p class="vazio" data-componente="empty-state" id="recentes-vazio" hidden>No orders in scope.</p>
+      </div>
+      <h2 class="secao">By unit</h2>
+      <div class="gal gal-unidades" data-componente="table-gallery" role="table" aria-label="Orders by unit in scope">
+        <div class="gal-cab" role="row"><span role="columnheader">Unit</span><span role="columnheader" class="dir">Open</span><span role="columnheader" class="dir">In progress</span><span role="columnheader" class="dir">Completed</span><span role="columnheader" class="dir">Canceled</span><span role="columnheader" class="dir">Total</span></div>
+        <div class="gal-corpo" role="rowgroup" id="unidades-linhas"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCREEN: Orders ===== -->
+  <section class="tela" id="tela-pedidos" data-tela="tela-pedidos" data-titulo="Orders" data-perfis="administrador,gestor,operador" data-mockups="tl-01-orders-list,tl-01-list-confirm-close,tl-01-list-toast-success,tl-02-new-order" hidden>
+    <header class="cab" data-componente="screen-header"><button type="button" class="btn btn-inicio" data-componente="home-cards" data-acao="ir-inicio">‹ Home</button><h1 tabindex="-1">Orders</h1><span class="cab-usuario" data-usuario></span></header>
+    <div class="conteudo">
+      <div class="linha-abas">
+        <div class="abas" data-componente="tabs" role="tablist" aria-label="Order status">
+          <button type="button" class="aba" role="tab" data-acao="aba" data-aba="0" aria-controls="gal-pedidos"></button>
+          <button type="button" class="aba" role="tab" data-acao="aba" data-aba="1" aria-controls="gal-pedidos"></button>
+          <button type="button" class="aba" role="tab" data-acao="aba" data-aba="2" aria-controls="gal-pedidos"></button>
+          <button type="button" class="aba" role="tab" data-acao="aba" data-aba="3" aria-controls="gal-pedidos"></button>
+        </div>
+        <div class="seletor" data-componente="unit-selector">
+          <label class="seletor-escopo" for="sel-unidade" data-escopo></label>
+          <select class="combo w180" id="sel-unidade" data-flag="flgGlobal"></select>
+        </div>
+      </div>
+      <form class="filtros" id="form-filtros" data-componente="filter-bar" aria-label="Filters (applied when you click Filter)">
+        <div class="campo"><label for="f-status">Status</label><select class="combo w180" id="f-status"></select></div>
+        <div class="campo"><label for="f-busca">Protocol or requester</label><input class="texto w300" id="f-busca" placeholder="E.g.: PD-0001 or Contoso" autocomplete="off"></div>
+        <div class="campo"><label for="f-de">From</label><input type="date" class="combo w180" id="f-de"></div>
+        <div class="campo"><label for="f-ate">To</label><input type="date" class="combo w180" id="f-ate"></div>
+        <button type="submit" class="btn btn-primario btn-filtro" data-fx="fxTxtFiltrar">Filter</button>
+        <button type="button" class="btn btn-secundario btn-filtro" data-acao="limpar" data-fx="fxTxtLimpar">Clear</button>
+        <button type="button" class="btn btn-primario exportar" id="btn-exportar" data-componente="export" data-acao="exportar" data-foco="exportar" data-flag="flgExportar" data-fx="fxTxtExportar">Export</button>
+      </form>
+      <div class="barra-acoes">
+        <div class="lote" data-componente="bulk-selection" data-flag="flgEncerrar">
+          <label class="chk"><input type="checkbox" id="chk-todos" data-foco="chk-todos"> Select all</label>
+          <span class="lote-contador" id="lote-contador" aria-live="polite"></span>
+          <button type="button" class="btn btn-primario" id="btn-lote" data-acao="lote" data-foco="lote" disabled>Complete selected</button>
+        </div>
+        <button type="button" class="btn btn-primario" data-acao="novo" data-foco="novo-pedidos" data-flag="flgCriar">New order</button>
+      </div>
+      <div class="gal gal-pedidos" id="gal-pedidos" data-componente="table-gallery" role="table" aria-label="Orders" aria-describedby="rodape">
+        <div class="gal-cab" role="row">
+          <span role="columnheader"><span class="sr">Selection</span></span>
+          <span role="columnheader" class="ord-cel" data-componente="column-sort" data-coluna="protocolo"><button type="button" class="ord" data-acao="ordenar" data-coluna="protocolo">Protocol</button></span>
+          <span role="columnheader" class="ord-cel" data-componente="column-sort" data-coluna="solicitante"><button type="button" class="ord" data-acao="ordenar" data-coluna="solicitante">Requester</button></span>
+          <span role="columnheader">Description</span>
+          <span role="columnheader">Unit</span>
+          <span role="columnheader" class="ord-cel dir" data-componente="column-sort" data-coluna="valor"><button type="button" class="ord" data-acao="ordenar" data-coluna="valor">Amount</button></span>
+          <span role="columnheader" class="centro">Status</span>
+          <span role="columnheader" class="ord-cel centro" data-componente="column-sort" data-coluna="dtInclusao"><button type="button" class="ord" data-acao="ordenar" data-coluna="dtInclusao">Created</button></span>
+          <span role="columnheader">Actions</span>
+          <span role="columnheader"><span class="sr">Details</span></span>
+        </div>
+        <div class="gal-corpo" id="gal-corpo">
+          <div role="rowgroup" id="gal-linhas"></div>
+          <p class="vazio" id="gal-vazio" data-componente="empty-state" hidden></p>
+        </div>
+      </div>
+      <div class="gal-rodape">
+        <span></span>
+        <div class="pag" data-componente="cursor-pagination" role="group" aria-label="Pagination">
+          <button type="button" class="btn btn-neutro" data-acao="pag-ant" data-foco="pag-ant" data-fx="fxTxtAnterior">‹ Previous</button>
+          <span class="pag-txt" id="pag-txt" aria-live="polite"></span>
+          <button type="button" class="btn btn-neutro" data-acao="pag-prox" data-foco="pag-prox" data-fx="fxTxtProxima">Next ›</button>
+        </div>
+        <p class="rodape" id="rodape" data-componente="count-footer"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCREEN: no access (fail-closed; also covers a screen without permission) ===== -->
+  <section class="tela" id="tela-sem-acesso" data-tela="tela-sem-acesso" data-titulo="No access" data-perfis="administrador,gestor,operador,sem-acesso" data-mockups="tl-00-no-access" hidden>
+    <div class="sem-acesso" data-componente="no-access-panel">
+      <h1 tabindex="-1" id="sa-titulo">Access not granted</h1>
+      <p id="sa-hint">Your user has no role or unit assigned. Contact the app administrator.</p>
+    </div>
+  </section>
+
+  <!-- ===== MODALS (z-order: content, no access, modals, loading, toast) ===== -->
+  <div class="veu" id="mod-form" data-componente="form-modal" hidden>
+    <form class="card card-l" id="form-pedido" role="dialog" aria-modal="true" aria-labelledby="form-titulo" tabindex="-1" novalidate>
+      <h2 id="form-titulo">New order</h2>
+      <p class="obrig-nota">Fields marked with * are required.</p>
+      <div class="form-grade">
+        <div class="campo"><label for="ff-unidade">Unit *</label><select class="combo" id="ff-unidade" aria-describedby="er-unidade"></select><span class="erro" id="er-unidade" aria-live="polite"></span></div>
+        <div class="campo"><label for="ff-solicitante">Requester *</label><select class="combo" id="ff-solicitante" aria-describedby="er-solicitante"></select><span class="erro" id="er-solicitante" aria-live="polite"></span></div>
+        <div class="campo"><label for="ff-valor">Amount ($) *</label><input class="texto" id="ff-valor" inputmode="decimal" placeholder="0.00" autocomplete="off" aria-describedby="er-valor"><span class="erro" id="er-valor" aria-live="polite"></span></div>
+        <div class="campo campo-largo"><label for="ff-descricao">Description *</label><textarea class="texto" id="ff-descricao" rows="4" maxlength="1000" placeholder="At least 10 characters" aria-describedby="er-descricao"></textarea><span class="erro" id="er-descricao" aria-live="polite"></span></div>
+      </div>
+      <div class="card-botoes">
+        <button type="button" class="btn btn-secundario" data-acao="fechar" data-fx="fxTxtCancelar">Cancel</button>
+        <button type="submit" class="btn btn-primario" data-fx="fxTxtSalvar">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="veu" id="mod-confirmar" data-componente="confirm-modal" hidden>
+    <div class="card card-s" role="dialog" aria-modal="true" aria-labelledby="conf-titulo" aria-describedby="conf-msg" tabindex="-1">
+      <h2 id="conf-titulo">Complete the order</h2>
+      <p class="card-msg" id="conf-msg"></p>
+      <div class="card-botoes">
+        <button type="button" class="btn btn-secundario" data-acao="fechar" data-fx="fxTxtVoltar">Back</button>
+        <button type="button" class="btn btn-primario" data-acao="confirmar-ok" data-fx="fxTxtEncerrar">Complete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="veu" id="mod-cancelar" data-componente="destructive-reason-modal" hidden>
+    <div class="card card-m" role="dialog" aria-modal="true" aria-labelledby="canc-titulo" aria-describedby="canc-msg" tabindex="-1">
+      <h2 class="destrutivo" id="canc-titulo">Cancel the order</h2>
+      <p class="card-msg" id="canc-msg"></p>
+      <div class="campo">
+        <label for="canc-motivo">Reason (required)</label>
+        <textarea class="texto" id="canc-motivo" rows="3" maxlength="500" placeholder="Describe the reason (at least 5 characters)" aria-describedby="canc-ajuda"></textarea>
+        <span class="ajuda" id="canc-ajuda" aria-live="polite"></span>
+      </div>
+      <div class="card-botoes">
+        <button type="button" class="btn btn-secundario" data-acao="fechar" data-fx="fxTxtVoltar">Back</button>
+        <button type="button" class="btn btn-destrutivo" id="canc-ok" data-acao="cancelar-ok" disabled>Confirm cancellation</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="veu" id="mod-detalhes" data-componente="info-modal" hidden>
+    <div class="card card-xl" role="dialog" aria-modal="true" aria-labelledby="det-titulo" tabindex="-1">
+      <h2 id="det-titulo"></h2>
+      <dl class="det-grade">
+        <div><dt>Requester</dt><dd data-det="solicitante"></dd></div> <div><dt>Unit</dt><dd data-det="unidade"></dd></div> <div><dt>Amount</dt><dd data-det="valor"></dd></div>
+        <div><dt>Status</dt><dd><span class="badge" data-componente="status-badge" id="det-status"></span></dd></div> <div><dt>Owner</dt><dd data-det="responsavel"></dd></div> <div><dt>Created</dt><dd data-det="inclusao"></dd></div>
+        <div><dt>Last updated</dt><dd data-det="alteracao"></dd></div> <div><dt>Events</dt><dd data-det="eventos"></dd></div> <div class="largo"><dt>Description</dt><dd data-det="descricao"></dd></div>
+      </dl>
+      <h3 class="det-sub">History</h3>
+      <div class="gal gal-hist" role="table" aria-label="Order history">
+        <div class="gal-cab" role="row"><span role="columnheader">Date</span><span role="columnheader">Event</span><span role="columnheader">User</span><span role="columnheader">Description</span></div>
+        <div class="gal-corpo" role="rowgroup" id="det-hist"></div>
+      </div>
+      <div class="card-botoes centro"><button type="button" class="btn btn-secundario" data-acao="fechar" data-fx="fxTxtFechar">Close</button></div>
+    </div>
+  </div>
+
+  <!-- loading-overlay: blocks interaction while the flow runs -->
+  <div class="loading" id="loading" data-componente="loading-overlay" hidden>
+    <div class="loading-card" role="status"><div class="spinner" aria-hidden="true"></div><p class="loading-txt" id="loading-txt">Processing, please wait...</p></div>
+  </div>
+
+  <!-- toast: reads the description from the flow response -->
+  <div class="toast" id="toast" data-componente="toast" role="status" aria-live="polite" aria-atomic="true">
+    <span class="toast-acento" aria-hidden="true"></span>
+    <span class="toast-icone" aria-hidden="true"></span>
+    <div><p class="toast-titulo"></p><p class="toast-msg"></p></div>
+    <button type="button" class="toast-fechar" data-acao="toast-fechar" aria-label="Close notification" title="Close notification">✕</button>
+    <span class="toast-trilha" aria-hidden="true"><span class="toast-barra"></span></span>
+  </div>
+</main>
+</div>
+
+<!-- row templates: the JS clones them; the data-componente values stay visible in the HTML -->
+<template id="tpl-linha">
+  <div class="linha" role="none" data-componente="expandable-row">
+    <div class="linha-topo" role="row">
+      <span class="cel cel-chk" role="cell"><input type="checkbox" class="chk-linha" data-componente="bulk-selection"></span>
+      <span class="cel cel-prot" role="cell" data-campo="protocolo"></span>
+      <span class="cel" role="cell" data-campo="solicitante"></span>
+      <span class="cel" role="cell" data-campo="descricao"></span>
+      <span class="cel" role="cell" data-campo="unidade"></span>
+      <span class="cel dir num" role="cell" data-campo="valor"></span>
+      <span class="cel cel-status" role="cell"><span class="badge" data-componente="status-badge"></span></span>
+      <span class="cel centro peq" role="cell" data-campo="inclusao"></span>
+      <span class="cel cel-acoes" role="cell" data-componente="buttons">
+        <button type="button" class="btn btn-secundario btn-linha" data-acao="detalhes">Details</button>
+        <button type="button" class="btn btn-neutro btn-linha" data-acao="editar">Edit</button>
+        <button type="button" class="btn btn-primario btn-linha" data-acao="avancar"></button>
+        <button type="button" class="btn btn-destrutivo btn-linha" data-acao="cancelar">Cancel</button>
+      </span>
+      <span class="cel cel-exp" role="cell"><button type="button" class="btn-exp" data-acao="expandir" aria-expanded="false">▾</button></span>
+    </div>
+    <div class="linha-detalhe" role="row" hidden>
+      <div role="cell"><span>Owner</span><strong data-campo="responsavel"></strong></div>
+      <div role="cell"><span>Last updated</span><strong data-campo="alteracao"></strong></div>
+      <div role="cell"><span>History</span><strong data-campo="eventos"></strong></div>
+      <div role="cell"><span>Full description</span><strong data-campo="descricao"></strong></div>
+    </div>
+  </div>
+</template>
+<template id="tpl-recente">
+  <div class="linha-topo linha-simples" role="row">
+    <span class="cel cel-prot" role="cell" data-campo="protocolo"></span>
+    <span class="cel" role="cell" data-campo="solicitante"></span>
+    <span class="cel" role="cell" data-campo="descricao"></span>
+    <span class="cel" role="cell" data-campo="unidade"></span>
+    <span class="cel cel-status" role="cell"><span class="badge" data-componente="status-badge"></span></span>
+    <span class="cel centro peq" role="cell" data-campo="inclusao"></span>
+    <span class="cel cel-acoes" role="cell"><button type="button" class="btn btn-secundario btn-linha" data-acao="detalhes">Details</button></span>
+  </div>
+</template>
+
+<script>
+'use strict';
+/* ===== 1. PROJECT CONSTANTS (change them here when adapting) ===== */
+const PROJETO = { nome: 'Order Management', modulo: 'Clickable prototype', versao: 'v1', chave: 'prototipo-pedidos' };
+// navigation pattern decided in /pp-en:design (ux-design-system.md §2.1)
+const NAVEGACAO = 'lateral-fixo';
+const PADROES_NAV = [
+  { id: 'lateral-fixo', rotulo: 'Fixed side menu' },
+  { id: 'lateral-recolhivel', rotulo: 'Collapsible side menu' },
+  { id: 'gaveta', rotulo: 'Drawer (hamburger)' },
+  { id: 'topo', rotulo: 'Top bar' },
+  { id: 'inicio-cartoes', rotulo: 'Home screen with cards' }
+];
+const PASTA_MOCKUPS = "../mockups/"; // relative to the prototype: docs/planning/prototype/ -> docs/planning/mockups/
+const UNIDADES = ['AAA', 'BBB', 'CCC'];
+// the screen reads the flag, never the role name; null = no role (fail-closed)
+const PERFIS = {
+  administrador: { rotulo: 'Administrator', flgCriar: true, flgEditar: true, flgEncerrar: true, flgCancelar: true, flgExportar: true, flgGlobal: true },
+  gestor: { rotulo: 'Manager', flgCriar: true, flgEditar: true, flgEncerrar: true, flgCancelar: true, flgExportar: true, flgGlobal: false },
+  operador: { rotulo: 'Operator', flgCriar: true, flgEditar: true, flgEncerrar: false, flgCancelar: false, flgExportar: false, flgGlobal: false },
+  'sem-acesso': null
+};
+const STATUS = {
+  aberto: { rotulo: 'Open', tom: 'info' },
+  em_andamento: { rotulo: 'In progress', tom: 'progress' },
+  encerrado: { rotulo: 'Completed', tom: 'success' },
+  cancelado: { rotulo: 'Canceled', tom: 'neutral' }
+};
+const SEMENTE = 20261001;
+const ROTEIRO = {
+  administrador: [
+    'On each screen, open "Compare with the mockup": the screen must reproduce the approved image; note the divergences.',
+    'On Home, check the cards and the 5 most recent orders in the "all units" scope.',
+    'On Orders, switch the unit selector to BBB: cards, tabs, list and footer now count only BBB.',
+    'Click "New order" and Save without filling anything in: each field shows its error. Then create the order.',
+    'Edit the order, click Start and then Complete (it asks for confirmation).',
+    'Cancel an open order: the button only enables after 5 characters of reason.',
+    'Check 3 orders and use "Complete selected".',
+    'Expand a row: all rows grow, because in Canvas the item height belongs to the gallery.',
+    'Filter by "Contoso" and by a date range: nothing changes until you click Filter.',
+    'Sort by Amount (▲/▼), go to the next page and export the CSV of the filtered set.',
+    'In the bar, set Flow response = error and repeat an action: nothing is saved. With timeout, check the list before repeating.'
+  ],
+  gestor: [
+    'The scope stays fixed on the user\'s unit: there is no unit selector.',
+    'Orders from other units do not show up; change the unit in the bar and watch the list change.',
+    'Open #/tela-pedidos straight from the address bar: the deep link opens the list; the browser back button works.',
+    'With Flow response = warning, complete 4 selected orders: only part is saved and the toast explains.'
+  ],
+  operador: [
+    'There is no Complete, Cancel, Export or bulk selection: the screen hides them by the flag.',
+    'As a manager, open Cancel on an order; switch the role to operator in the bar and confirm: the flow denies it too.'
+  ],
+  'sem-acesso': [
+    'Any address falls on the "Access not granted" panel and the menu disappears.',
+    'Go back to a valid role: the screen requested in the address reappears.'
+  ]
+};
+// texts and times with the same names and values as the fx* tokens (app-formulas-tokens.md)
+const fx = {
+  fxTxtVoltar: 'Back', fxTxtFechar: 'Close', fxTxtCancelar: 'Cancel', fxTxtSalvar: 'Save', fxTxtEncerrar: 'Complete',
+  fxTxtFiltrar: 'Filter', fxTxtLimpar: 'Clear', fxTxtProcessando: 'Processing...', fxTxtExportar: 'Export',
+  fxTxtToastSuccess: 'Success', fxTxtToastWarning: 'Partially completed', fxTxtToastError: 'Error',
+  fxTxtOrdemAsc: ' ▲', fxTxtOrdemDesc: ' ▼', fxTxtAnterior: '‹ Previous', fxTxtProxima: 'Next ›', fxTxtExibindo: 'Showing', fxTxtTeto: '2,000+',
+  fxMsgLoadingDefault: 'Processing, please wait...',
+  fxMsgNoResultsError: 'No results found.', fxMsgNoResultsHint: 'Review the filters and try again.',
+  fxMsgFalhaFlow: 'The operation could not be completed. Nothing was saved.', fxMsgFalhaFlowHint: 'Try again; if it persists, contact support.',
+  fxMsgTimeoutError: 'The operation took longer than expected.', fxMsgTimeoutHint: 'Check the result in the list before repeating.',
+  fxMsgSemPermissao: 'You do not have permission for this action.',
+  fxMsgSemAcessoTitulo: 'Access not granted', fxMsgSemAcessoHint: 'Your user has no role or unit assigned. Contact the app administrator.',
+  fxMsgCampoObrigatorio: 'Fill in the required fields.', fxMsgFormatoInvalido: 'Invalid format. Review the value entered.',
+  fxMsgSalvoComSucesso: 'Record saved successfully.',
+  fxToastDurationShort: 6000, fxToastDurationLong: 12000, fxToastDurationError: 15000, fxLimiteLinhas: 2000
+};
+const ABAS = [
+  { rotulo: 'Open', status: 'aberto', conta: 'aberto' },
+  { rotulo: 'In progress', status: 'em_andamento', conta: 'em_andamento' },
+  { rotulo: 'Completed', status: 'encerrado', conta: 'encerrado' },
+  { rotulo: 'All', status: '', conta: 'total' }
+];
+const RESPOSTAS = ['success', 'warning', 'error', 'timeout'];
+const LATENCIAS = [{ ms: 300, rotulo: '0.3 s' }, { ms: 1500, rotulo: '1.5 s' }, { ms: 4000, rotulo: '4 s' }];
+const PAGINA = 20;            // in the real app the page size is fxPageSize
+const MOTIVO_MIN = 5;             // same as the catalog (destructive-reason-modal) and the flow
+const DESCRICAO_MIN = 10;
+const QTD_SEMENTE = 60;
+const DATA_BASE = '2026-09-30T18:00:00';
+const DIA_MS = 86400000;
+const ATIVOS = ['aberto', 'em_andamento'];
+const SOLICITANTES = ['Contoso', 'Fabrikam', 'Northwind Traders', 'Adventure Works', 'Tailspin Toys', 'Wide World Importers', 'Woodgrove Bank', 'Litware', 'Proseware', 'Fourth Coffee', 'Relecloud'];
+const DESCRICOES = ['Office supplies restock', 'Preventive maintenance of equipment', 'Purchase of software licenses', 'Document courier service', 'Customer service team training', 'Furniture for the meeting room', 'Technical support contract renewal', 'Network drops on the second floor', 'Printer cartridge and toner replacement', 'Extra cleaning service contract'];
+const MOTIVOS = ['Order duplicated in the system', 'Requester gave up on the purchase', 'Budget not approved this month'];
+const CHAVE_DADOS = PROJETO.chave + ':dados:v1';
+const CHAVE_CONTROLES = PROJETO.chave + ':controles:v1';
+
+/* ===== 2. UTILITIES ===== */
+const $ = (sel, raiz = document) => raiz.querySelector(sel);
+const $$ = (sel, raiz = document) => [...raiz.querySelectorAll(sel)];
+const porId = id => document.getElementById(id);
+const esperar = ms => new Promise(ok => setTimeout(ok, ms));
+const moeda = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const dois = n => String(n).padStart(2, '0');
+const isoLocal = d => `${d.getFullYear()}-${dois(d.getMonth() + 1)}-${dois(d.getDate())}T${dois(d.getHours())}:${dois(d.getMinutes())}:00`;
+const fmtData = iso => `${iso.slice(5, 7)}/${iso.slice(8, 10)}/${iso.slice(0, 4)}`;
+const fmtDataHora = iso => `${fmtData(iso)} ${iso.slice(11, 16)}`;
+const fmtN = n => (n >= fx.fxLimiteLinhas ? fx.fxTxtTeto : n.toLocaleString('en-US'));
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const protocolo = id => 'PD-' + String(id + 100).padStart(6, '0');
+const rotuloStatus = s => (STATUS[s] ? STATUS[s].rotulo : s);
+const opcao = (valor, texto) => Object.assign(document.createElement('option'), { value: valor, textContent: texto });
+const perfilAtual = () => PERFIS[estado.perfil];
+const flag = nome => Boolean(perfilAtual() && perfilAtual()[nome]);
+const usuario = () => (perfilAtual() ? `${perfilAtual().rotulo} ${estado.lotacao}` : `User ${estado.lotacao}`);
+const buscar = id => DADOS.pedidos.find(p => p.id === id);
+const escopoPadrao = () => (flag('flgGlobal') ? '' : estado.lotacao);
+function prng(semente) { // mulberry32: same seed, same data
+  let a = semente >>> 0;
+  return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const armazenamento = { // the page works without storage (private mode, blocked file)
+  ler(chave) { try { return JSON.parse(localStorage.getItem(chave)); } catch (erro) { return null; } },
+  gravar(chave, valor) { try { localStorage.setItem(chave, JSON.stringify(valor)); } catch (erro) { /* no storage: carries on in memory */ } }
+};
+
+/* ===== 3. DATA (deterministic seed + local persistence) ===== */
+const evento = (dt, quem, acao, de, para, motivo) => ({ dt, usuario: quem, acao, de, para, motivo });
+function gerarPedidos() {
+  const sortear = prng(SEMENTE);
+  const pegar = lista => lista[Math.floor(sortear() * lista.length)];
+  const base = new Date(DATA_BASE).getTime();
+  const pedidos = [];
+  for (let id = 1; id <= QTD_SEMENTE; id++) {
+    const unidade = UNIDADES[(id - 1) % UNIDADES.length];
+    let t = base - Math.floor((2 + sortear() * 88) * DIA_MS);
+    const passo = () => { t = Math.min(base, t + Math.floor((0.2 + sortear() * 2) * DIA_MS)); return isoLocal(new Date(t)); };
+    const sorteio = sortear();
+    const status = sorteio < 0.35 ? 'aberto' : sorteio < 0.65 ? 'em_andamento' : sorteio < 0.9 ? 'encerrado' : 'cancelado';
+    const historico = [evento(isoLocal(new Date(t)), `Operator ${unidade}`, 'Creation', '', 'aberto', '')];
+    if (status === 'em_andamento' || status === 'encerrado') historico.push(evento(passo(), `Manager ${unidade}`, 'Service started', 'aberto', 'em_andamento', ''));
+    if (status === 'encerrado') historico.push(evento(passo(), `Manager ${unidade}`, 'Completion', 'em_andamento', 'encerrado', ''));
+    if (status === 'cancelado') historico.push(evento(passo(), `Manager ${unidade}`, 'Cancellation', 'aberto', 'cancelado', pegar(MOTIVOS)));
+    pedidos.push({
+      id, protocolo: protocolo(id), unidade, solicitante: pegar(SOLICITANTES), descricao: pegar(DESCRICOES),
+      valor: Math.round((350 + sortear() * 24000) * 100) / 100, dtInclusao: historico[0].dt,
+      dtAlteracao: historico[historico.length - 1].dt, status, responsavel: `Operator ${unidade}`, historico
+    });
+  }
+  return { pedidos, proximoId: QTD_SEMENTE + 1 };
+}
+function carregarDados() {
+  const salvo = armazenamento.ler(CHAVE_DADOS);
+  return salvo && Array.isArray(salvo.pedidos) && Number.isInteger(salvo.proximoId) ? salvo : gerarPedidos();
+}
+const salvarDados = () => armazenamento.gravar(CHAVE_DADOS, DADOS);
+// immutable write: swaps the order object and appends the event to the history
+function alterarPedido(id, mudanca, acao, motivo = '') {
+  const agora = isoLocal(new Date());
+  DADOS = { ...DADOS, pedidos: DADOS.pedidos.map(p => {
+    if (p.id !== id) return p;
+    const novo = { ...p, ...mudanca, dtAlteracao: agora };
+    return { ...novo, historico: [...p.historico, evento(agora, usuario(), acao, p.status, novo.status, motivo)] };
+  }) };
+}
+
+/* ===== 4. SCREEN STATE (equivalent to the var* variables of OnStart) ===== */
+let DADOS = carregarDados();
+const estado = {
+  perfil: 'administrador', lotacao: 'AAA', resposta: 'success', latencia: 1500,
+  unidadeFiltro: '', aba: 0, filtros: { status: '', busca: '', de: '', ate: '' }, ordem: { coluna: 'dtInclusao', asc: false },
+  pagina: 1, selecionados: new Set(), expandida: null, pedidoSel: null, confirmarIds: [], formModo: 'criar',
+  tentouSalvar: false, modal: null, abridor: null, focoAntes: null, carregando: false, tela: 'tela-inicio',
+  nav: NAVEGACAO, navAberta: false // navAberta = varNavExpandida: collapsible expanded or drawer open
+};
+const criterioAtual = () => ({ unidade: estado.unidadeFiltro, aba: ABAS[estado.aba].status, ...estado.filtros });
+function filtrar(lista, c) {
+  const busca = norm(c.busca || '');
+  return lista.filter(p => (!c.unidade || p.unidade === c.unidade) && (!c.aba || p.status === c.aba)
+    && (!c.status || p.status === c.status)
+    && (!busca || norm(p.protocolo).startsWith(busca) || norm(p.solicitante).startsWith(busca))
+    && (!c.de || p.dtInclusao.slice(0, 10) >= c.de) && (!c.ate || p.dtInclusao.slice(0, 10) <= c.ate));
+}
+function ordenar(lista, { coluna, asc }) {
+  return [...lista].sort((a, b) => {
+    const r = typeof a[coluna] === 'number' ? a[coluna] - b[coluna] : String(a[coluna]).localeCompare(String(b[coluna]), 'en-US');
+    return asc ? r : -r;
+  });
+}
+function contar() {
+  const escopo = filtrar(DADOS.pedidos, { unidade: estado.unidadeFiltro });
+  const n = s => escopo.filter(p => p.status === s).length;
+  return { total: escopo.length, aberto: n('aberto'), em_andamento: n('em_andamento'), encerrado: n('encerrado') };
+}
+
+/* ===== 5. CANVAS SCALE (fixed 1920x1080; only the scale follows the window) ===== */
+function escalar() {
+  const barra = $('[data-prototipo-controles]').offsetHeight;
+  const largura = window.innerWidth, altura = Math.max(window.innerHeight - barra, 120);
+  const escala = Math.min(largura / 1920, altura / 1080);
+  porId('palco').style.height = altura + 'px';
+  porId('canvas').style.transform = `translate(${(largura - 1920 * escala) / 2}px, ${(altura - 1080 * escala) / 2}px) scale(${escala})`;
+  $$('.pt-painel').forEach(p => { p.style.top = barra + 'px'; });
+}
+
+/* ===== 6. HASH ROUTING (#/tela-xxx) ===== */
+const podeVer = secao => secao.dataset.perfis.split(',').includes(estado.perfil);
+function telaDoHash() {
+  const secao = porId(location.hash.replace(/^#\//, ''));
+  return secao && secao.matches('[data-tela]') ? secao : porId('tela-inicio');
+}
+function rotear() {
+  const pedida = telaDoHash();
+  const alvo = podeVer(pedida) ? pedida : porId('tela-sem-acesso');
+  estado.tela = alvo.id;
+  $$('[data-tela]').forEach(s => { s.hidden = s !== alvo; });
+  const semPerfil = !perfilAtual();
+  porId('tela-sem-acesso').classList.toggle('tela-cheia', semPerfil);
+  porId('sa-titulo').textContent = semPerfil ? fx.fxMsgSemAcessoTitulo : fx.fxMsgSemPermissao;
+  porId('sa-titulo').classList.toggle('so-permissao', !semPerfil);
+  porId('sa-hint').textContent = fx.fxMsgSemAcessoHint;
+  porId('sa-hint').hidden = !semPerfil;
+  document.title = `${alvo.dataset.titulo} · ${PROJETO.nome} (prototype)`;
+}
+const focarTitulo = () => { const h1 = $('[data-tela]:not([hidden]) h1'); if (h1) h1.focus(); };
+function irPara(tela) { if (location.hash === '#/' + tela) renderTudo(); else location.hash = '#/' + tela; }
+
+/* ===== 7. RENDERING ===== */
+function renderTudo() {
+  const chave = document.activeElement && document.activeElement.dataset.foco;
+  rotear();
+  renderMenu();
+  atualizarComparar();
+  const escopo = `Scope: ${estado.unidadeFiltro || 'all units'}`;
+  $$('[data-escopo]').forEach(e => { e.textContent = escopo; });
+  $$('[data-usuario]').forEach(e => { e.textContent = usuario(); });
+  $$('[data-flag]').forEach(e => { e.hidden = !flag(e.dataset.flag); });
+  renderInicio();
+  renderPedidos();
+  atualizarInert();
+  if (chave && !estado.modal) focarChave(chave);
+}
+function renderMenu() {
+  porId('menu').hidden = !perfilAtual(); // varSemAcesso
+  $$('.menu-item').forEach(a => {
+    a.parentElement.hidden = !podeVer(porId(a.dataset.alvo));
+    if (a.dataset.alvo === estado.tela) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  porId('menu-usuario').textContent = usuario();
+  porId('menu-perfil').textContent = `${perfilAtual() ? perfilAtual().rotulo : 'No role'} · ${estado.unidadeFiltro || 'All units'}`;
+  renderNav();
+}
+function renderNav() {
+  const canvas = porId('canvas'), semPerfil = !perfilAtual(), aberta = estado.navAberta;
+  canvas.dataset.navegacao = estado.nav;
+  canvas.classList.toggle('nav-aberta', aberta);
+  porId('menu-topo').hidden = semPerfil;
+  porId('nav-abrir').hidden = semPerfil;
+  porId('nav-abrir').setAttribute('aria-expanded', String(estado.nav === 'gaveta' && aberta));
+  const alternar = porId('menu-alternar'), rotulo = aberta ? 'Collapse menu' : 'Expand menu';
+  alternar.textContent = aberta ? '‹' : '☰';
+  alternar.setAttribute('aria-expanded', String(aberta));
+  alternar.setAttribute('aria-label', rotulo);
+  alternar.title = rotulo;
+  $$('.topo-item').forEach(a => {
+    a.parentElement.hidden = !podeVer(porId(a.dataset.alvo));
+    if (a.dataset.alvo === estado.tela) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  porId('topo-usuario').textContent = `${usuario()} · ${perfilAtual() ? perfilAtual().rotulo : 'No role'}`;
+  $$('.cartao').forEach(c => { c.hidden = !podeVer(porId(c.dataset.alvo)); });
+}
+function montarNavegacao() { // the top bar and the cards are born from the side menu (a single source)
+  const itens = $$('.menu-item').map(a => ({ a, rotulo: a.textContent.trim(), alvo: a.dataset.alvo, href: a.getAttribute('href') }));
+  porId('topo-titulo').textContent = PROJETO.nome;
+  porId('topo-lista').replaceChildren(...itens.map(i => {
+    const li = document.createElement('li');
+    const link = Object.assign(document.createElement('a'), { className: 'topo-item', href: i.href, textContent: i.rotulo });
+    link.dataset.alvo = i.alvo;
+    li.append(link);
+    return li;
+  }));
+  porId('cartoes').replaceChildren(...itens.filter(i => i.alvo !== 'tela-inicio').map(i => {
+    const cartao = Object.assign(document.createElement('div'), { className: 'cartao' });
+    cartao.setAttribute('role', 'listitem');
+    cartao.dataset.alvo = i.alvo;
+    const abrir = Object.assign(document.createElement('button'), { type: 'button', className: 'btn btn-primario', textContent: 'Open ' + i.rotulo });
+    abrir.dataset.acao = 'ir-tela';
+    abrir.dataset.alvo = i.alvo;
+    cartao.append(Object.assign(document.createElement('h3'), { textContent: i.rotulo }),
+      Object.assign(document.createElement('p'), { textContent: i.a.dataset.descricao || '' }), abrir);
+    return cartao;
+  }));
+  itens.forEach(i => { // collapsed: only the initial (Left(label, 1) in Canvas)
+    i.a.dataset.inicial = i.rotulo.charAt(0);
+    i.a.title = i.rotulo;
+    i.a.replaceChildren(Object.assign(document.createElement('span'), { className: 'menu-rot', textContent: i.rotulo }));
+  });
+}
+function pintarBadge(el, status) {
+  el.textContent = rotuloStatus(status);
+  el.className = 'badge t-' + (STATUS[status] ? STATUS[status].tom : 'neutral');
+}
+function valorCampo(p, campo) {
+  if (campo === 'valor') return moeda.format(p.valor);
+  if (campo === 'inclusao') return fmtData(p.dtInclusao);
+  if (campo === 'alteracao') return fmtDataHora(p.dtAlteracao);
+  if (campo === 'eventos') return p.historico.length === 1 ? '1 event' : `${p.historico.length} events`;
+  return p[campo];
+}
+function preencher(raiz, p, prefixo = '') { // prefix: the focus key is unique across the whole app
+  $$('[data-campo]', raiz).forEach(c => { c.textContent = valorCampo(p, c.dataset.campo); });
+  pintarBadge($('.badge', raiz), p.status);
+  $$('button[data-acao]', raiz).forEach(b => { b.dataset.id = p.id; b.dataset.foco = `${prefixo}${b.dataset.acao}-${p.id}`; });
+}
+function renderInicio() {
+  const c = contar();
+  $$('[data-kpi]').forEach(e => { e.textContent = fmtN(c[e.dataset.kpi]); });
+  $$('[data-atalho]').forEach(e => { e.textContent = fmtN(c[e.dataset.atalho]); });
+  const recentes = ordenar(filtrar(DADOS.pedidos, { unidade: estado.unidadeFiltro }), { coluna: 'dtInclusao', asc: false }).slice(0, 5);
+  porId('recentes-linhas').replaceChildren(...recentes.map(p => {
+    const linha = porId('tpl-recente').content.firstElementChild.cloneNode(true);
+    preencher(linha, p, 'inicio-');
+    return linha;
+  }));
+  porId('recentes-vazio').hidden = recentes.length > 0;
+  const unidades = estado.unidadeFiltro ? [estado.unidadeFiltro] : UNIDADES;
+  porId('unidades-linhas').replaceChildren(...unidades.map(u => {
+    const daUnidade = filtrar(DADOS.pedidos, { unidade: u });
+    const n = s => daUnidade.filter(p => p.status === s).length;
+    return linhaTexto([u, ...['aberto', 'em_andamento', 'encerrado', 'cancelado'].map(n), daUnidade.length].map((v, i) => (i ? fmtN(v) : v)),
+      i => (i ? 'cel dir num' : 'cel cel-prot'));
+  }));
+}
+function linhaTexto(textos, classe) { // read-only row (gallery without actions)
+  const linha = Object.assign(document.createElement('div'), { className: 'linha-topo linha-simples' });
+  linha.setAttribute('role', 'row');
+  linha.append(...textos.map((texto, i) => {
+    const cel = Object.assign(document.createElement('span'), { className: classe(i), textContent: texto });
+    cel.setAttribute('role', 'cell');
+    return cel;
+  }));
+  return linha;
+}
+function linhaPedido(p) {
+  const linha = porId('tpl-linha').content.firstElementChild.cloneNode(true);
+  const ativo = ATIVOS.includes(p.status), aberta = estado.expandida === p.id;
+  linha.dataset.id = p.id;
+  linha.classList.toggle('aberta', aberta);
+  preencher(linha, p);
+  const chk = $('.chk-linha', linha);
+  Object.assign(chk, { checked: estado.selecionados.has(p.id), disabled: !ativo });
+  Object.assign(chk.dataset, { id: p.id, foco: 'chk-' + p.id });
+  chk.setAttribute('aria-label', 'Select ' + p.protocolo);
+  const [, editar, avancar, cancelar] = $$('.cel-acoes button', linha);
+  editar.classList.toggle('oculto', !(ativo && flag('flgEditar')));
+  avancar.textContent = p.status === 'aberto' ? 'Start' : 'Complete';
+  avancar.dataset.foco = 'avancar-' + p.id; // same slot in both states: focus is not lost
+  avancar.classList.toggle('oculto', !(p.status === 'aberto' ? flag('flgEditar') : p.status === 'em_andamento' && flag('flgEncerrar')));
+  cancelar.classList.toggle('oculto', !(ativo && flag('flgCancelar')));
+  const exp = $('.btn-exp', linha);
+  exp.textContent = aberta ? '▴' : '▾';
+  exp.setAttribute('aria-expanded', aberta);
+  exp.setAttribute('aria-label', (aberta ? 'Collapse details of ' : 'Expand details of ') + p.protocolo);
+  $('.linha-detalhe', linha).hidden = !aberta;
+  return linha;
+}
+function renderPedidos() {
+  const c = contar();
+  $$('[data-acao="aba"]').forEach((b, i) => {
+    b.textContent = `${ABAS[i].rotulo} (${fmtN(c[ABAS[i].conta])})`;
+    b.setAttribute('aria-selected', i === estado.aba);
+  });
+  porId('sel-unidade').value = estado.unidadeFiltro;
+  $$('[data-componente="column-sort"]').forEach(cel => {
+    const ativa = estado.ordem.coluna === cel.dataset.coluna;
+    const seta = ativa ? (estado.ordem.asc ? fx.fxTxtOrdemAsc : fx.fxTxtOrdemDesc) : '';
+    cel.setAttribute('aria-sort', ativa ? (estado.ordem.asc ? 'ascending' : 'descending') : 'none');
+    const b = $('button', cel);
+    b.textContent = b.textContent.replace(/ [▲▼]$/, '') + seta;
+  });
+  const lista = ordenar(filtrar(DADOS.pedidos, criterioAtual()), estado.ordem);
+  const paginas = Math.max(1, Math.ceil(lista.length / PAGINA));
+  estado.pagina = Math.min(estado.pagina, paginas);
+  const visiveis = lista.slice((estado.pagina - 1) * PAGINA, estado.pagina * PAGINA);
+  porId('gal-linhas').replaceChildren(...visiveis.map(linhaPedido));
+  const gal = porId('gal-pedidos');
+  gal.classList.toggle('gal-expandida', visiveis.some(p => p.id === estado.expandida)); // TemplateSize belongs to the whole gallery
+  gal.classList.toggle('sem-lote', !flag('flgEncerrar'));
+  porId('gal-vazio').textContent = `${fx.fxMsgNoResultsError}\n${fx.fxMsgNoResultsHint}`;
+  porId('gal-vazio').hidden = visiveis.length > 0;
+  porId('pag-txt').textContent = `Page ${estado.pagina} of ${paginas}`;
+  $('[data-acao="pag-ant"]').disabled = estado.pagina <= 1;
+  $('[data-acao="pag-prox"]').disabled = estado.pagina >= paginas;
+  porId('rodape').textContent = `${fx.fxTxtExibindo} ${visiveis.length} of ${fmtN(lista.length)} orders `
+    + (estado.unidadeFiltro ? 'in unit ' + estado.unidadeFiltro : 'across all units');
+  porId('btn-exportar').disabled = lista.length === 0;
+  const n = estado.selecionados.size, elegiveis = visiveis.filter(p => ATIVOS.includes(p.status));
+  porId('lote-contador').textContent = n === 0 ? '' : n === 1 ? '1 order selected' : `${n} orders selected`;
+  porId('btn-lote').disabled = n === 0;
+  Object.assign(porId('chk-todos'), { checked: elegiveis.length > 0 && elegiveis.every(p => estado.selecionados.has(p.id)), disabled: elegiveis.length === 0 });
+}
+function renderRoteiro() {
+  porId('roteiro-corpo').replaceChildren(...Object.entries(ROTEIRO).flatMap(([perfil, passos]) => {
+    const titulo = document.createElement('h3');
+    titulo.textContent = (PERFIS[perfil] ? PERFIS[perfil].rotulo : 'No access') + (perfil === estado.perfil ? ' (current role)' : '');
+    const lista = document.createElement('ol');
+    lista.append(...passos.map(passo => Object.assign(document.createElement('li'), { textContent: passo })));
+    return [titulo, lista];
+  }));
+}
+
+/* ===== 8. MODALS, LOADING AND TOAST ===== */
+function atualizarInert() { // Canvas scrim: nothing behind the modal or the loading responds
+  $$('.menu, .topo, .nav-abrir, .tela').forEach(e => { e.inert = Boolean(estado.modal) || estado.carregando; });
+  if (estado.nav === 'gaveta' && estado.navAberta) $$('.tela, .nav-abrir').forEach(e => { e.inert = true; }); // drawer scrim
+  $$('.veu').forEach(e => { e.inert = estado.carregando; });
+}
+function focarChave(chave, reserva) {
+  const alvo = chave && $(`[data-foco="${chave}"]`);
+  if (alvo && !alvo.closest('[hidden]') && !alvo.disabled && !alvo.classList.contains('oculto')) alvo.focus();
+  else if (reserva) reserva.focus(); else focarTitulo();
+}
+function abrirModal(id) {
+  estado.abridor = document.activeElement && document.activeElement.dataset.foco;
+  estado.modal = id;
+  porId(id).hidden = false;
+  atualizarInert();
+  $('.card', porId(id)).focus();
+}
+function fecharModal() {
+  if (!estado.modal || estado.carregando) return;
+  porId(estado.modal).hidden = true;
+  Object.assign(estado, { modal: null, pedidoSel: null, confirmarIds: [] }); // clears the state on close
+  atualizarInert();
+  focarChave(estado.abridor);
+}
+function mostrarLoading(mensagem) {
+  estado.focoAntes = document.activeElement;
+  estado.carregando = true;
+  porId('loading-txt').textContent = mensagem || fx.fxMsgLoadingDefault;
+  porId('loading').hidden = false;
+  const verbo = estado.modal && $('.card-botoes .btn:last-child', porId(estado.modal));
+  if (verbo) { verbo.dataset.texto = verbo.textContent; verbo.textContent = fx.fxTxtProcessando; } // If(varShowLoading, fxTxtProcessando, verb)
+  atualizarInert();
+}
+function esconderLoading() {
+  estado.carregando = false;
+  porId('loading').hidden = true;
+  $$('[data-texto]').forEach(b => { b.textContent = b.dataset.texto; delete b.dataset.texto; });
+  atualizarInert();
+}
+let toastFim = null, toastTique = null, toastTexto = null;
+function esconderToast() { clearTimeout(toastFim); clearTimeout(toastTexto); clearInterval(toastTique); porId('toast').classList.remove('visivel'); }
+function mostrarToast(tipo, mensagem) {
+  const t = porId('toast'), status = ['success', 'warning', 'error'].includes(tipo) ? tipo : 'error';
+  esconderToast();
+  t.classList.remove('toast-success', 'toast-warning', 'toast-error');
+  t.classList.add('toast-' + status, 'visivel');
+  $('.toast-icone', t).textContent = { success: '✓', warning: '!', error: '✕' }[status];
+  const duracao = status === 'error' ? fx.fxToastDurationError : status === 'warning' || mensagem.length > 100 ? fx.fxToastDurationLong : fx.fxToastDurationShort;
+  toastTexto = setTimeout(() => { // text after it is visible: the screen reader announces it
+    $('.toast-titulo', t).textContent = { success: fx.fxTxtToastSuccess, warning: fx.fxTxtToastWarning, error: fx.fxTxtToastError }[status];
+    $('.toast-msg', t).textContent = mensagem;
+  }, 60);
+  const inicio = Date.now(), barra = $('.toast-barra', t);
+  barra.style.width = '100%';
+  toastTique = setInterval(() => { barra.style.width = Math.max(0, 100 - ((Date.now() - inicio) / duracao) * 100) + '%'; }, 250);
+  toastFim = setTimeout(esconderToast, duracao);
+}
+
+/* ===== 9. SIMULATED FLOW: simularFlow(acao, parametros) -> {status, description, id, url} ===== */
+const resposta = (status, description, id = '', url = '') => ({ status, description, id, url });
+const ativo = p => ATIVOS.includes(p.status);
+const primeiroErro = erros => Object.values(erros)[0] || '';
+const avisoParcial = texto => `${texto} The e-mail notice to the requester was not sent; notify them manually.`;
+function parseValor(texto) {
+  const limpo = String(texto).trim();
+  if (!/^(\d{1,3}(,\d{3})+|\d+)(\.\d{1,2})?$/.test(limpo)) return NaN;
+  const n = Number(limpo.replace(/,/g, ''));
+  return n > 0 ? n : NaN;
+}
+function validarCampos(d) {
+  const e = {};
+  if (!d.unidade) e.unidade = fx.fxMsgCampoObrigatorio;
+  if (!d.solicitante) e.solicitante = fx.fxMsgCampoObrigatorio;
+  if (!d.valor) e.valor = fx.fxMsgCampoObrigatorio; else if (Number.isNaN(parseValor(d.valor))) e.valor = fx.fxMsgFormatoInvalido;
+  if (!d.descricao) e.descricao = fx.fxMsgCampoObrigatorio;
+  else if (d.descricao.length < DESCRICAO_MIN) e.descricao = `Describe it with at least ${DESCRICAO_MIN} characters.`;
+  return e;
+}
+// each action: required flag, server validation and write (the flow decides; the screen only helps)
+const REGRAS = {
+  criar: { flag: 'flgCriar', grava: true,
+    validar: p => primeiroErro(validarCampos(p)) || (!flag('flgGlobal') && p.unidade !== estado.lotacao ? fx.fxMsgSemPermissao : ''),
+    executar: (p, alvos, parcial) => {
+      const id = DADOS.proximoId, agora = isoLocal(new Date());
+      const novo = { id, protocolo: protocolo(id), unidade: p.unidade, solicitante: p.solicitante, descricao: p.descricao, valor: parseValor(p.valor),
+        dtInclusao: agora, dtAlteracao: agora, status: 'aberto', responsavel: usuario(), historico: [evento(agora, usuario(), 'Creation', '', 'aberto', '')] };
+      DADOS = { pedidos: [novo, ...DADOS.pedidos], proximoId: id + 1 };
+      const texto = `Order ${novo.protocolo} created successfully.`;
+      return { id: String(id), description: parcial ? avisoParcial(texto) : texto };
+    } },
+  editar: { flag: 'flgEditar', grava: true,
+    validar: (p, [ped]) => (!ativo(ped) ? 'This order can no longer be changed.' : primeiroErro(validarCampos(p))),
+    executar: (p, [ped], parcial) => {
+      alterarPedido(ped.id, { solicitante: p.solicitante, descricao: p.descricao, valor: parseValor(p.valor) }, 'Edit', 'Order data updated');
+      return { id: String(ped.id), description: parcial ? avisoParcial(fx.fxMsgSalvoComSucesso) : fx.fxMsgSalvoComSucesso };
+    } },
+  iniciar: { flag: 'flgEditar', grava: true,
+    validar: (p, [ped]) => (ped.status !== 'aberto' ? 'Only open orders can be started.' : ''),
+    executar: (p, [ped], parcial) => {
+      alterarPedido(ped.id, { status: 'em_andamento' }, 'Service started');
+      const texto = `Order ${ped.protocolo} in progress.`;
+      return { id: String(ped.id), description: parcial ? avisoParcial(texto) : texto };
+    } },
+  encerrar: { flag: 'flgEncerrar', grava: true,
+    validar: (p, alvos) => (alvos.length === 0 ? 'Select at least one order.' : alvos.some(x => !ativo(x)) ? 'Only open or in-progress orders can be completed.' : ''),
+    executar: (p, alvos, parcial) => {
+      const feitos = parcial && alvos.length > 1 ? alvos.slice(0, Math.ceil(alvos.length / 2)) : alvos;
+      feitos.forEach(ped => alterarPedido(ped.id, { status: 'encerrado' }, 'Completion'));
+      if (alvos.length === 1) {
+        const texto = `Order ${alvos[0].protocolo} completed.`;
+        return { id: String(alvos[0].id), description: parcial ? avisoParcial(texto) : texto };
+      }
+      return { id: feitos.map(x => x.id).join(','), description: parcial
+        ? `${feitos.length} of ${alvos.length} orders completed. The rest were not processed; select them and try again.`
+        : `${alvos.length} orders completed.` };
+    } },
+  cancelar: { flag: 'flgCancelar', grava: true,
+    validar: (p, [ped]) => (!ativo(ped) ? 'This order can no longer be canceled.' : (p.motivo || '').length < MOTIVO_MIN ? `Enter the reason with at least ${MOTIVO_MIN} characters.` : ''),
+    executar: (p, [ped], parcial) => {
+      alterarPedido(ped.id, { status: 'cancelado' }, 'Cancellation', p.motivo);
+      const texto = `Order ${ped.protocolo} canceled.`;
+      return { id: String(ped.id), description: parcial ? avisoParcial(texto) : texto };
+    } },
+  exportar: { flag: 'flgExportar', grava: false, validar: () => '',
+    executar: (p, alvos, parcial) => { // reads "on the server" the full filtered set, not the page
+      const unidade = flag('flgGlobal') ? p.unidade : estado.lotacao;
+      const linhas = ordenar(filtrar(DADOS.pedidos, { ...p, unidade }), estado.ordem);
+      const q = v => `"${String(v).replace(/"/g, '""')}"`;
+      const csv = [['Protocol', 'Unit', 'Requester', 'Description', 'Amount', 'Status', 'Owner', 'Created', 'Updated'].map(q).join(','),
+        ...linhas.map(x => [x.protocolo, x.unidade, x.solicitante, x.descricao, x.valor.toFixed(2), rotuloStatus(x.status), x.responsavel, fmtDataHora(x.dtInclusao), fmtDataHora(x.dtAlteracao)].map(q).join(','))];
+      const url = URL.createObjectURL(new Blob(['﻿' + csv.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+      const texto = `File generated with ${linhas.length} orders.`;
+      return { url, description: parcial ? `${texto} The e-mail copy was not sent.` : texto };
+    } }
+};
+const MSG_LOADING = { criar: 'Creating order...', editar: 'Saving changes...', iniciar: 'Starting service...', encerrar: 'Completing...', cancelar: 'Canceling order...', exportar: 'Generating file...' };
+async function simularFlow(acao, parametros) {
+  const regra = REGRAS[acao];
+  mostrarLoading(MSG_LOADING[acao]);                                                      // 1. overlay
+  try {
+    await esperar(estado.latencia);                                                       // 2. latency
+    const perfil = perfilAtual();                                                         // 3. the flow authorizes again
+    if (!perfil || !perfil[regra.flag]) return resposta('error', fx.fxMsgSemPermissao);
+    const alvos = (parametros.ids || []).map(buscar);
+    if (alvos.some(p => !p || (!perfil.flgGlobal && p.unidade !== estado.lotacao))) return resposta('error', fx.fxMsgSemPermissao);
+    const invalido = regra.validar(parametros, alvos);                                    // 4. required fields
+    if (invalido) return resposta('error', invalido);
+    if (estado.resposta === 'error') return resposta('error', `${fx.fxMsgFalhaFlow}\n${fx.fxMsgFalhaFlowHint}`); // nothing saved
+    const r = regra.executar(parametros, alvos, estado.resposta === 'warning');           // 5. saves + history
+    if (regra.grava) salvarDados();
+    // timeout: the server finished, but the response did not reach the app
+    if (estado.resposta === 'timeout') return resposta('error', `${fx.fxMsgTimeoutError}\n${fx.fxMsgTimeoutHint}`);
+    return resposta(estado.resposta === 'warning' ? 'warning' : 'success', r.description, r.id, r.url);
+  } finally {
+    esconderLoading();
+  }
+}
+
+/* ===== 10. SCREEN ACTIONS (equivalent to the OnSelect) ===== */
+async function executarAcao(acao, parametros, aoConcluir) {
+  const chave = document.activeElement && document.activeElement.dataset.foco;
+  let ret;
+  try { ret = await simularFlow(acao, parametros); } catch (erro) {
+    console.error('Simulated flow failure:', erro); // equivalent to IfError + Trace
+    ret = resposta('error', `${fx.fxMsgFalhaFlow}\n${fx.fxMsgFalhaFlowHint}`);
+  }
+  mostrarToast(ret.status, ret.description);
+  const sucesso = ret.status !== 'error';
+  if (sucesso && aoConcluir) aoConcluir(ret);
+  renderTudo();
+  if (sucesso && estado.modal) fecharModal();                  // success and warning close; error keeps it open
+  else if (estado.modal) focarChave(null, estado.focoAntes && estado.focoAntes.isConnected ? estado.focoAntes : $('.card', porId(estado.modal)));
+  else focarChave(chave);
+  return ret;
+}
+function reiniciarLista() { // new filter, tab, sort or scope: back to page 1 and clears the selection
+  Object.assign(estado, { pagina: 1, expandida: null });
+  estado.selecionados.clear();
+  renderTudo();
+}
+function lerFormulario() {
+  const v = id => porId(id).value.trim();
+  return { unidade: v('ff-unidade'), solicitante: v('ff-solicitante'), valor: v('ff-valor'), descricao: v('ff-descricao') };
+}
+function pintarErros(erros) {
+  ['unidade', 'solicitante', 'valor', 'descricao'].forEach(campo => {
+    const entrada = porId('ff-' + campo);
+    porId('er-' + campo).textContent = erros[campo] || '';
+    entrada.classList.toggle('invalido', Boolean(erros[campo]));
+    entrada.setAttribute('aria-invalid', Boolean(erros[campo]));
+  });
+}
+function abrirFormulario(modo, id) {
+  const p = id ? buscar(id) : null, global = flag('flgGlobal');
+  Object.assign(estado, { formModo: modo, tentouSalvar: false });
+  porId('form-titulo').textContent = p ? `Edit order ${p.protocolo}` : 'New order';
+  const unidade = porId('ff-unidade');
+  unidade.replaceChildren(opcao('', 'Select the unit'), ...(global ? UNIDADES : [estado.lotacao]).map(u => opcao(u, u)));
+  unidade.value = p ? p.unidade : global ? '' : estado.lotacao;
+  unidade.disabled = Boolean(p) || !global; // the flow derives the unit; editing does not change the unit
+  porId('ff-solicitante').value = p ? p.solicitante : '';
+  porId('ff-valor').value = p ? p.valor.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '';
+  porId('ff-descricao').value = p ? p.descricao : '';
+  pintarErros({});
+  abrirModal('mod-form');
+  estado.pedidoSel = id || null;
+}
+function salvarFormulario(evento) {
+  evento.preventDefault();
+  if (estado.carregando) return;
+  estado.tentouSalvar = true;
+  const dados = lerFormulario(), erros = validarCampos(dados);
+  pintarErros(erros);
+  const primeiro = Object.keys(erros)[0];
+  if (primeiro) { porId('ff-' + primeiro).focus(); return; }   // error next to the field, focus on the first one
+  executarAcao(estado.formModo, { ...dados, ids: estado.pedidoSel ? [estado.pedidoSel] : [] });
+}
+function abrirConfirmar(ids) {
+  const um = ids.length === 1;
+  porId('conf-titulo').textContent = um ? 'Complete the order' : 'Complete selected orders';
+  porId('conf-msg').textContent = um ? `Confirm completing order ${buscar(ids[0]).protocolo}?` : `Confirm completing ${ids.length} selected orders?`;
+  abrirModal('mod-confirmar');
+  estado.confirmarIds = ids;
+}
+function atualizarMotivo() {
+  const falta = MOTIVO_MIN - porId('canc-motivo').value.trim().length;
+  porId('canc-ok').disabled = falta > 0;
+  porId('canc-ajuda').textContent = falta > 0 ? `${falta} more characters needed to enable the cancellation.` : 'Reason is long enough.';
+}
+function abrirCancelar(id) {
+  porId('canc-msg').textContent = `Order ${buscar(id).protocolo} will be canceled and cannot be reopened.`;
+  porId('canc-motivo').value = '';
+  atualizarMotivo();
+  abrirModal('mod-cancelar');
+  estado.pedidoSel = id;
+}
+function abrirDetalhes(id) {
+  const p = buscar(id);
+  porId('det-titulo').textContent = `Details of order ${p.protocolo}`;
+  $$('[data-det]').forEach(e => { e.textContent = valorCampo(p, e.dataset.det); });
+  pintarBadge(porId('det-status'), p.status);
+  porId('det-hist').replaceChildren(...[...p.historico].reverse().map(h => {
+    const mudou = h.de && h.de !== h.para ? `${rotuloStatus(h.de)} → ${rotuloStatus(h.para)}` : h.de ? '' : `Initial status: ${rotuloStatus(h.para)}`;
+    const descricao = [mudou, h.motivo && (h.acao === 'Cancellation' ? 'Reason: ' + h.motivo : h.motivo)].filter(Boolean).join(' · ');
+    return linhaTexto([fmtDataHora(h.dt), h.acao, h.usuario, descricao], i => (i === 0 ? 'cel peq' : 'cel'));
+  }));
+  abrirModal('mod-detalhes');
+  estado.pedidoSel = id;
+}
+async function exportar() {
+  const ret = await executarAcao('exportar', criterioAtual());
+  if (ret.status === 'error' || !ret.url) return;
+  const link = Object.assign(document.createElement('a'), { href: ret.url, download: `orders-${isoLocal(new Date()).slice(0, 10)}.csv` });
+  document.body.append(link); link.click(); link.remove(); // equivale ao Download(varRet.url)
+  setTimeout(() => URL.revokeObjectURL(ret.url), 10000);
+}
+function alternarLinha(id) {
+  estado.expandida = estado.expandida === id ? null : id;
+  renderTudo();
+}
+/* bar panels (walkthrough and compare): one open at a time; closing returns focus to the button */
+const PAINEIS = { 'pt-roteiro': 'pt-roteiro-btn', 'pt-comparar': 'pt-comparar-btn' };
+const painelAberto = () => Object.keys(PAINEIS).find(id => !porId(id).hidden);
+function alternarPainel(id) {
+  const abrir = porId(id).hidden;
+  Object.entries(PAINEIS).forEach(([painel, botao]) => {
+    porId(painel).hidden = !(abrir && painel === id);
+    porId(botao).setAttribute('aria-expanded', abrir && painel === id);
+  });
+  if (!abrir) { porId(PAINEIS[id]).focus(); return; }
+  if (id === 'pt-roteiro') renderRoteiro(); else mostrarMockup();
+  $('h2', porId(id)).focus();
+}
+const mockupsDaTela = () => (porId(estado.tela).dataset.mockups || '').split(',').map(s => s.trim()).filter(Boolean);
+function atualizarComparar() { // button and selector follow the current screen
+  const ids = mockupsDaTela(), botao = porId('pt-comparar-btn'), sel = porId('pt-mockup-sel');
+  botao.disabled = ids.length === 0;
+  botao.textContent = ids.length ? 'Compare with the mockup' : 'Screen without a mockup';
+  if (sel.dataset.daTela === estado.tela) return; // data-da-tela, never data-tela: [data-tela] is the router
+  sel.dataset.daTela = estado.tela;
+  sel.replaceChildren(...ids.map(id => opcao(id, id)));
+  porId('pt-mockup-campo').hidden = ids.length < 2;
+  if (porId('pt-comparar').hidden) return;
+  if (ids.length) mostrarMockup(); else { porId('pt-comparar').hidden = true; botao.setAttribute('aria-expanded', false); }
+}
+function mostrarMockup() {
+  const img = porId('pt-mockup-img'), erro = porId('pt-mockup-erro'), id = porId('pt-mockup-sel').value;
+  const caminho = PASTA_MOCKUPS + id + '.png';
+  const falhar = texto => { img.hidden = true; img.removeAttribute('src'); erro.textContent = texto; erro.hidden = false; };
+  if (/^([a-z][a-z0-9+.-]*:|\/\/|\\\\)/i.test(PASTA_MOCKUPS)) { falhar('PASTA_MOCKUPS must be a relative path: ' + PASTA_MOCKUPS); return; }
+  erro.hidden = true;
+  img.onload = () => { img.hidden = false; erro.hidden = true; };
+  img.onerror = () => falhar('Mockup not found: ' + caminho); // a missing image breaks nothing
+  img.alt = `Approved mockup ${id} of screen ${porId(estado.tela).dataset.titulo}`;
+  img.src = caminho;
+}
+const idDe = b => Number(b.dataset.id);
+const ACOES = {
+  pular: focarTitulo,
+  roteiro: () => alternarPainel('pt-roteiro'),
+  comparar: () => alternarPainel('pt-comparar'),
+  restaurar: () => {
+    if (estado.carregando) return;
+    if (estado.modal) fecharModal();
+    DADOS = gerarPedidos(); salvarDados(); reiniciarLista();
+    mostrarToast('success', 'Sample data restored.');
+  },
+  'toast-fechar': esconderToast,
+  aba: b => { estado.aba = Number(b.dataset.aba); reiniciarLista(); },
+  'ir-pedidos': b => { estado.aba = Number(b.dataset.aba); reiniciarLista(); irPara('tela-pedidos'); },
+  'ir-tela': b => irPara(b.dataset.alvo),
+  'ir-inicio': () => irPara('tela-inicio'),
+  'nav-alternar': () => {
+    estado.navAberta = !estado.navAberta;
+    renderTudo();
+    if (estado.nav === 'gaveta') { const item = $('.menu-item[aria-current]') || $('.menu-item'); if (item) item.focus(); }
+  },
+  'nav-fechar': () => { estado.navAberta = false; renderTudo(); if (estado.nav === 'gaveta') porId('nav-abrir').focus(); },
+  ordenar: b => {
+    const coluna = b.dataset.coluna;
+    estado.ordem = estado.ordem.coluna === coluna ? { coluna, asc: !estado.ordem.asc } : { coluna, asc: true };
+    reiniciarLista();
+  },
+  limpar: () => { porId('form-filtros').reset(); estado.filtros = { status: '', busca: '', de: '', ate: '' }; reiniciarLista(); },
+  'pag-ant': () => mudarPagina(-1),
+  'pag-prox': () => mudarPagina(1),
+  expandir: b => alternarLinha(idDe(b)),
+  detalhes: b => abrirDetalhes(idDe(b)),
+  novo: () => abrirFormulario('criar'),
+  editar: b => abrirFormulario('editar', idDe(b)),
+  avancar: b => (buscar(idDe(b)).status === 'aberto' ? executarAcao('iniciar', { ids: [idDe(b)] }) : abrirConfirmar([idDe(b)])),
+  cancelar: b => abrirCancelar(idDe(b)),
+  lote: () => abrirConfirmar([...estado.selecionados]),
+  'confirmar-ok': () => executarAcao('encerrar', { ids: estado.confirmarIds }, () => estado.selecionados.clear()),
+  'cancelar-ok': () => executarAcao('cancelar', { ids: [estado.pedidoSel], motivo: porId('canc-motivo').value.trim() }),
+  exportar,
+  fechar: fecharModal
+};
+function mudarPagina(delta) { // cursor: only moves in sequence; the selection does not cross pages
+  Object.assign(estado, { pagina: estado.pagina + delta, expandida: null });
+  estado.selecionados.clear();
+  renderTudo();
+  porId('gal-corpo').scrollTop = 0;
+}
+
+/* ===== 11. PROTOTYPE CONTROLS AND EVENTS ===== */
+function aplicarControles() {
+  armazenamento.gravar(CHAVE_CONTROLES, { perfil: estado.perfil, lotacao: estado.lotacao, resposta: estado.resposta, latencia: estado.latencia });
+  estado.unidadeFiltro = escopoPadrao();
+  if (!porId('pt-roteiro').hidden) renderRoteiro();
+  reiniciarLista();
+}
+function iniciar() {
+  const salvo = armazenamento.ler(CHAVE_CONTROLES) || {};
+  if (salvo.perfil in PERFIS) estado.perfil = salvo.perfil;
+  if (UNIDADES.includes(salvo.lotacao)) estado.lotacao = salvo.lotacao;
+  if (RESPOSTAS.includes(salvo.resposta)) estado.resposta = salvo.resposta;
+  if (LATENCIAS.some(l => l.ms === salvo.latencia)) estado.latencia = salvo.latencia;
+  const parametros = new URLSearchParams(location.search); // ?perfil=&nav=: used by capturar-telas.py
+  if (parametros.get('perfil') in PERFIS) estado.perfil = parametros.get('perfil');
+  if (PADROES_NAV.some(n => n.id === parametros.get('nav'))) estado.nav = parametros.get('nav');
+  const controles = [
+    ['ctl-perfil', Object.keys(PERFIS).map(k => opcao(k, PERFIS[k] ? PERFIS[k].rotulo : 'no access')), 'perfil', String],
+    ['ctl-unidade', UNIDADES.map(u => opcao(u, u)), 'lotacao', String],
+    ['ctl-resposta', RESPOSTAS.map(r => opcao(r, r)), 'resposta', String],
+    ['ctl-latencia', LATENCIAS.map(l => opcao(String(l.ms), l.rotulo)), 'latencia', Number]
+  ];
+  controles.forEach(([id, opcoes, campo, converter]) => {
+    const sel = porId(id);
+    sel.replaceChildren(...opcoes);
+    sel.value = String(estado[campo]);
+    sel.addEventListener('change', () => { estado[campo] = converter(sel.value); if (campo === 'perfil' || campo === 'lotacao') aplicarControles(); else armazenamento.gravar(CHAVE_CONTROLES, { perfil: estado.perfil, lotacao: estado.lotacao, resposta: estado.resposta, latencia: estado.latencia }); });
+  });
+  porId('sel-unidade').replaceChildren(opcao('', '(All)'), ...UNIDADES.map(u => opcao(u, u)));
+  porId('f-status').replaceChildren(opcao('', 'All'), ...Object.keys(STATUS).map(s => opcao(s, rotuloStatus(s))));
+  porId('ff-solicitante').replaceChildren(opcao('', 'Select the requester'), ...SOLICITANTES.map(s => opcao(s, s)));
+  $$('[data-fx]').forEach(e => { e.textContent = fx[e.dataset.fx]; });
+  montarNavegacao();
+  const selNav = porId('ctl-nav');
+  selNav.replaceChildren(...PADROES_NAV.map(n => opcao(n.id, n.rotulo + (n.id === NAVEGACAO ? ' (design)' : ''))));
+  selNav.value = estado.nav;
+  selNav.addEventListener('change', () => { estado.nav = selNav.value; estado.navAberta = false; renderTudo(); });
+  porId('menu-titulo').textContent = PROJETO.nome;
+  porId('menu-sub').textContent = PROJETO.modulo;
+  porId('pt-versao').textContent = PROJETO.versao;
+  estado.unidadeFiltro = escopoPadrao();
+
+  document.addEventListener('click', e => {
+    const alvo = e.target.closest('[data-acao]');
+    if (alvo) { if (!alvo.disabled && ACOES[alvo.dataset.acao]) ACOES[alvo.dataset.acao](alvo); return; }
+    const linha = e.target.closest('.linha[data-id]');
+    if (linha && !e.target.closest('input, button')) alternarLinha(Number(linha.dataset.id)); // the row background is a button in Canvas
+  });
+  document.addEventListener('change', e => {
+    if (e.target.classList.contains('chk-linha')) {
+      const id = Number(e.target.dataset.id);
+      if (e.target.checked) estado.selecionados.add(id); else estado.selecionados.delete(id);
+      renderTudo();
+    } else if (e.target.id === 'chk-todos') {
+      const visiveis = $$('.linha[data-id]').map(l => buscar(Number(l.dataset.id))).filter(ativo);
+      visiveis.forEach(p => (e.target.checked ? estado.selecionados.add(p.id) : estado.selecionados.delete(p.id)));
+      renderTudo();
+    } else if (e.target.id === 'sel-unidade') {
+      estado.unidadeFiltro = flag('flgGlobal') ? e.target.value : estado.lotacao;
+      reiniciarLista();
+    }
+  });
+  porId('form-filtros').addEventListener('submit', e => { // filters only apply after Filter
+    e.preventDefault();
+    estado.filtros = { status: porId('f-status').value, busca: porId('f-busca').value.trim(), de: porId('f-de').value, ate: porId('f-ate').value };
+    reiniciarLista();
+  });
+  porId('form-pedido').addEventListener('submit', salvarFormulario);
+  porId('form-pedido').addEventListener('input', () => { if (estado.tentouSalvar) pintarErros(validarCampos(lerFormulario())); });
+  porId('canc-motivo').addEventListener('input', atualizarMotivo);
+  porId('pt-mockup-sel').addEventListener('change', mostrarMockup);
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || estado.carregando) return;
+    if (estado.modal) { e.preventDefault(); fecharModal(); }
+    else if (estado.nav === 'gaveta' && estado.navAberta) ACOES['nav-fechar']();
+    else if (painelAberto()) alternarPainel(painelAberto());
+  });
+  window.addEventListener('hashchange', () => {
+    if (estado.modal) fecharModal();
+    if (estado.nav === 'gaveta') estado.navAberta = false;
+    renderTudo();
+    focarTitulo();
+  });
+  window.addEventListener('resize', escalar);
+  if (!location.hash) history.replaceState(null, '', '#/tela-inicio');
+  escalar();
+  renderTudo();
+}
+iniciar();
+</script>
+</body>
+</html>

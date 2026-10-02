@@ -28,7 +28,8 @@ kit está em `i18n/mapa.json`; aqui ficam os nomes que não são arquivo do kit.
 | `inventario-telas.md`, `mockups.json`, `mockups/`, `mockups.md` | `screen-inventory.md`, `mockups.json`, `mockups/`, `mockups.md` |
 | `docs/planejamento/prototipo/index.html`, `ajustes-prototipo.md` | `docs/planning/prototype/index.html`, `prototype-adjustments.md` |
 | `arquitetura.md`, `GOAL.md` | `architecture.md`, `GOAL.md` |
-| `NOMES-AS-BUILT.md` | `AS-BUILT-NAMES.md` |
+| `NOMES-AS-BUILT.md`, `AMBIENTE-AS-BUILT/` | `AS-BUILT-NAMES.md`, `AS-BUILT-ENVIRONMENT/` |
+| `docs/decisoes/ADR-<NNN>.md` | `docs/decisions/ADR-<NNN>.md` |
 | `carga-mockup.json`, `.xlsx`, `.sql`, `carga-mockup-tabelas/` | `mockup-load.json`, `.xlsx`, `.sql`, `mockup-load-tables/` |
 | `construtor-dataverse/` (`plano-dataverse.json`, `construtor-escopo.json`) | `dataverse-builder/` (`dataverse-plan.json`, `builder-scope.json`) |
 | `docs/qa/QA-<data>.md`, `docs/qa/UAT-<data>.md`, `docs/qa/correcoes.md` | `docs/qa/QA-<date>.md`, `docs/qa/UAT-<date>.md`, `docs/qa/fixes.md` |
@@ -50,12 +51,19 @@ kit está em `i18n/mapa.json`; aqui ficam os nomes que não são arquivo do kit.
 | entrega, molde, gabarito, lições de campo | delivery, template, baseline, field lessons |
 | concluída, em andamento, pendente, dispensada, reaberta | done, in progress, pending, skipped, reopened |
 | N erro(s), M aviso(s) | N error(s), M warning(s) |
+| requisito `RF-xx`, regra de negócio `RN-xx`, `[SUPOSIÇÃO]` | requirement `FR-xx`, business rule `BR-xx`, `[ASSUMPTION]` |
+| entidades de exemplo `Pedido`, `Unidade` (no texto e nos moldes) | `Order`, `Unit` (o nome físico SQL fica: `dbo.Unidade`) |
 
 ## Código
 
 - Power Fx en-US: `,` separa argumento, `;` encadeia, `.` decimal. YAML colado (`.pa.yaml`) é igual
   nos dois idiomas.
 - Nome de coluna, tabela, variável, chave de JSON e código fica igual; traduzem comentário e texto.
+- Componente do catálogo Canvas tem nome en-US, o do arquivo do catálogo (`cabecalho-tela` →
+  `screen-header`; a lista é o `_CATALOGO_EN` do `verificar-prototipo.py`). Ficam como no pt-BR, porque
+  script lê: id de padrão de navegação (`lateral-fixo`, `gaveta`, `inicio-cartoes`…), chave de perfil
+  (`gestor`, `operador`, `?perfil=`) e chave de `modelos.agentes` no config (`agente-*`). Fica também,
+  por ser nome de coluna, a convenção de flag de permissão `Flg_Pode<X>`.
 - Scripts: um só código (`_idioma.py`). Subcomando, opção e valor de opção ficam como no pt-BR
   (`estado.py concluir`, `--motivo`, `--resultado aceito`); o `estado.py` aceita também o id en-US da
   etapa (`estado.py comecar new`).

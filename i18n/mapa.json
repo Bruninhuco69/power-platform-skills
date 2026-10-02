@@ -463,167 +463,167 @@
     },
     "skills/power-platform/SKILL.md": {
       "en": "en/skills/power-platform/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/adr-molde.md": {
       "en": "en/skills/power-platform/assets/adr-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/arquitetura-molde.md": {
       "en": "en/skills/power-platform/assets/architecture-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/carga-mockup-molde.json": {
       "en": "en/skills/power-platform/assets/mockup-load-template.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/construtor-dataverse.json": {
       "en": "en/skills/power-platform/assets/dataverse-builder.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/goal-molde.md": {
       "en": "en/skills/power-platform/assets/goal-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/ideia-bruta-molde.md": {
       "en": "en/skills/power-platform/assets/raw-idea-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/inventario-telas-molde.md": {
       "en": "en/skills/power-platform/assets/screen-inventory-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/leia-primeiro-molde.md": {
       "en": "en/skills/power-platform/assets/read-me-first-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/mockups-molde.json": {
       "en": "en/skills/power-platform/assets/mockups-template.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/mudanca-molde.md": {
       "en": "en/skills/power-platform/assets/change-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/power-platform.config.exemplo.json": {
       "en": "en/skills/power-platform/assets/power-platform.config.example.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/prd-molde.md": {
       "en": "en/skills/power-platform/assets/prd-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/prototipo-molde.html": {
       "en": "en/skills/power-platform/assets/prototype-template.html",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/assets/ux-design-system-molde.md": {
       "en": "en/skills/power-platform/assets/ux-design-system-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/prompts/dados.md": {
       "en": "en/skills/power-platform/prompts/data.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/prompts/dev.md": {
       "en": "en/skills/power-platform/prompts/dev.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/prompts/flow.md": {
       "en": "en/skills/power-platform/prompts/flow.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/prompts/performance.md": {
       "en": "en/skills/power-platform/prompts/performance.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/prompts/sql.md": {
       "en": "en/skills/power-platform/prompts/sql.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/prompts/ux.md": {
       "en": "en/skills/power-platform/prompts/ux.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/alm-ambientes.md": {
       "en": "en/skills/power-platform/references/alm-environments.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/brainstorm-modos.md": {
       "en": "en/skills/power-platform/references/brainstorm-modes.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/brainstorm.md": {
       "en": "en/skills/power-platform/references/brainstorm.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/carga-mockup.md": {
       "en": "en/skills/power-platform/references/mockup-load.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/construtor-dataverse.md": {
       "en": "en/skills/power-platform/references/dataverse-builder.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/decisoes-padrao.md": {
       "en": "en/skills/power-platform/references/default-decisions.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/design-system-e-telas.md": {
       "en": "en/skills/power-platform/references/design-system-and-screens.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/formato-saida.md": {
       "en": "en/skills/power-platform/references/output-format.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/matriz-tecnologia.md": {
       "en": "en/skills/power-platform/references/technology-matrix.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/mockups.md": {
       "en": "en/skills/power-platform/references/mockups.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/modelos.md": {
       "en": "en/skills/power-platform/references/models.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/modo-goal-fila.md": {
       "en": "en/skills/power-platform/references/goal-queue-mode.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/modo-investigar.md": {
       "en": "en/skills/power-platform/references/investigate-mode.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/navegacao.md": {
       "en": "en/skills/power-platform/references/navigation.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/pipeline.md": {
       "en": "en/skills/power-platform/references/pipeline.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/portao-final.md": {
       "en": "en/skills/power-platform/references/final-gate.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/protocolo.md": {
       "en": "en/skills/power-platform/references/protocol.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/salvaguardas.md": {
       "en": "en/skills/power-platform/references/safeguards.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/subagentes.md": {
       "en": "en/skills/power-platform/references/subagents.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/references/verificacao-visual.md": {
       "en": "en/skills/power-platform/references/visual-verification.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/_carga_conferir.py": {
       "en": "en/skills/power-platform/scripts/_carga_conferir.py",

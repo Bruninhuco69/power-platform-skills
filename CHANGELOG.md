@@ -42,6 +42,23 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
   - Testes novos em `tests/_i18n/`: cópias idênticas, idioma por plugin e por `PP_LANG`, `--help`
     de cada script sem português e a saída en-US dos validadores, do `estado.py`, da carga mockup e
     dos nomes as-built. A saída pt-BR não muda.
+- **Skill `power-platform` em en-US** (parte b do plugin `pp-en`).
+  - **`en/skills/power-platform/`:** o `SKILL.md`, as 20 referências, os 6 prompts de revisão e os
+    14 moldes em inglês, com os nomes do mapa (`references/mockup-load.md`,
+    `assets/prd-template.md`…), comandos `/pp-en:*`, agentes `pp-en:*-agent` e os arquivos do projeto
+    em inglês (`STATE.md`, `docs/planning/`, `AS-BUILT-ENVIRONMENT/`).
+  - **Moldes que os scripts leem:** o `assets/dataverse-builder.json` tem o mesmo código do
+    construtor pt-BR e só troca título, descrição e o texto do relatório (`done`, `already existed`,
+    `not run`); o `mockup-load-template.json`, o `mockups-template.json` e o `prototype-template.html`
+    passam limpos nos scripts en-US, com os componentes do catálogo Canvas pelo nome en-US
+    (`screen-header`…). Chave de config, id de padrão de navegação e chave de perfil ficam como no
+    pt-BR, porque script lê.
+  - **`i18n/glossario.md`:** `AMBIENTE-AS-BUILT/`, `docs/decisoes/`, `RF-`/`RN-`, entidades de
+    exemplo e o que fica igual no código.
+  - **Testes novos** em `tests/_i18n/test_skills_en.py`: cada skill en-US no padrão (description
+    "Use when … Do not use", até 250 linhas, links que existem), todo arquivo en-US é par `feito` do
+    mapa, nenhum `/pp:` nem agente pt no texto en-US, o construtor com o mesmo código do pt-BR e os
+    moldes en-US nos scripts.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.
