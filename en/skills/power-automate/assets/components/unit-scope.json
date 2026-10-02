@@ -1,0 +1,109 @@
+{
+  "nodeId": "Bloco_escopo_unidade",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Escopo_ok_gravar": {
+        "type": "Compose",
+        "inputs": "@or(equals(outputs('CONFIG')?['cfgEscopoUnidade'],false),or(or(equals(toLower(string(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Flg_TodasUnidades'],'0'))),'1'),equals(toLower(string(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Flg_TodasUnidades'],'0'))),'true')),and(not(empty(toUpper(trim(coalesce(first(body('Estado_antes_gravar')?['value'])?['Nom_Unidade'],''))))),equals(toUpper(trim(coalesce(first(body('Estado_antes_gravar')?['value'])?['Nom_Unidade'],''))),toUpper(trim(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Nom_Unidade'],'')))))))",
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000041"
+        }
+      },
+      "Se_fora_do_escopo_gravar": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@not(outputs('Escopo_ok_gravar'))",
+                "@true"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Nega_escopo_gravar": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "error",
+                "description": "You do not have access to this unit.",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000042"
+            }
+          },
+          "Nega_escopo_gravar_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Nega_escopo_gravar": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000043"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Escopo_ok_gravar": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000044"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_estado_antes": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000045"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

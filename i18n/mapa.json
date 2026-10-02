@@ -127,331 +127,331 @@
     },
     "skills/power-automate/SKILL.md": {
       "en": "en/skills/power-automate/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/INDICE.md": {
       "en": "en/skills/power-automate/assets/components/INDEX.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/autorizar-por-flag.json": {
       "en": "en/skills/power-automate/assets/components/authorize-by-flag.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/autorizar-por-flag.md": {
       "en": "en/skills/power-automate/assets/components/authorize-by-flag.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/batch-upsert-changeset.json": {
       "en": "en/skills/power-automate/assets/components/batch-upsert-changeset.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/batch-upsert-changeset.md": {
       "en": "en/skills/power-automate/assets/components/batch-upsert-changeset.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/catch-conector.json": {
       "en": "en/skills/power-automate/assets/components/connector-catch.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/catch-conector.md": {
       "en": "en/skills/power-automate/assets/components/connector-catch.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/compensacao-dataverse.json": {
       "en": "en/skills/power-automate/assets/components/dataverse-compensation.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/compensacao-dataverse.md": {
       "en": "en/skills/power-automate/assets/components/dataverse-compensation.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/config-recebimento.json": {
       "en": "en/skills/power-automate/assets/components/inbound-config.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/config-recebimento.md": {
       "en": "en/skills/power-automate/assets/components/inbound-config.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/config.json": {
       "en": "en/skills/power-automate/assets/components/config.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/config.md": {
       "en": "en/skills/power-automate/assets/components/config.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/derivar-valor-switch.json": {
       "en": "en/skills/power-automate/assets/components/derive-value-switch.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/derivar-valor-switch.md": {
       "en": "en/skills/power-automate/assets/components/derive-value-switch.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/email-suporte-com-parcial.json": {
       "en": "en/skills/power-automate/assets/components/support-email-with-partial.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/email-suporte-com-parcial.md": {
       "en": "en/skills/power-automate/assets/components/support-email-with-partial.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/escopo-unidade.json": {
       "en": "en/skills/power-automate/assets/components/unit-scope.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/escopo-unidade.md": {
       "en": "en/skills/power-automate/assets/components/unit-scope.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/escopo-unidades-dataverse.json": {
       "en": "en/skills/power-automate/assets/components/dataverse-units-scope.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/escopo-unidades-dataverse.md": {
       "en": "en/skills/power-automate/assets/components/dataverse-units-scope.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/estado-antes.json": {
       "en": "en/skills/power-automate/assets/components/state-before.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/estado-antes.md": {
       "en": "en/skills/power-automate/assets/components/state-before.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/exportar-csv-arquivo.json": {
       "en": "en/skills/power-automate/assets/components/export-csv-file.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/exportar-csv-arquivo.md": {
       "en": "en/skills/power-automate/assets/components/export-csv-file.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/filtros-json-da-tela.json": {
       "en": "en/skills/power-automate/assets/components/screen-filters-json.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/filtros-json-da-tela.md": {
       "en": "en/skills/power-automate/assets/components/screen-filters-json.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/gravar-via-procedure.json": {
       "en": "en/skills/power-automate/assets/components/write-via-procedure.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/gravar-via-procedure.md": {
       "en": "en/skills/power-automate/assets/components/write-via-procedure.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/html-para-pdf.json": {
       "en": "en/skills/power-automate/assets/components/html-to-pdf.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/html-para-pdf.md": {
       "en": "en/skills/power-automate/assets/components/html-to-pdf.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/identificar-chamador.json": {
       "en": "en/skills/power-automate/assets/components/identify-caller.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/identificar-chamador.md": {
       "en": "en/skills/power-automate/assets/components/identify-caller.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/indice-chaves-destino.json": {
       "en": "en/skills/power-automate/assets/components/target-key-index.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/indice-chaves-destino.md": {
       "en": "en/skills/power-automate/assets/components/target-key-index.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/ler-chamador-dataverse.json": {
       "en": "en/skills/power-automate/assets/components/read-caller-dataverse.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/ler-chamador-dataverse.md": {
       "en": "en/skills/power-automate/assets/components/read-caller-dataverse.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/ler-chamador-sql.json": {
       "en": "en/skills/power-automate/assets/components/read-caller-sql.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/ler-chamador-sql.md": {
       "en": "en/skills/power-automate/assets/components/read-caller-sql.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/log-execucao.json": {
       "en": "en/skills/power-automate/assets/components/run-log.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/log-execucao.md": {
       "en": "en/skills/power-automate/assets/components/run-log.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/mapear-lote.json": {
       "en": "en/skills/power-automate/assets/components/map-batch.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/mapear-lote.md": {
       "en": "en/skills/power-automate/assets/components/map-batch.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/nega-resposta-terminate.json": {
       "en": "en/skills/power-automate/assets/components/deny-response-terminate.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/nega-resposta-terminate.md": {
       "en": "en/skills/power-automate/assets/components/deny-response-terminate.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/normalizar-entrada.json": {
       "en": "en/skills/power-automate/assets/components/normalize-input.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/normalizar-entrada.md": {
       "en": "en/skills/power-automate/assets/components/normalize-input.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/paginacao-nativa.json": {
       "en": "en/skills/power-automate/assets/components/native-pagination.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/paginacao-nativa.md": {
       "en": "en/skills/power-automate/assets/components/native-pagination.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/resolver-id-diretorio.json": {
       "en": "en/skills/power-automate/assets/components/resolve-directory-id.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/resolver-id-diretorio.md": {
       "en": "en/skills/power-automate/assets/components/resolve-directory-id.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/se-nada-mudou.json": {
       "en": "en/skills/power-automate/assets/components/if-nothing-changed.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/se-nada-mudou.md": {
       "en": "en/skills/power-automate/assets/components/if-nothing-changed.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/switch-acao.json": {
       "en": "en/skills/power-automate/assets/components/action-switch.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/switch-acao.md": {
       "en": "en/skills/power-automate/assets/components/action-switch.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/token-cache-e-resposta-http.json": {
       "en": "en/skills/power-automate/assets/components/token-cache-and-http-response.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/token-cache-e-resposta-http.md": {
       "en": "en/skills/power-automate/assets/components/token-cache-and-http-response.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/traduzir-codigo-e-responder.json": {
       "en": "en/skills/power-automate/assets/components/translate-code-and-respond.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/traduzir-codigo-e-responder.md": {
       "en": "en/skills/power-automate/assets/components/translate-code-and-respond.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/trigger-http-recebimento.md": {
       "en": "en/skills/power-automate/assets/components/trigger-http-inbound.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/trigger-power-apps-v2.md": {
       "en": "en/skills/power-automate/assets/components/trigger-power-apps-v2.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/trilha-de-auditoria.json": {
       "en": "en/skills/power-automate/assets/components/audit-trail.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/trilha-de-auditoria.md": {
       "en": "en/skills/power-automate/assets/components/audit-trail.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/upsert-unitario.json": {
       "en": "en/skills/power-automate/assets/components/single-upsert.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/upsert-unitario.md": {
       "en": "en/skills/power-automate/assets/components/single-upsert.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/validar-com-mensagem.json": {
       "en": "en/skills/power-automate/assets/components/validate-with-message.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/componentes/validar-com-mensagem.md": {
       "en": "en/skills/power-automate/assets/components/validate-with-message.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/contrato-flow-molde.md": {
       "en": "en/skills/power-automate/assets/flow-contract-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/assets/flow-gravar-molde.json": {
       "en": "en/skills/power-automate/assets/flow-write-template.json",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/anatomia-flow.md": {
       "en": "en/skills/power-automate/references/flow-anatomy.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/autorizacao-no-flow.md": {
       "en": "en/skills/power-automate/references/authorization-in-flow.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/contrato-app-flow.md": {
       "en": "en/skills/power-automate/references/app-flow-contract.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/dataverse-batch-upsert.md": {
       "en": "en/skills/power-automate/references/dataverse-batch-upsert.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/expressoes-wdl-armadilhas.md": {
       "en": "en/skills/power-automate/references/wdl-expression-pitfalls.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/formato-clipboard.md": {
       "en": "en/skills/power-automate/references/clipboard-format.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/gabarito-designer.md": {
       "en": "en/skills/power-automate/references/designer-baseline.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/gerador-e-gabarito.md": {
       "en": "en/skills/power-automate/references/generator-and-baseline.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/http-entrada-externa.md": {
       "en": "en/skills/power-automate/references/http-external-inbound.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/licoes-de-campo.md": {
       "en": "en/skills/power-automate/references/field-lessons.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/log-execucao.md": {
       "en": "en/skills/power-automate/references/run-log.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/references/sql-no-flow.md": {
       "en": "en/skills/power-automate/references/sql-in-flow.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/scripts/_idioma.py": {
       "en": "en/skills/power-automate/scripts/_idioma.py",

@@ -81,6 +81,19 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
   - Teste novo `tests/_i18n/test_powerapps_canvas_en.py`: o catálogo é o do `verificar-prototipo.py`,
     estrutura de cada componente, índice, erro plantado, tokens, e cada bloco YAML en-US com as
     mesmas chaves, controles, tipos e fórmulas do pt-BR.
+- **Skill `power-automate` em en-US** (parte e do plugin `pp-en`).
+  - **`en/skills/power-automate/`:** o `SKILL.md`, as 12 referências, o contrato e o molde de flow
+    (`assets/flow-write-template.json`) e os 32 componentes (`.json` + `.md`) e 2 gatilhos
+    descritivos em `assets/components/`, com o índice `INDEX.md`.
+  - **O JSON colado tem o mesmo código do pt-BR:** nomes de ação, variável, parâmetro, coluna, os
+    códigos (`GRAVADO`, `TokenInvalido`…) e as ações do switch (`gravar`/`excluir`) ficam; muda só a
+    mensagem ao usuário, `description` e o sentinela `'(unresolved)'`. O CSV exportado usa `,` como
+    separador (Excel en-US). Moldes de expressão Power Fx do app em en-US.
+  - Tudo passa no `verificar-fluxo.py` en-US com os mesmos códigos do pt-BR (`0 error(s)`); o molde
+    de gravação dá `0 error(s), 0 warning(s)`.
+  - Teste novo `tests/_i18n/test_power_automate_en.py` (com `tests/_i18n/_fluxo.py`): mesmos
+    componentes do pt-BR, cada um limpo no verificador en-US, `.md` com o mesmo JSON e as seções,
+    índice completo, e cada JSON en-US com as mesmas chaves, tipos, expressões e GUIDs do pt-BR.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.

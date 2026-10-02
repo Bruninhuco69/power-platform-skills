@@ -1,0 +1,89 @@
+{
+  "nodeId": "Autorizar_gravar",
+  "serializedValue": {
+    "type": "If",
+    "expression": {
+      "and": [
+        {
+          "equals": [
+            "@not(or(equals(toLower(string(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Flg_Gravar'],'0'))),'1'),equals(toLower(string(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Flg_Gravar'],'0'))),'true')))",
+            "@true"
+          ]
+        }
+      ]
+    },
+    "actions": {
+      "Nega_perm_gravar": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "error",
+            "description": "Your role does not allow this action.",
+            "id": "",
+            "url": ""
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000022"
+        }
+      },
+      "Nega_perm_gravar_fim": {
+        "type": "Terminate",
+        "inputs": {
+          "runStatus": "Succeeded"
+        },
+        "runAfter": {
+          "Nega_perm_gravar": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000023"
+        }
+      }
+    },
+    "else": {
+      "actions": {}
+    },
+    "runAfter": {
+      "Se_chamador_desconhecido": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000024"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

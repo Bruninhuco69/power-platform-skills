@@ -1,0 +1,285 @@
+{
+  "nodeId": "Escopo_Principal",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Scope_Token": {
+        "type": "Scope",
+        "description": "REUSABLE: first action inside the main scope. Failed = token rejected.",
+        "actions": {
+          "Token_recebido": {
+            "type": "Compose",
+            "description": "Credential in the header, never in the body. Secure inputs and outputs: it does not go into the run history.",
+            "inputs": "@coalesce(triggerOutputs()?['headers']?['Authorization'],'')",
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000142"
+            }
+          },
+          "Buscar_token_cache": {
+            "type": "OpenApiConnection",
+            "description": "modifiedon of the row = when the token was last validated.",
+            "inputs": {
+              "parameters": {
+                "entityName": "<prefixo>_tokencaches",
+                "$select": "<prefixo>_tokencacheid,<prefixo>_token,modifiedon",
+                "$filter": "@concat('<prefixo>_name eq ''',outputs('CONFIG')?['origemToken'],'''')",
+                "$orderby": "modifiedon desc",
+                "$top": 1
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connection": "shared_commondataserviceforapps",
+                "operationId": "ListRecords"
+              }
+            },
+            "runAfter": {
+              "Token_recebido": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000143"
+            }
+          },
+          "Se_token_novo": {
+            "type": "If",
+            "description": "Yes = the cache is not valid (no token, different token, or last validated 1 h ago or more).",
+            "expression": {
+              "or": [
+                {
+                  "equals": [
+                    "@empty(outputs('Token_recebido'))",
+                    true
+                  ]
+                },
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('Token_recebido')",
+                      "@first(coalesce(body('Buscar_token_cache')?['value'],json('[]')))?['<prefixo>_token']"
+                    ]
+                  }
+                },
+                {
+                  "greaterOrEquals": [
+                    "@sub(ticks(utcNow()),ticks(coalesce(first(coalesce(body('Buscar_token_cache')?['value'],json('[]')))?['modifiedon'],'2000-01-01T00:00:00Z')))",
+                    36000000000
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Validar_token": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "new_token": "@outputs('Token_recebido')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_validadortoken",
+                    "connection": "shared_validadortoken",
+                    "operationId": "VerifyToken"
+                  }
+                },
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000144"
+                }
+              },
+              "Atualizar_token_cache": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "entityName": "<prefixo>_tokencaches",
+                    "recordId": "@first(coalesce(body('Buscar_token_cache')?['value'],json('[]')))?['<prefixo>_tokencacheid']",
+                    "item/<prefixo>_token": "@outputs('Token_recebido')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "connection": "shared_commondataserviceforapps",
+                    "operationId": "UpdateRecord"
+                  }
+                },
+                "runAfter": {
+                  "Validar_token": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000145"
+                }
+              },
+              "Criar_token_cache": {
+                "type": "OpenApiConnection",
+                "description": "Only runs if the Update failed: the cache row does not exist yet.",
+                "inputs": {
+                  "parameters": {
+                    "entityName": "<prefixo>_tokencaches",
+                    "item/<prefixo>_name": "@outputs('CONFIG')?['origemToken']",
+                    "item/<prefixo>_token": "@outputs('Token_recebido')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "connection": "shared_commondataserviceforapps",
+                    "operationId": "CreateRecord"
+                  }
+                },
+                "runAfter": {
+                  "Atualizar_token_cache": [
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000146"
+                }
+              },
+              "Ignorar_falha_cache": {
+                "type": "Compose",
+                "description": "Intentional absorption: a failure to write the cache must not bring down the inbound call (the token was already validated). Do NOT include Skipped in runAfter, or it masks a Validar_token failure.",
+                "inputs": "Token cache not written: see Atualizar_token_cache and Criar_token_cache. The next call validates again.",
+                "runAfter": {
+                  "Criar_token_cache": [
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "00000000-0000-0000-0000-000000000147"
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            },
+            "runAfter": {
+              "Buscar_token_cache": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000148"
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000149"
+        }
+      },
+      "Resposta_sucesso": {
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 200,
+          "body": {
+            "code": "Success",
+            "message": "Received successfully."
+          }
+        },
+        "runAfter": {
+          "Scope_Token": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000150"
+        }
+      },
+      "Resposta_token_invalido": {
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 401,
+          "body": {
+            "error": {
+              "code": "TokenInvalido",
+              "message": "The token sent is not valid."
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Token": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000151"
+        }
+      }
+    },
+    "runAfter": {
+      "Inicializar_linhas_com_erro": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000152"
+    }
+  },
+  "allConnectionData": {
+    "Buscar_token_cache": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    },
+    "Validar_token": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_validadortoken"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedvalidadortoken"
+        },
+        "connectionName": "<prefixo>_sharedvalidadortoken"
+      },
+      "referenceKey": "shared_validadortoken"
+    },
+    "Atualizar_token_cache": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    },
+    "Criar_token_cache": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

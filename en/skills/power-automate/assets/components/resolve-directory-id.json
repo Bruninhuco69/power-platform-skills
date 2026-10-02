@@ -1,0 +1,85 @@
+{
+  "nodeId": "Bloco_resolver_id",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Se_id_diretorio_vazio": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@empty(trim(coalesce(triggerBody()['text_2'],'')))",
+                "@true"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Obter_perfil_do_alvo": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "userId": "@toLower(trim(coalesce(triggerBody()['text_1'],'')))"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365users",
+                "connection": "shared_office365users",
+                "operationId": "UserProfile_V2"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000098"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000099"
+        }
+      },
+      "Id_diretorio_final": {
+        "type": "Compose",
+        "inputs": "@if(empty(trim(coalesce(triggerBody()['text_2'],''))),coalesce(body('Obter_perfil_do_alvo')?['id'],'(unresolved)'),trim(coalesce(triggerBody()['text_2'],'')))",
+        "runAfter": {
+          "Se_id_diretorio_vazio": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000100"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_validar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000101"
+    }
+  },
+  "allConnectionData": {
+    "Obter_perfil_do_alvo": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365users"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedoffice365users"
+        },
+        "connectionName": "<prefixo>_sharedoffice365users"
+      },
+      "referenceKey": "shared_office365users"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

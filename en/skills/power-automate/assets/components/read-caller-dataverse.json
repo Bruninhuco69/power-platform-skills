@@ -1,0 +1,170 @@
+{
+  "nodeId": "Try_pedido",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Ler_chamador": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "entityName": "<prefixo>_usuarios",
+            "$filter": "@concat('<prefixo>_upn eq ''',replace(outputs('Chamador'),'''',''''''),''' and <prefixo>_ativo eq true')",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "connection": "shared_commondataserviceforapps",
+            "operationId": "ListRecords"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000013"
+        }
+      },
+      "Se_chamador_desconhecido": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@empty(coalesce(body('Ler_chamador')?['value'],json('[]')))",
+                "@true"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Nega_chamador": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "error",
+                "description": "Your profile does not allow this action.",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000014"
+            }
+          },
+          "Nega_chamador_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Nega_chamador": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000015"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Ler_chamador": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000016"
+        }
+      },
+      "Ler_perfil": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "entityName": "<prefixo>_perfis",
+            "$filter": "@concat('<prefixo>_perfilid eq ',coalesce(first(body('Ler_chamador')?['value'])?['_<prefixo>_perfil_value'],'null'))",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "connection": "shared_commondataserviceforapps",
+            "operationId": "ListRecords"
+          }
+        },
+        "runAfter": {
+          "Se_chamador_desconhecido": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000017"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_chamador": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000018"
+    }
+  },
+  "allConnectionData": {
+    "Ler_chamador": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    },
+    "Ler_perfil": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

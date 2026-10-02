@@ -1,0 +1,116 @@
+{
+  "nodeId": "Bloco_trilha",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Linha_gravar_01": {
+        "type": "Compose",
+        "inputs": {
+          "ordem": "1",
+          "tp_evento": "EDICAO",
+          "campo": "Des_Pedido",
+          "valor_anterior": "@take(if(empty(string(first(body('Estado_antes_gravar')?['value'])?['Des_Pedido'])),'(empty)',string(first(body('Estado_antes_gravar')?['value'])?['Des_Pedido'])),200)",
+          "valor_novo": "@take(if(empty(string(outputs('Normalizar_gravar')?['descricao'])),'(empty)',string(outputs('Normalizar_gravar')?['descricao'])),200)",
+          "resumo": "@take(concat('Des_Pedido changed from ''',take(if(empty(string(first(body('Estado_antes_gravar')?['value'])?['Des_Pedido'])),'(empty)',string(first(body('Estado_antes_gravar')?['value'])?['Des_Pedido'])),200),''' to ''',take(if(empty(string(outputs('Normalizar_gravar')?['descricao'])),'(empty)',string(outputs('Normalizar_gravar')?['descricao'])),200),''''),400)",
+          "incluir": "@if(equals(string(first(body('Estado_antes_gravar')?['value'])?['Des_Pedido']),string(outputs('Normalizar_gravar')?['descricao'])),'0','1')"
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000062"
+        }
+      },
+      "Linha_gravar_02": {
+        "type": "Compose",
+        "inputs": {
+          "ordem": "2",
+          "tp_evento": "EDICAO",
+          "campo": "Qtd_Pedido",
+          "valor_anterior": "@take(if(empty(string(first(body('Estado_antes_gravar')?['value'])?['Qtd_Pedido'])),'(empty)',string(first(body('Estado_antes_gravar')?['value'])?['Qtd_Pedido'])),200)",
+          "valor_novo": "@take(if(empty(string(outputs('Normalizar_gravar')?['quantidade'])),'(empty)',string(outputs('Normalizar_gravar')?['quantidade'])),200)",
+          "resumo": "@take(concat('Qtd_Pedido changed from ''',take(if(empty(string(first(body('Estado_antes_gravar')?['value'])?['Qtd_Pedido'])),'(empty)',string(first(body('Estado_antes_gravar')?['value'])?['Qtd_Pedido'])),200),''' to ''',take(if(empty(string(outputs('Normalizar_gravar')?['quantidade'])),'(empty)',string(outputs('Normalizar_gravar')?['quantidade'])),200),''''),400)",
+          "incluir": "@if(equals(string(first(body('Estado_antes_gravar')?['value'])?['Qtd_Pedido']),string(outputs('Normalizar_gravar')?['quantidade'])),'0','1')"
+        },
+        "runAfter": {
+          "Linha_gravar_01": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000063"
+        }
+      },
+      "Trilha_gravar_todas": {
+        "type": "Compose",
+        "inputs": "@createArray(outputs('Linha_gravar_01'),outputs('Linha_gravar_02'))",
+        "runAfter": {
+          "Linha_gravar_02": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000064"
+        }
+      },
+      "Trilha_gravar_ativas": {
+        "type": "Query",
+        "inputs": {
+          "from": "@outputs('Trilha_gravar_todas')",
+          "where": "@equals(item()?['incluir'],'1')"
+        },
+        "runAfter": {
+          "Trilha_gravar_todas": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000065"
+        }
+      },
+      "Trilha_gravar": {
+        "type": "Select",
+        "inputs": {
+          "from": "@body('Trilha_gravar_ativas')",
+          "select": {
+            "ordem": "@item()?['ordem']",
+            "tp_evento": "@item()?['tp_evento']",
+            "campo": "@item()?['campo']",
+            "valor_anterior": "@item()?['valor_anterior']",
+            "valor_novo": "@item()?['valor_novo']",
+            "resumo": "@item()?['resumo']"
+          }
+        },
+        "runAfter": {
+          "Trilha_gravar_ativas": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000066"
+        }
+      },
+      "Trilha_gravar_campos": {
+        "type": "Compose",
+        "inputs": "@length(body('Trilha_gravar_ativas'))",
+        "runAfter": {
+          "Trilha_gravar": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000067"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_validar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000068"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

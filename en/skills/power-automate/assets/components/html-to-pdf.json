@@ -1,0 +1,335 @@
+{
+  "nodeId": "Bloco_html_para_pdf",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Html_pagina": {
+        "type": "Compose",
+        "inputs": "@concat('<html><head><meta charset=\"utf-8\"></head><body>',join(coalesce(body('Linhas_html'),json('[]')),''),'</body></html>')",
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000131"
+        }
+      },
+      "Gravar_html": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "folderPath": "@outputs('CONFIG')?['pastaSaida']",
+            "name": "Labels_@{formatDateTime(utcNow(),'yyyyMMdd-HHmm')}.html",
+            "body": "@outputs('Html_pagina')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connection": "shared_onedriveforbusiness",
+            "operationId": "CreateFile"
+          }
+        },
+        "runAfter": {
+          "Html_pagina": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000132"
+        }
+      },
+      "Converter_pdf": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "id": "@coalesce(body('Gravar_html')?['Id'],'')",
+            "type": "PDF"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connection": "shared_onedriveforbusiness",
+            "operationId": "ConvertFile"
+          }
+        },
+        "runAfter": {
+          "Gravar_html": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000133"
+        }
+      },
+      "Limpar_html": {
+        "type": "OpenApiConnection",
+        "description": "Intentional absorption: deleting the temporary HTML must not mask a conversion failure.",
+        "inputs": {
+          "parameters": {
+            "id": "@coalesce(body('Gravar_html')?['Id'],'')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connection": "shared_onedriveforbusiness",
+            "operationId": "DeleteFile"
+          }
+        },
+        "runAfter": {
+          "Converter_pdf": [
+            "Succeeded",
+            "Failed",
+            "Skipped"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000134"
+        }
+      },
+      "Se_pdf_falhou": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@empty(coalesce(string(body('Converter_pdf')),''))",
+                "@true"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Nega_pdf": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "error",
+                "description": "Could not generate the PDF. The converter accepts up to 2 MB per file: filter by period or unit and try again, or export as CSV.",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000135"
+            }
+          },
+          "Nega_pdf_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Nega_pdf": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000136"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Limpar_html": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000137"
+        }
+      },
+      "Gravar_pdf": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "folderPath": "@outputs('CONFIG')?['pastaSaida']",
+            "name": "Labels_@{formatDateTime(utcNow(),'yyyyMMdd-HHmm')}.pdf",
+            "body": "@body('Converter_pdf')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connection": "shared_onedriveforbusiness",
+            "operationId": "CreateFile"
+          }
+        },
+        "runAfter": {
+          "Se_pdf_falhou": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000138"
+        }
+      },
+      "Link_pdf": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "id": "@coalesce(body('Gravar_pdf')?['Id'],'')",
+            "type": "View",
+            "scope": "Organization"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connection": "shared_onedriveforbusiness",
+            "operationId": "CreateShareLinkV2"
+          }
+        },
+        "runAfter": {
+          "Gravar_pdf": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000139"
+        }
+      },
+      "Responder_pdf": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "success",
+            "description": "PDF generated.",
+            "id": "",
+            "url": "@{if(empty(coalesce(body('Link_pdf')?['WebUrl'],'')),'',concat(body('Link_pdf')?['WebUrl'],if(contains(body('Link_pdf')?['WebUrl'],'?'),'&','?'),'download=1'))}"
+          }
+        },
+        "runAfter": {
+          "Link_pdf": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000140"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_filtros": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000141"
+    }
+  },
+  "allConnectionData": {
+    "Gravar_html": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedonedriveforbusiness"
+        },
+        "connectionName": "<prefixo>_sharedonedriveforbusiness"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    },
+    "Converter_pdf": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedonedriveforbusiness"
+        },
+        "connectionName": "<prefixo>_sharedonedriveforbusiness"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    },
+    "Limpar_html": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedonedriveforbusiness"
+        },
+        "connectionName": "<prefixo>_sharedonedriveforbusiness"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    },
+    "Gravar_pdf": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedonedriveforbusiness"
+        },
+        "connectionName": "<prefixo>_sharedonedriveforbusiness"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    },
+    "Link_pdf": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedonedriveforbusiness"
+        },
+        "connectionName": "<prefixo>_sharedonedriveforbusiness"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

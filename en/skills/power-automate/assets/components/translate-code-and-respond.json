@@ -1,0 +1,91 @@
+{
+  "nodeId": "Bloco_responder",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Mensagens_gravar": {
+        "type": "Compose",
+        "inputs": {
+          "GRAVADO": {
+            "status": "success",
+            "description": "Order saved."
+          },
+          "NAO_APLICADO": {
+            "status": "warning",
+            "description": "Nothing was changed."
+          },
+          "DUPLICADO": {
+            "status": "warning",
+            "description": "An order with this number already exists."
+          },
+          "NAO_ENCONTRADO": {
+            "status": "error",
+            "description": "Order not found."
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000081"
+        }
+      },
+      "Responder_gravar": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "@{coalesce(outputs('Mensagens_gravar')?[outputs('Codigo_gravar')]?['status'],'error')}",
+            "description": "@{coalesce(outputs('Mensagens_gravar')?[outputs('Codigo_gravar')]?['description'],concat('Unexpected system response: ',outputs('Codigo_gravar'),'.'))}",
+            "id": "@{coalesce(body('Gravar_pedido')?['ResultSets']?['Table1']?[0]?['id'],'')}",
+            "url": ""
+          }
+        },
+        "runAfter": {
+          "Mensagens_gravar": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000082"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_gravar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000083"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

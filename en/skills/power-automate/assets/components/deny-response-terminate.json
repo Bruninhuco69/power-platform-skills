@@ -1,0 +1,71 @@
+{
+  "nodeId": "Bloco_nega",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Nega_motivo": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "error",
+            "description": "Your role does not allow this action.",
+            "id": "",
+            "url": ""
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000019"
+        }
+      },
+      "Nega_motivo_fim": {
+        "type": "Terminate",
+        "inputs": {
+          "runStatus": "Succeeded"
+        },
+        "runAfter": {
+          "Nega_motivo": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000020"
+        }
+      }
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000021"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

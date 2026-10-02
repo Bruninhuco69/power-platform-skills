@@ -1,0 +1,29 @@
+{
+  "nodeId": "Bloco_config",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "CONFIG": {
+        "type": "Compose",
+        "inputs": {
+          "EntitySetName": "<prefixo>_pedidos",
+          "TamanhoLote": 50,
+          "ColunaGuid": "<prefixo>_pedidoid",
+          "ColunaChave1": "<prefixo>_numero",
+          "ColunaChave2": "<prefixo>_dataevento",
+          "origemToken": "<origem-do-token>"
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000003"
+        }
+      }
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000004"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

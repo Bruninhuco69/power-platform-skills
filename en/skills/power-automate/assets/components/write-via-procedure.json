@@ -1,0 +1,68 @@
+{
+  "nodeId": "Bloco_gravar",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Gravar_pedido": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "server": "default",
+            "database": "default",
+            "procedure": "[dbo].[<procedure_gravar_pedido>]",
+            "parameters/Id_Pedido": "@outputs('Normalizar_gravar')?['idNumero']",
+            "parameters/Des_Pedido": "@outputs('Normalizar_gravar')?['descricao']",
+            "parameters/Qtd_Pedido": "@outputs('Normalizar_gravar')?['quantidade']",
+            "parameters/Nom_Unidade": "@outputs('Normalizar_gravar')?['unidade']",
+            "parameters/Id_UsuarioChamador": "@int(coalesce(body('Ler_chamador')?['ResultSets']?['Table1']?[0]?['Id_Usuario'],0))"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sql",
+            "connection": "shared_sql",
+            "operationId": "ExecuteProcedure_V2"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000078"
+        }
+      },
+      "Codigo_gravar": {
+        "type": "Compose",
+        "inputs": "@coalesce(body('Gravar_pedido')?['ResultSets']?['Table1']?[0]?['description'],'')",
+        "runAfter": {
+          "Gravar_pedido": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000079"
+        }
+      }
+    },
+    "runAfter": {
+      "Se_nada_mudou_gravar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000080"
+    }
+  },
+  "allConnectionData": {
+    "Gravar_pedido": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sql"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedsql"
+        },
+        "connectionName": "<prefixo>_sharedsql"
+      },
+      "referenceKey": "shared_sql"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

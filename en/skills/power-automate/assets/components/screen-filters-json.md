@@ -1,0 +1,229 @@
+# Filters sent as JSON in a text parameter
+
+> **File**: `screen-filters-json.json` · **Frequency**: occasional · **Maturity**: designed [unverified]: generated, never returned by the designer
+> **Depends on**: `authorize-by-flag`; filters parameter on the trigger
+
+## Purpose
+
+Reads the text as an object (`Filtros`), removes the known keys one by one (`Filtros_resto_N`) and checks that the remainder is `{}`: an unknown key is denied. Validates the shape of the lists and denies with the message.
+
+## When to use / when not to use
+
+**Use**
+
+- Report or export with optional filters.
+
+**Do not use**
+
+- A few fixed filters: one positional parameter per filter is simpler.
+
+## Where to paste
+
+Inside `Try_pedido`, after `Autorizar_exportar`.
+
+## Inputs and outputs
+
+**Reads**
+
+- `triggerBody()['text_1']`: JSON object as text.
+
+**Exposes**
+
+- `outputs('Filtros')` (object) and `outputs('Validar_filtros')` (message or empty).
+
+## JSON
+
+Destination: `Ctrl+V` at the designer insertion point (clipboard scope envelope, `nodeId` `Bloco_filtros`; the same content is in `screen-filters-json.json`). Fictitious GUIDs; connections: none.
+
+```json
+{
+  "nodeId": "Bloco_filtros",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Filtros": {
+        "type": "Compose",
+        "inputs": "@json(if(and(startsWith(trim(coalesce(triggerBody()['text_1'],'')),'{'),endsWith(trim(coalesce(triggerBody()['text_1'],'')),'}')),trim(coalesce(triggerBody()['text_1'],'')),'{}'))",
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000114"
+        }
+      },
+      "Filtros_resto_1": {
+        "type": "Compose",
+        "inputs": "@if(contains(outputs('Filtros'),'unidades'),removeProperty(outputs('Filtros'),'unidades'),outputs('Filtros'))",
+        "runAfter": {
+          "Filtros": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000115"
+        }
+      },
+      "Filtros_resto_2": {
+        "type": "Compose",
+        "inputs": "@if(contains(outputs('Filtros_resto_1'),'status'),removeProperty(outputs('Filtros_resto_1'),'status'),outputs('Filtros_resto_1'))",
+        "runAfter": {
+          "Filtros_resto_1": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000116"
+        }
+      },
+      "Filtros_resto_3": {
+        "type": "Compose",
+        "inputs": "@if(contains(outputs('Filtros_resto_2'),'data_de'),removeProperty(outputs('Filtros_resto_2'),'data_de'),outputs('Filtros_resto_2'))",
+        "runAfter": {
+          "Filtros_resto_2": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000117"
+        }
+      },
+      "Validar_filtros": {
+        "type": "Compose",
+        "inputs": "@if(not(equals(trim(string(outputs('Filtros_resto_3'))),'{}')),'Unknown filter. Tell support.',if(and(not(empty(coalesce(string(outputs('Filtros')?['unidades']),''))),not(startsWith(trim(string(outputs('Filtros')?['unidades'])),'['))),'Invalid filter. Redo the selection and try again.',''))",
+        "runAfter": {
+          "Filtros_resto_3": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000118"
+        }
+      },
+      "Se_filtros_invalidos": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "greater": [
+                "@length(outputs('Validar_filtros'))",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Nega_filtros": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "error",
+                "description": "@{outputs('Validar_filtros')}",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000119"
+            }
+          },
+          "Nega_filtros_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Nega_filtros": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000120"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Validar_filtros": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000121"
+        }
+      }
+    },
+    "runAfter": {
+      "Autorizar_exportar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000122"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}
+```
+
+## Parameters to change
+
+| Item | Value in the JSON | Replace with |
+|---|---|---|
+| `unidades`, `status`, `data_de` | known keys | one `Filtros_resto_N` row per key; change the number of the last one in the validation |
+| `text_1` | parameter position | position on the trigger |
+
+## runAfter
+
+The root depends on `Autorizar_exportar`; the `Filtros_resto_N` actions chain.
+
+## Pitfalls
+
+- `json()` of text that starts with `{` and ends with `}` but is malformed blows up; the app must build the text with `JSON()`.
+- Removing keys with a **nested** `if(contains(o,'k'), removeProperty(o,'k'), o)` doubles the expression for every key (2^8 copies with 8 keys): one `Compose` per key chains linearly. Limit 8,192 characters (F013).
+- A list arrives as text that starts with `[`; check the shape before using it in `join`.
+- A filter value that goes into `$filter` takes a doubled apostrophe; a date only in a validated format.
+- Instead of `ISJSON`, which does not exist in WDL, the unknown-key validation is the `{}` remainder.
+
+## Variations
+
+- Date: validate year, month and day separately (`substring` with guards) before building `$filter` or calling the procedure.
+
+## Verification
+
+Destination: terminal, from the plugin root.
+
+```text
+python skills/power-automate/scripts/verificar-fluxo.py skills/power-automate/assets/components/screen-filters-json.json
+```
+
+Expected result: `0 error(s), 0 warning(s)`.

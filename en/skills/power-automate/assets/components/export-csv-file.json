@@ -1,0 +1,230 @@
+{
+  "nodeId": "Bloco_exportar_csv",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Se_exportacao_vazia": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@empty(coalesce(body('Ler_dados_exportacao')?['ResultSets']?['Table1'],json('[]')))",
+                "@true"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Avisa_exportacao_vazia": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "warning",
+                "description": "No records match the filters. Nothing was generated.",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000123"
+            }
+          },
+          "Avisa_exportacao_vazia_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Avisa_exportacao_vazia": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000124"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000125"
+        }
+      },
+      "Linhas_csv": {
+        "type": "Select",
+        "inputs": {
+          "from": "@coalesce(body('Ler_dados_exportacao')?['ResultSets']?['Table1'],json('[]'))",
+          "select": "@concat(replace(replace(replace(coalesce(string(item()?['Pedido']),''),',',';'),decodeUriComponent('%0D'),' '),decodeUriComponent('%0A'),' '),',',replace(replace(replace(coalesce(string(item()?['Descricao']),''),',',';'),decodeUriComponent('%0D'),' '),decodeUriComponent('%0A'),' '),',',replace(replace(replace(coalesce(string(item()?['Unidade']),''),',',';'),decodeUriComponent('%0D'),' '),decodeUriComponent('%0A'),' '))"
+        },
+        "runAfter": {
+          "Se_exportacao_vazia": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000126"
+        }
+      },
+      "Gravar_csv": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "folderPath": "@outputs('CONFIG')?['pastaSaida']",
+            "name": "Orders_@{formatDateTime(utcNow(),'yyyyMMdd-HHmm')}.csv",
+            "body": "@concat(decodeUriComponent('%EF%BB%BF'),'Order,Description,Unit',decodeUriComponent('%0D%0A'),join(body('Linhas_csv'),decodeUriComponent('%0D%0A')))"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connection": "shared_onedriveforbusiness",
+            "operationId": "CreateFile"
+          }
+        },
+        "runAfter": {
+          "Linhas_csv": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000127"
+        }
+      },
+      "Link_csv": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "id": "@coalesce(body('Gravar_csv')?['Id'],'')",
+            "type": "View",
+            "scope": "Organization"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connection": "shared_onedriveforbusiness",
+            "operationId": "CreateShareLinkV2"
+          }
+        },
+        "runAfter": {
+          "Gravar_csv": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000128"
+        }
+      },
+      "Responder_csv": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "success",
+            "description": "@{concat(string(length(body('Linhas_csv'))),' record(s) exported.')}",
+            "id": "",
+            "url": "@{if(empty(coalesce(body('Link_csv')?['WebUrl'],'')),'',concat(body('Link_csv')?['WebUrl'],if(contains(body('Link_csv')?['WebUrl'],'?'),'&','?'),'download=1'))}"
+          }
+        },
+        "runAfter": {
+          "Link_csv": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000129"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_filtros": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000130"
+    }
+  },
+  "allConnectionData": {
+    "Gravar_csv": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedonedriveforbusiness"
+        },
+        "connectionName": "<prefixo>_sharedonedriveforbusiness"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    },
+    "Link_csv": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedonedriveforbusiness"
+        },
+        "connectionName": "<prefixo>_sharedonedriveforbusiness"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}
