@@ -97,9 +97,13 @@
       "en": "en/skills/dataverse/references/security.md",
       "situacao": "pendente"
     },
+    "skills/dataverse/scripts/_idioma.py": {
+      "en": "en/skills/dataverse/scripts/_idioma.py",
+      "situacao": "feito"
+    },
     "skills/dataverse/scripts/extrair-nomes-as-built.py": {
       "en": "en/skills/dataverse/scripts/extrair-nomes-as-built.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/design/SKILL.md": {
       "en": "en/skills/design/SKILL.md",
@@ -449,9 +453,13 @@
       "en": "en/skills/power-automate/references/sql-in-flow.md",
       "situacao": "pendente"
     },
+    "skills/power-automate/scripts/_idioma.py": {
+      "en": "en/skills/power-automate/scripts/_idioma.py",
+      "situacao": "feito"
+    },
     "skills/power-automate/scripts/verificar-fluxo.py": {
       "en": "en/skills/power-automate/scripts/verificar-fluxo.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/SKILL.md": {
       "en": "en/skills/power-platform/SKILL.md",
@@ -619,55 +627,59 @@
     },
     "skills/power-platform/scripts/_carga_conferir.py": {
       "en": "en/skills/power-platform/scripts/_carga_conferir.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/_carga_construtor.py": {
       "en": "en/skills/power-platform/scripts/_carga_construtor.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/_carga_modelo.py": {
       "en": "en/skills/power-platform/scripts/_carga_modelo.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/_carga_plano.py": {
       "en": "en/skills/power-platform/scripts/_carga_plano.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/_carga_sql.py": {
       "en": "en/skills/power-platform/scripts/_carga_sql.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/_carga_valores.py": {
       "en": "en/skills/power-platform/scripts/_carga_valores.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/_carga_xlsx.py": {
       "en": "en/skills/power-platform/scripts/_carga_xlsx.py",
-      "situacao": "pendente"
+      "situacao": "feito"
+    },
+    "skills/power-platform/scripts/_idioma.py": {
+      "en": "en/skills/power-platform/scripts/_idioma.py",
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/capturar-telas.py": {
       "en": "en/skills/power-platform/scripts/capturar-telas.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/desenhar-mockups.py": {
       "en": "en/skills/power-platform/scripts/desenhar-mockups.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/estado.py": {
       "en": "en/skills/power-platform/scripts/estado.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/modelos.py": {
       "en": "en/skills/power-platform/scripts/modelos.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/montar-carga-mockup.py": {
       "en": "en/skills/power-platform/scripts/montar-carga-mockup.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-platform/scripts/verificar-prototipo.py": {
       "en": "en/skills/power-platform/scripts/verificar-prototipo.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/SKILL.md": {
       "en": "en/skills/powerapps-canvas/SKILL.md",
@@ -853,9 +865,13 @@
       "en": "en/skills/powerapps-canvas/references/pa-yaml-format.md",
       "situacao": "pendente"
     },
+    "skills/powerapps-canvas/scripts/_idioma.py": {
+      "en": "en/skills/powerapps-canvas/scripts/_idioma.py",
+      "situacao": "feito"
+    },
     "skills/powerapps-canvas/scripts/validar-telas.py": {
       "en": "en/skills/powerapps-canvas/scripts/validar-telas.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/progresso/SKILL.md": {
       "en": "en/skills/progress/SKILL.md",
@@ -925,9 +941,13 @@
       "en": "en/skills/sql-procedures/references/security-and-permissions.md",
       "situacao": "pendente"
     },
+    "skills/sql-procedures/scripts/_idioma.py": {
+      "en": "en/skills/sql-procedures/scripts/_idioma.py",
+      "situacao": "feito"
+    },
     "skills/sql-procedures/scripts/lint-procedure.py": {
       "en": "en/skills/sql-procedures/scripts/lint-procedure.py",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/testar/SKILL.md": {
       "en": "en/skills/test/SKILL.md",

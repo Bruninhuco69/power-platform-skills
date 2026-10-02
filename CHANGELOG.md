@@ -29,6 +29,19 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
     `docs/img/pdf-en-1.jpg` a `-4.jpg` no `README.en.md`.
   - O `README.en.md` aponta para o site, o diagrama e o PDF em inglês; o mapa marca os três como
     `feito`.
+- **Scripts em en-US** (parte a do plugin `pp-en`).
+  - **Um código só:** cada script das skills escreve as mensagens em `tr("pt", "en")` e escolhe o
+    idioma pelo `plugin.json` acima dele (`pp` fala pt-BR, `pp-en` fala inglês) ou pela variável
+    `PP_LANG` (`_idioma.py`, igual nas cinco skills). No en-US o resumo é `0 error(s), 0 warning(s)`,
+    o nível aparece como `ERROR`/`WARNING` e os arquivos gerados têm nome em inglês (`STATE.md`,
+    `mockup-load.sql`, `dataverse-builder/`…). Subcomando, opção e chave de JSON ficam iguais; o
+    `estado.py` aceita também o id en-US da etapa (`comecar new`).
+  - **`tools/sincronizar_en.py`** copia `skills/*/scripts/*.py`, idênticos, para a pasta en-US de cada
+    skill e marca o mapa; `--conferir` só confere. O teste falha se uma cópia dessincronizar.
+  - **`i18n/glossario.md`:** comandos, agentes, arquivos que o kit cria e termos em en-US.
+  - Testes novos em `tests/_i18n/`: cópias idênticas, idioma por plugin e por `PP_LANG`, `--help`
+    de cada script sem português e a saída en-US dos validadores, do `estado.py`, da carga mockup e
+    dos nomes as-built. A saída pt-BR não muda.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.
