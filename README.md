@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://bruninhuco69.github.io/power-platform-skills/diagrama/">
+<a href="https://stage2dev.github.io/power-platform-skills/diagrama/">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/img/pipeline-escuro.webp">
     <img src="docs/img/pipeline-claro.webp" width="100%" alt="O pipeline /pp montado em blocos: dez etapas numeradas em quatro blocos (definição, identidade, construção e entrega), o orquestrador de boné, os oito agentes de gorro colorido, os pinos vermelhos onde você age no ambiente e as três voltas: ajuste do protótipo, correção de teste e mudança com o app no ar">
@@ -19,8 +19,8 @@ agentes que constroem e provam o que fizeram, e você só onde precisa de gente.
 ![idioma](https://img.shields.io/badge/idioma-pt--BR-6b7280)
 ![licença](https://img.shields.io/badge/licen%C3%A7a-MIT-16a34a)
 
-[**Site**](https://bruninhuco69.github.io/power-platform-skills/) ·
-[**Diagrama 3D**](https://bruninhuco69.github.io/power-platform-skills/diagrama/) ·
+[**Site**](https://stage2dev.github.io/power-platform-skills/) ·
+[**Diagrama 3D**](https://stage2dev.github.io/power-platform-skills/diagrama/) ·
 [**Apresentação em PDF**](docs/Power-Platform-Kit.pdf) ·
 [**Instalação**](#instalação) ·
 [**Contribuir**](#como-contribuir)
@@ -32,7 +32,7 @@ agentes que constroem e provam o que fizeram, e você só onde precisa de gente.
 ## Em 30 segundos
 
 ```text
-/plugin marketplace add Bruninhuco69/power-platform-skills
+/plugin marketplace add stage2dev/power-platform-skills
 /plugin install pp@power-platform-kit
 /pp:novo um app para acompanhar pedidos entre as unidades
 ```
@@ -98,7 +98,7 @@ convenções. [**Baixar o PDF**](docs/Power-Platform-Kit.pdf).
 
 O diagrama do topo é o pipeline inteiro: dez etapas em quatro blocos, da ideia (`1`) ao app
 publicado (`10`). Os gorros coloridos são os agentes, os pinos vermelhos marcam onde você age no
-ambiente, e as mangueiras são as voltas. [Abra a versão em 3D](https://bruninhuco69.github.io/power-platform-skills/diagrama/)
+ambiente, e as mangueiras são as voltas. [Abra a versão em 3D](https://stage2dev.github.io/power-platform-skills/diagrama/)
 para girar e aproximar.
 
 <details>
@@ -204,14 +204,14 @@ estado fica no `ESTADO.md`, na raiz do projeto.
 Dentro do Claude Code:
 
 ```text
-/plugin marketplace add Bruninhuco69/power-platform-skills
+/plugin marketplace add stage2dev/power-platform-skills
 /plugin install pp@power-platform-kit
 ```
 
 Ou pelo terminal:
 
 ```bash
-claude plugin marketplace add Bruninhuco69/power-platform-skills
+claude plugin marketplace add stage2dev/power-platform-skills
 claude plugin install pp@power-platform-kit
 ```
 
@@ -221,7 +221,7 @@ sessão que já estava aberta, reinicie o Claude Code.
 **A partir de um clone local** (para testar mudanças antes de publicar):
 
 ```bash
-git clone https://github.com/Bruninhuco69/power-platform-skills.git
+git clone https://github.com/stage2dev/power-platform-skills.git
 claude plugin marketplace add ./power-platform-skills
 claude plugin install pp@power-platform-kit
 ```
