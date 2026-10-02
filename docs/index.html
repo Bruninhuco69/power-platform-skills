@@ -217,6 +217,7 @@ section.alt .table { background: var(--bg); }
 
 /* install */
 .install { display: grid; gap: 20px; }
+.install > * { min-width: 0; } /* o <pre> rola em vez de alargar a página no celular */
 @media (min-width: 900px) { .install { grid-template-columns: 1.1fr .9fr; } }
 .code { position: relative; background: var(--term-bg); color: var(--term-ink); border-radius: 12px; border: 1px solid #22262f; margin: 0 0 14px; }
 .code pre { margin: 0; padding: 16px 52px 16px 16px; font-size: 13px; line-height: 1.7; overflow-x: auto; }

@@ -158,6 +158,9 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
 - **Apresentação em PDF** (`docs/Power-Platform-Kit.pdf`, 4 páginas), com miniaturas no README.
 
 ### Mudado
+- **PDF en-US sem o aviso de `pp-en` em tradução** (página 1) e miniaturas `pdf-en-*.jpg` de novo;
+  o site pt-BR ganha a regra que o en-US já tinha (`.install > * { min-width: 0; }`): o bloco de
+  instalação rola por dentro em vez de alargar a página no celular (546 px → 390 px).
 - **Datas da carga mockup só com dia 13 ou mais** (`data_base` padrão `2026-01-13`): se a importação
   trocar dia e mês, a linha é recusada em vez de entrar com a data errada.
 - README com nova capa: diagrama, links rápidos, "Em 30 segundos", por que o kit existe e os
