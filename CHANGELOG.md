@@ -2,6 +2,19 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: semver.
 
+## [Não lançado]
+
+### Adicionado
+- **Diagrama 3D em blocos** (`docs/diagrama/`, three.js, no site em `/diagrama/`): as dez etapas
+  numa trilha de tabuleiro, com o orquestrador, os oito agentes, os pinos de onde você age no
+  ambiente e as três voltas. O README mostra a cena como imagem, nos temas claro e escuro.
+- **Apresentação em PDF** (`docs/Power-Platform-Kit.pdf`, 4 páginas), com miniaturas no README.
+
+### Mudado
+- README com nova capa: diagrama, links rápidos, "Em 30 segundos", por que o kit existe e os
+  problemas que ele evita. O Mermaid fica recolhido em "o mesmo diagrama em texto"; a skill de
+  Power BI abre os próximos passos; "Como contribuir" convida a mandar pull request.
+
 ## [0.3.0] — 2026-10-02
 
 Quem pensa não é quem executa: a sessão de cada etapa define o pedido e julga; os agentes fazem e

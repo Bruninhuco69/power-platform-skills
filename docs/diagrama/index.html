@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline em blocos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f5f7; --card: #ffffff; --ink: #14161a; --ink-2: #4a5160; --line: #e3e5e9;
+  --sombra: 0 1px 2px rgba(20,22,26,.08), 0 6px 18px rgba(20,22,26,.14);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0e1014; --card: #ffffff; --ink: #14161a; --ink-2: #4a5160; }
+}
+:root[data-theme="dark"] { --bg: #0e1014; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); overflow: hidden;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
+body.shot { background: transparent; }
+#app { position: fixed; inset: 0; }
+body.shot #app { position: relative; width: 1200px; height: 720px; }
+.rotulos { position: absolute; inset: 0; pointer-events: none; }
+.ancora { width: 0; height: 0; position: relative; }
+.ancora > * { position: absolute; top: 0; transform: translateY(-50%); }
+.ancora.centro > * { left: 0; transform: translate(-50%, -50%); }
+.ancora.esq > * { right: 0; }
+.ancora.dir > * { left: 0; }
+code { font-family: "JetBrains Mono", Consolas, monospace; font-weight: 600; }
+
+.zona { display: flex; align-items: center; gap: 9px; padding: 7px 15px 7px 8px; border-radius: 999px;
+  background: var(--card); color: var(--ink); box-shadow: var(--sombra); font-weight: 800; font-size: 19px; white-space: nowrap; }
+.zona b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; font-size: 15px; }
+.volta { display: flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px; color: #fff;
+  font-weight: 700; font-size: 16px; white-space: nowrap; box-shadow: var(--sombra); }
+.volta code { font-size: 15px; }
+.volta .seta { font-size: 15px; line-height: 1; }
+.ajuste { background: #db2777; } .corrige { background: #d97706; } .muda { background: #c8603f; }
+.portao { padding: 6px 13px; border-radius: 999px; background: #16a34a; color: #fff; font-weight: 800; font-size: 16px; white-space: nowrap; box-shadow: var(--sombra); }
+.quem { padding: 4px 11px; border-radius: 999px; background: #1d2b4f; color: #fff; font-weight: 700; font-size: 15px; white-space: nowrap; box-shadow: var(--sombra); }
+
+.legenda { position: absolute; left: 50%; transform: translateX(-50%); bottom: 16px; white-space: nowrap; display: flex; gap: 18px; align-items: center;
+  padding: 9px 16px; border-radius: 12px; background: var(--card); box-shadow: var(--sombra); font-size: 15px; font-weight: 600; color: var(--ink-2); }
+.legenda span { display: flex; align-items: center; gap: 7px; }
+.legenda i { width: 12px; height: 12px; border-radius: 50%; background: #dc2626; }
+.legenda i.chapeu { width: 14px; height: 9px; border-radius: 7px 7px 2px 2px; background: #36aebf; }
+
+.topo { position: fixed; left: 24px; top: 20px; display: flex; align-items: center; gap: 12px; }
+.topo .logo { width: 34px; height: 34px; border-radius: 9px; background: #2563eb; color: #fff; display: grid; place-items: center; font-weight: 800; }
+.topo h1 { margin: 0; font-size: 17px; font-weight: 800; }
+.topo p { margin: 1px 0 0; font-size: 12.5px; color: var(--ink-2); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .topo h1 { color: #eceef2; } :root:not([data-theme="light"]) .topo p { color: #8a91a0; } }
+body.shot .topo { display: none; }
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="logo">pp</div>
+  <div><h1>Power Platform Kit · o caminho em blocos</h1><p>Arraste para girar · role para aproximar</p></div>
+</header>
+<div id="app"></div>
+<div class="legenda">
+  <span><i></i>você age no ambiente</span>
+  <span><i class="chapeu"></i>agente que executa e prova</span>
+</div>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+{ const q = new URLSearchParams(location.search);
+  if (q.has('shot')) document.body.classList.add('shot');
+  // fundo igual ao do GitHub: a imagem do README some na página, no tema claro e no escuro
+  if (q.get('fundo')) document.documentElement.style.background = document.body.style.background = q.get('fundo') === 'escuro' ? '#0d1117' : '#ffffff'; }
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+// Geometria e material dos blocos. Unidade: 1 = distância entre pinos (8 mm); tijolo 1,2 de altura, placa 0,4.
+// Técnica (plástico com verniz, mapa de digitais, pinos com borda) aprendida na demo Brick Toy da lemo-opuscar.
+
+
+
+const BRICK = 1.2, PLATE = .4, STUD_R = .24, STUD_H = .18;
+const COL = {
+  clay: '#d97757', clayDk: '#b8583a', navy: '#1d2b4f', cream: '#f1ebdf', white: '#f4f4f1', black: '#1b2a34',
+  dgray: '#4a4e55', lgray: '#a0a5a9', red: '#c91a09', green: '#2f8f4e', yellow: '#f2cd37', blue: '#1f5fd6',
+  purple: '#7b3d91', teal: '#16857f', pink: '#e7849f', azure: '#36aebf', lime: '#9bc53d', orange: '#fe8a18',
+};
+
+function smudgeTex(seed = 1) {
+  const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d');
+  let s = seed * 9301; const R = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  x.fillStyle = 'rgb(0,44,0)'; x.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 18; i++) {
+    const cx = R() * 512, cy = R() * 512, r0 = 20 + R() * 40;
+    x.strokeStyle = 'rgba(0,120,0,.08)'; x.lineWidth = 1.2;
+    for (let r = 4; r < r0; r += 3) { x.beginPath(); x.ellipse(cx, cy, r, r * .75, R() * 3, 0, Math.PI * 2); x.stroke(); }
+  }
+  for (let i = 0; i < 70; i++) {
+    x.strokeStyle = `rgba(0,${90 + R() * 80 | 0},0,${.1 + R() * .2})`; x.lineWidth = .5 + R() * .8;
+    const px = R() * 512, py = R() * 512, a = R() * Math.PI, l = 10 + R() * 60;
+    x.beginPath(); x.moveTo(px, py); x.lineTo(px + Math.cos(a) * l, py + Math.sin(a) * l); x.stroke();
+  }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.NoColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+const SMUDGE = [1, 2, 3].map(smudgeTex);
+const matCache = new Map();
+function plastic(color, o = {}) {
+  const key = color + JSON.stringify(o);
+  if (matCache.has(key)) return matCache.get(key);
+  let m;
+  if (o.trans) m = new THREE.MeshPhysicalMaterial({ color, transmission: .9, thickness: .8, roughness: .08, ior: 1.52, clearcoat: 1 });
+  else if (o.matte) m = new THREE.MeshPhysicalMaterial({ color, roughness: .62, clearcoat: .1, clearcoatRoughness: .5 });
+  else {
+    m = new THREE.MeshPhysicalMaterial({ color, roughness: 1, roughnessMap: SMUDGE[matCache.size % 3], clearcoat: .85, clearcoatRoughness: .07, specularIntensity: .9, envMapIntensity: 1.15 });
+  }
+  matCache.set(key, m); return m;
+}
+
+function studs(w, d, y) {
+  const gs = [];
+  for (let i = 0; i < w; i++) for (let j = 0; j < d; j++) {
+    const g = new THREE.CylinderGeometry(STUD_R, STUD_R, STUD_H, 24, 1); g.translate(i - w / 2 + .5, y + STUD_H / 2, j - d / 2 + .5); gs.push(g);
+    const lip = new THREE.TorusGeometry(STUD_R - .02, .02, 6, 24); lip.rotateX(Math.PI / 2); lip.translate(i - w / 2 + .5, y + STUD_H - .01, j - d / 2 + .5); gs.push(lip);
+  }
+  return gs;
+}
+const clean = g => { const n = g.index ? g.toNonIndexed() : g; for (const k of Object.keys(n.attributes)) if (!['position', 'normal', 'uv'].includes(k)) n.deleteAttribute(k); return n; };
+const geoCache = new Map();
+const cached = (key, fn) => { if (!geoCache.has(key)) geoCache.set(key, fn()); return geoCache.get(key); };
+
+// tijolo/placa w×d de altura h, base em y=0; tile = sem pinos
+function brickGeo(w, d, h = BRICK, o = {}) {
+  return cached(`b${w}x${d}x${h}${o.tile ? 't' : ''}`, () => {
+    const body = new RoundedBoxGeometry(w - .02, h - .01, d - .02, 4, Math.min(.06, h / 4)); body.translate(0, h / 2, 0);
+    return mergeGeometries([body, ...(o.tile ? [] : studs(w, d, h))].map(clean));
+  });
+}
+function roundGeo(r, h = BRICK, o = {}) {
+  return cached(`r${r}x${h}${o.tile ? 't' : ''}`, () => {
+    const body = new THREE.CylinderGeometry(r - .01, r - .01, h - .01, 40, 1); body.translate(0, h / 2, 0);
+    const n = Math.max(1, Math.round(r * 2));
+    return mergeGeometries([body, ...(o.tile ? [] : studs(n, n, h))].map(clean));
+  });
+}
+
+function mesh(geo, color, o = {}) {
+  const m = new THREE.Mesh(geo, o.mat || plastic(color, o)); m.castShadow = true; m.receiveShadow = true; return m;
+}
+const brick = (w, d, color, o = {}) => mesh(brickGeo(w, d, o.h ?? BRICK, o), color, o);
+const plate = (w, d, color, o = {}) => mesh(brickGeo(w, d, PLATE, o), color, o);
+
+// peça com estampa no topo: um tile w×d (sem pinos) e um plano impresso logo acima.
+// tex: CanvasTexture inteira; uv = [u0, v0, u1, v1] a região dela que cabe nesta peça.
+function printed(w, d, color, tex, uv = [0, 0, 1, 1], o = {}) {
+  const g = new THREE.Group();
+  const body = mesh(brickGeo(w, d, o.h ?? PLATE, { tile: true }), color, o); g.add(body);
+  const pg = new THREE.PlaneGeometry(w - .14, d - .14); pg.rotateX(-Math.PI / 2);
+  const a = pg.attributes.uv;   // remapeia o UV para a região
+  for (let i = 0; i < a.count; i++) a.setXY(i, uv[0] + a.getX(i) * (uv[2] - uv[0]), uv[1] + a.getY(i) * (uv[3] - uv[1]));
+  const pm = new THREE.MeshPhysicalMaterial({ map: tex, roughness: .35, clearcoat: .6, clearcoatRoughness: .1, emissiveMap: o.glow ? tex : null, emissive: o.glow ? '#ffffff' : '#000000', emissiveIntensity: 0 });
+  const top = new THREE.Mesh(pg, pm); top.position.y = (o.h ?? PLATE) + .004; top.receiveShadow = true; g.add(top);
+  g.userData = { body, top, w, d, h: o.h ?? PLATE };
+  return g;
+}
+
+// textura de canvas pronta para cor
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+
+// Clawd montado de blocos: corpo largo (três tijolos empilhados), quatro perninhas 1×1, dois tocos de braço
+// e olhos em fenda (tiles pretos). Desenho da ClaudeAnimationBase: corpo 10u × 6u, pernas 2u, braços 2,2u.
+// Blocos não esticam: toda a atuação vem de pulo, inclinação, braços, pernas e olhos.
+
+
+const EYE = new THREE.MeshPhysicalMaterial({ color: '#15181d', roughness: .25, clearcoat: 1, clearcoatRoughness: .05 });
+const box = (w, h, d, mat) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.castShadow = true; return m; };
+
+// emotes: marcas pintadas num tile flutuante (nunca palavras)
+const EMOTE_TEX = {};
+function emoteTex(ch, col) {
+  return EMOTE_TEX[ch] ??= canvasTex(256, 256, (x, w, h) => {
+    x.fillStyle = col; x.beginPath(); x.roundRect(28, 28, 200, 200, 46); x.fill();
+    x.fillStyle = '#fff'; x.font = '700 170px Fredoka'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 128, 140);
+  });
+}
+
+// o: { s: escala do desenho (1 = Clawd principal), col, hat: 'cap'|'beanie'|null, hatCol, prop: 'lens'|null }
+function makeClawd(o = {}) {
+  const big = !o.mini;
+  const W = big ? 6 : 4, D = big ? 4 : 3, NB = big ? 3 : 2, LEG = big ? BRICK : PLATE * 2;
+  const col = o.col || COL.clay;
+  const root = new THREE.Group(), body = new THREE.Group(); root.add(body);
+  const BODY_Y = LEG, TOPY = LEG + NB * BRICK;
+  for (let i = 0; i < NB; i++) { const b = brick(W, D, col, { tile: i < NB - 1 }); b.position.y = BODY_Y + i * BRICK; body.add(b); }
+
+  // pernas: x alternando fileira da frente e de trás (as de trás aparecem entre as da frente)
+  const lx = big ? [-2.4, -1.25, 1.25, 2.4] : [-1.55, -.75, .75, 1.55], lw = big ? .9 : .62;
+  const legs = lx.map((x, i) => {
+    const g = new THREE.Group(); g.position.set(x, LEG, i % 2 ? -D * .22 : D * .22); body.add(g);
+    const m = new THREE.Mesh(new THREE.BoxGeometry(lw, LEG, lw), plastic(i % 2 ? COL.clayDk : col)); m.position.y = -LEG / 2; m.castShadow = m.receiveShadow = true; g.add(m);
+    return g;
+  });
+
+  // braços: toco horizontal, pivô na lateral do corpo
+  const AL = big ? 1.4 : 1.0, AH = big ? .62 : .45, AD = big ? .8 : .6;
+  const arms = [-1, 1].map(side => {
+    const g = new THREE.Group(); g.position.set(side * W / 2, BODY_Y + NB * BRICK * .58, 0); body.add(g);
+    const m = new THREE.Mesh(new THREE.BoxGeometry(AL, AH, AD), plastic(col)); m.position.x = side * AL / 2; m.castShadow = true; g.add(m);
+    const tip = new THREE.Group(); tip.position.x = side * AL; g.add(tip);
+    return { g, side, tip };
+  });
+
+  // olhos: variantes prontas, só uma visível por vez
+  const face = new THREE.Group(); face.position.set(0, BODY_Y + NB * BRICK * .66, D / 2 + .03); body.add(face);
+  const ex = big ? 1.45 : .95, es = big ? 1 : .68;
+  const eyes = [-1, 1].map(side => {
+    const g = new THREE.Group(); g.position.x = side * ex; face.add(g);
+    const v = {
+      normal: box(.5 * es, 1.05 * es, .1, EYE),
+      wide: box(.7 * es, 1.3 * es, .1, EYE),
+      closed: box(.7 * es, .14 * es, .1, EYE),
+      happy: new THREE.Group(), dizzy: new THREE.Group(), down: box(.5 * es, .7 * es, .1, EYE),
+    };
+    for (const s of [-1, 1]) { const b = box(.5 * es, .14 * es, .1, EYE); b.position.set(s * .17 * es, 0, 0); b.rotation.z = -s * .62; v.happy.add(b); }
+    for (const s of [-1, 1]) { const b = box(.75 * es, .14 * es, .1, EYE); b.rotation.z = s * .78; v.dizzy.add(b); }
+    v.down.position.y = -.25 * es;
+    for (const k in v) { v[k].visible = false; g.add(v[k]); }
+    return { g, v };
+  });
+  const mouthO = new THREE.Mesh(new THREE.CylinderGeometry(.26 * es, .26 * es, .1, 20), EYE); mouthO.rotation.x = Math.PI / 2; mouthO.position.y = -1.0 * es; face.add(mouthO);
+  const smile = new THREE.Group(); smile.position.y = -.85 * es; face.add(smile);
+  for (const s of [-1, 1]) { const b = box(.42 * es, .12 * es, .1, EYE); b.position.x = s * .17 * es; b.rotation.z = s * .35; smile.add(b); }
+
+  // chapéus
+  const hat = new THREE.Group(); hat.position.y = TOPY + .18; body.add(hat);
+  if (o.hat === 'cap') {
+    const crown = mesh(roundGeo(1.25, .9, { tile: true }), o.hatCol || COL.navy); hat.add(crown);
+    const band = new THREE.Mesh(new THREE.CylinderGeometry(1.27, 1.27, .22, 40), plastic(COL.white)); band.position.y = .2; hat.add(band);
+    const top = new THREE.Mesh(new THREE.CylinderGeometry(1.42, 1.3, .2, 40), plastic(o.hatCol || COL.navy)); top.position.y = .95; hat.add(top);
+    const visor = box(2.1, .1, 1.0, plastic(COL.black)); visor.position.set(0, .05, 1.3); visor.rotation.x = .18; hat.add(visor);
+    const badge = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .06, 20), plastic(COL.yellow)); badge.rotation.x = Math.PI / 2; badge.position.set(0, .55, 1.27); hat.add(badge);
+  } else if (o.hat === 'beanie') {
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(1.05, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), plastic(o.hatCol)); dome.position.y = .15; dome.castShadow = true; hat.add(dome);
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, .3, 32), plastic(o.hatCol)); rim.position.y = .1; rim.castShadow = true; hat.add(rim);
+    const pom = new THREE.Mesh(new THREE.SphereGeometry(.28, 16, 12), plastic(o.pomCol || COL.white)); pom.position.y = 1.25; pom.castShadow = true; hat.add(pom);
+  }
+  const hatHome = hat.position.clone();
+
+  // adereço na mão direita
+  let prop = null;
+  if (o.prop === 'lens') {
+    prop = new THREE.Group();
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(.62, .1, 10, 32), plastic(COL.black)); prop.add(ring);
+    const glass = new THREE.Mesh(new THREE.CircleGeometry(.6, 32), new THREE.MeshPhysicalMaterial({ color: '#dff3ff', transmission: .9, roughness: .02, thickness: .2, clearcoat: 1 })); prop.add(glass);
+    const handle = box(.18, .9, .18, plastic(COL.black)); handle.position.y = -1.05; prop.add(handle);
+    prop.position.set(.25, .9, .2); prop.rotation.y = -.3; arms[1].tip.add(prop);
+  }
+
+  // emote flutuante
+  const emote = new THREE.Sprite(new THREE.SpriteMaterial({ map: emoteTex('?', '#1d2b4f'), depthWrite: false }));
+  emote.visible = false; root.add(emote);
+  const EMH = TOPY + (o.hat ? 3.2 : 2.4);
+
+  root.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } });
+  const dims = { W, D, LEG, TOPY, big };
+
+  // p: { x,y,z, ry, bob, lean (frente/trás), tilt (lado), aL, aR (ângulo do braço: + = para cima),
+  //      walk (fase: as pernas alternam), eyes, lookX, lookY, mouth: 'o'|'smile', emote: ['?', cor, k 0..1],
+  //      hatOff: {x,y,z,rx} (chapéu fora da cabeça, em coords do mundo relativas ao root), vis }
+  function pose(p) {
+    root.visible = p.vis ?? true;
+    root.position.set(p.x ?? 0, p.y ?? 0, p.z ?? 0); root.rotation.y = p.ry ?? 0;
+    body.position.y = p.bob ?? 0; body.rotation.x = p.lean ?? 0; body.rotation.z = p.tilt ?? 0;
+    const wph = p.walk;
+    legs.forEach((l, i) => { l.rotation.x = wph == null ? (p.legs?.[i] ?? 0) : Math.sin(wph + (i % 2 ? Math.PI : 0) + (i > 1 ? Math.PI : 0)) * .55; });
+    arms[0].g.rotation.z = -(p.aL ?? -.15) ; arms[1].g.rotation.z = (p.aR ?? -.15);
+    arms[0].g.rotation.y = p.aLy ?? 0; arms[1].g.rotation.y = p.aRy ?? 0;
+    const ek = p.eyes || 'normal';
+    eyes.forEach((e, i) => { for (const k in e.v) e.v[k].visible = k === (Array.isArray(ek) ? ek[i] : ek); e.g.position.y = (p.lookY ?? 0) * .3 * es; e.g.position.x = (i ? 1 : -1) * ex + (p.lookX ?? 0) * .35 * es; });
+    mouthO.visible = p.mouth === 'o'; smile.visible = p.mouth === 'smile';
+    if (p.hatOff) { hat.position.set(p.hatOff.x, p.hatOff.y, p.hatOff.z); hat.rotation.set(p.hatOff.rx ?? 0, p.hatOff.ry ?? 0, 0); }
+    else { hat.position.copy(hatHome); hat.rotation.set(0, 0, 0); }
+    hat.visible = p.hatVis ?? true;
+    if (p.emote && p.emote[2] > 0) {
+      emote.visible = true; emote.material.map = emoteTex(p.emote[0], p.emote[1]);
+      const k = p.emote[2], s = (big ? 2.1 : 1.5) * (k < 1 ? .4 + .75 * Math.sin(Math.min(1, k) * Math.PI * .62) : 1);
+      emote.scale.set(s, s, 1); emote.position.set(0, EMH + (p.bob ?? 0), 0);
+    } else emote.visible = false;
+    if (prop) prop.visible = p.prop ?? true;
+  }
+  return { root, body, arms, legs, hat, pose, dims };
+}
+
+// pulo: altura ao longo de [t0, t1] (agachada antes é a antecipação, que fica por conta de quem chama)
+const hopY = (t, t0, t1, h) => (t > t0 && t < t1) ? Math.sin((t - t0) / (t1 - t0) * Math.PI) * h : 0;
+
+// O pipeline /pp como uma trilha de tabuleiro em blocos, no mesmo estilo do vídeo de apresentação.
+// Fileira de trás: definição e identidade (etapas 1 a 5). Fileira da frente: construção e entrega (6 a 10).
+// ?shot = quadro fixo 1600×900 com fundo transparente, para virar a imagem do README.
+
+const SHOT = new URLSearchParams(location.search).has('shot');
+const LARG = 1200, ALT = 720;
+
+const ZONAS = [
+  { n: 1, nome: 'Definição', cor: '#7c3aed', x: [-17.5, -3.5], z: [-12.5, -0.5] },
+  { n: 2, nome: 'Identidade', cor: '#db2777', x: [-3.5, 17.5], z: [-12.5, -0.5] },
+  { n: 3, nome: 'Construção', cor: '#2563eb', x: [3.5, 17.5], z: [0.5, 14.5] },
+  { n: 4, nome: 'Entrega', cor: '#059669', x: [-17.5, 3.5], z: [0.5, 14.5] },
+];
+const TRAS = -5.5, FRENTE = 6.5;          // linha das etapas em cada fileira
+const PISO = PLATE * 2;                    // topo da placa cinza
+const ETAPAS = [
+  { n: 1, cmd: '/pp:novo', zona: 0, x: -14, z: TRAS },
+  { n: 2, cmd: '/pp:brainstorm', zona: 0, x: -7, z: TRAS },
+  { n: 3, cmd: '/pp:design', zona: 1, x: 0, z: TRAS },
+  { n: 4, cmd: '/pp:mockups', zona: 1, x: 7, z: TRAS },
+  { n: 5, cmd: '/pp:prototipo', zona: 1, x: 14, z: TRAS },
+  { n: 6, cmd: '/pp:arquitetura', zona: 2, x: 14, z: FRENTE, voce: true },
+  { n: 7, cmd: '/pp:construir', zona: 2, x: 7, z: FRENTE, voce: true },
+  { n: 8, cmd: '/pp:testar', zona: 3, x: 0, z: FRENTE, voce: true },
+  { n: 9, cmd: '/pp:homologar', zona: 3, x: -7, z: FRENTE, voce: true },
+  { n: 10, cmd: '/pp:publicar', zona: 3, x: -14, z: FRENTE, voce: true },
+];
+// os agentes, com os chapéus do vídeo
+const AGENTES = [
+  { id: 'pesquisa', hat: COL.white, pom: COL.navy, x: -7, z: -10 },
+  { id: 'mockups', hat: COL.pink, x: 7, z: -10 },
+  { id: 'prototipo', hat: COL.azure, x: 14, z: -10 },
+  { id: 'sql', hat: COL.teal, x: 12.2, z: 3 },
+  { id: 'arquitetura', hat: COL.green, x: 15.8, z: 3 },
+  { id: 'canvas', hat: COL.purple, x: 5.3, z: 3 },
+  { id: 'automate', hat: COL.blue, x: 8.7, z: 3 },
+  { id: 'qa', hat: COL.yellow, prop: 'lens', x: 0, z: 3 },
+];
+
+await Promise.all(['700 64px Fredoka', '600 64px "JetBrains Mono"', '700 16px "Plus Jakarta Sans"']
+  .map(f => document.fonts.load(f)));
+
+// ---------- renderização ----------
+const app = document.getElementById('app');
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(SHOT ? 2 : Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x000000, 0);
+app.appendChild(renderer.domElement);
+const rotulos = new CSS2DRenderer(); rotulos.domElement.className = 'rotulos'; app.appendChild(rotulos.domElement);
+
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .55;
+const sol = new THREE.DirectionalLight('#fff4e8', 2.6); sol.position.set(-24, 46, 30); sol.castShadow = true;
+sol.shadow.mapSize.set(4096, 4096); sol.shadow.bias = -.0004; sol.shadow.normalBias = .02;
+Object.assign(sol.shadow.camera, { left: -34, right: 34, top: 28, bottom: -28, near: 1, far: 150 });
+scene.add(sol, new THREE.HemisphereLight('#ffffff', '#c9cfd8', .6));
+const contra = new THREE.DirectionalLight('#cfe0ff', .5); contra.position.set(30, 20, -30); scene.add(contra);
+
+const camera = new THREE.PerspectiveCamera(22, LARG / ALT, 1, 400);
+const ALVO = new THREE.Vector3(1.2, 1.2, 2.4);
+camera.position.copy(ALVO).add(new THREE.Vector3().setFromSphericalCoords(84, THREE.MathUtils.degToRad(50), THREE.MathUtils.degToRad(-9)));
+camera.lookAt(ALVO);
+
+const add = (obj, x, y, z) => { obj.position.set(x, y, z); scene.add(obj); return obj; };
+// lado: 'centro', 'esq' (o rótulo fica à esquerda do ponto) ou 'dir'
+function rotulo(html, cls, x, y, z, lado = 'centro') {
+  const ancora = document.createElement('div'); ancora.className = 'ancora ' + lado;
+  const el = document.createElement('div'); el.className = cls; el.innerHTML = html; ancora.appendChild(el);
+  return add(new CSS2DObject(ancora), x, y, z);
+}
+
+// ---------- tabuleiro ----------
+for (const zn of ZONAS) {
+  const w = zn.x[1] - zn.x[0], d = zn.z[1] - zn.z[0], cx = (zn.x[0] + zn.x[1]) / 2, cz = (zn.z[0] + zn.z[1]) / 2;
+  add(plate(w, d, zn.cor, { tile: true }), cx, 0, cz);                 // aro na cor do bloco
+  add(plate(w - 1, d - 1, '#dfe2e6'), cx, PLATE, cz);                  // placa cinza com pinos
+}
+add(plate(3, 1, '#dfe2e6', { tile: true }), 14, PLATE, 0);              // ponte entre as fileiras
+
+// estrada creme por onde a trilha passa
+const CREME = COL.cream;
+add(brick(31, 2, CREME, { h: PLATE, tile: true }), 0, PISO, TRAS);
+add(brick(31, 2, CREME, { h: PLATE, tile: true }), 0, PISO, FRENTE);
+add(brick(2, 12, CREME, { h: PLATE, tile: true }), 14, PISO, (TRAS + FRENTE) / 2);
+
+// ---------- etapas: pedestal estampado com número e comando ----------
+function estampa(e) {
+  return canvasTex(512, 512, (c, w, h) => {
+    c.fillStyle = ZONAS[e.zona].cor; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.font = '700 220px Fredoka'; c.fillText(String(e.n), w / 2, 170);
+    const palavra = e.cmd.replace('/pp:', '');
+    let px = 112; c.font = `700 ${px}px Fredoka`;
+    while (c.measureText(palavra).width > 476) { px -= 2; c.font = `700 ${px}px Fredoka`; }
+    c.fillText(palavra, w / 2, 392);
+  });
+}
+const TOPO = PISO + PLATE + BRICK;         // topo do pedestal
+for (const e of ETAPAS) add(printed(4, 4, ZONAS[e.zona].cor, estampa(e), [0, 0, 1, 1], { h: BRICK }), e.x, PISO + PLATE, e.z);
+
+// pino vermelho: aqui uma pessoa age no ambiente
+const PINO = roundGeo(.5, BRICK);
+for (const e of ETAPAS.filter(e => e.voce)) add(mesh(PINO, '#dc2626'), e.x - 1.5, PISO, e.z + 2.9);
+
+// ---------- elenco ----------
+const orq = makeClawd({ hat: 'cap' }); orq.root.scale.setScalar(.75); scene.add(orq.root);
+orq.pose({ x: -14, y: PISO, z: -10.1, mouth: 'smile', aL: .5, aR: -.15 });
+const elenco = AGENTES.map(a => {
+  const c = makeClawd({ mini: true, hat: 'beanie', hatCol: a.hat, pomCol: a.pom, prop: a.prop });
+  c.root.scale.setScalar(.8); scene.add(c.root); return { ...a, c };
+});
+
+// leque de cores da identidade visual
+const leque = add(new THREE.Group(), 0, PISO, -9.6);
+ZONAS.forEach((zn, i) => {
+  const lamina = plate(1, 4, zn.cor, { tile: true }); lamina.position.set(0, i * PLATE, -1.6);
+  const eixo = new THREE.Group(); eixo.rotation.y = (i - 1.5) * .42; eixo.add(lamina); leque.add(eixo);
+});
+add(mesh(roundGeo(.5, PLATE * 4.4), COL.white), 0, PISO, -9.6);
+
+// bandeira do app publicado
+add(mesh(roundGeo(.6, PLATE), COL.white), -16.4, PISO, 4.2);
+const mastro = add(new THREE.Mesh(new THREE.CylinderGeometry(.13, .13, 4.6, 16), plastic(COL.white)), -16.4, PISO + 2.3, 4.2);
+mastro.castShadow = true;
+const pano = add(new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.4, .1), plastic('#059669')), -15.1, PISO + 3.8, 4.2);
+pano.castShadow = true;
+
+// protótipo aprovado: visto na ponte entre as fileiras
+const visto = canvasTex(256, 256, (c, w, h) => {
+  c.fillStyle = '#16a34a'; c.fillRect(0, 0, w, h);
+  c.strokeStyle = '#fff'; c.lineWidth = 30; c.lineCap = c.lineJoin = 'round';
+  c.beginPath(); c.moveTo(62, 134); c.lineTo(108, 182); c.lineTo(196, 82); c.stroke();
+});
+add(printed(2, 2, '#16a34a', visto), 14, PISO + PLATE, -2.4);
+
+// ---------- voltas: mangueiras de plástico com seta ----------
+function volta(pontos, cor) {
+  const curva = new THREE.CatmullRomCurve3(pontos.map(p => new THREE.Vector3(...p)), false, 'centripetal');
+  const tubo = new THREE.Mesh(new THREE.TubeGeometry(curva, 160, .24, 14, false), plastic(cor));
+  const ponta = new THREE.Mesh(new THREE.ConeGeometry(.62, 1.2, 24), plastic(cor));
+  const fim = curva.getPoint(1), dir = curva.getTangent(1);
+  ponta.position.copy(fim).addScaledVector(dir, .3);
+  ponta.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+  const tampa = new THREE.Mesh(new THREE.SphereGeometry(.34, 16, 12), plastic(cor)); tampa.position.copy(curva.getPoint(0));
+  for (const m of [tubo, ponta, tampa]) { m.castShadow = true; scene.add(m); }
+}
+const AJUSTE = '#db2777', CORRIGE = '#f59e0b', MUDA = '#d97757';
+volta([[12, TOPO - .3, TRAS], [11, 6.4, TRAS], [7, 9, TRAS], [3, 6.4, TRAS], [2.4, TOPO + .5, TRAS]], AJUSTE);
+volta([[.8, 1.5, 8.7], [1, 1.25, 10.4], [3.5, 1.25, 11.3], [6, 1.25, 10.4], [6.2, 1.5, 9.2]], CORRIGE);
+volta([[-13.2, 1.5, 8.7], [-13, 1.25, 12], [-3, 1.25, 13.6], [7.8, 1.25, 12], [7.8, 1.5, 9.2]], MUDA);
+
+// ---------- rótulos ----------
+for (const zn of ZONAS) {
+  const esquerda = zn.x[0] < -10, linha = zn.z[0] < 0 ? TRAS : FRENTE;
+  const zr = zn.n === 2 ? -9.5 : linha;
+  rotulo(`<b style="background:${zn.cor}">${zn.n}</b>${zn.nome}`, 'zona', esquerda ? zn.x[0] - .8 : zn.x[1] + .8, PISO, zr,
+    esquerda ? 'esq' : 'dir');
+}
+rotulo('<span class="seta">↺</span> ajuste → <code>/pp:design</code>', 'volta ajuste', 7, 10.6, TRAS);
+rotulo('✓ aprovado?', 'portao', 18.4, PISO, -1.6, 'dir');
+rotulo('<span class="seta">↺</span> falhou → <code>construir</code>', 'volta corrige', 3.5, 1.2, 12.4);
+rotulo('<span class="seta">↺</span> app no ar → <code>/pp:mudanca</code>', 'volta muda', -3, 1.2, 14.8);
+rotulo('orquestrador', 'quem', -14, 6.2, -10.1);
+
+// ---------- quadro ----------
+function ajustar() {
+  const w = SHOT ? LARG : innerWidth, h = SHOT ? ALT : innerHeight;
+  renderer.setSize(w, h); rotulos.setSize(w, h);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+ajustar();
+
+function posar(t) {
+  elenco.forEach((a, i) => {
+    const fase = t * 2.2 + i * 1.3;
+    a.c.pose({ x: a.x, y: PISO, z: a.z, bob: SHOT ? 0 : Math.max(0, Math.sin(fase)) * .25,
+      eyes: i % 3 === 1 ? 'happy' : 'normal', mouth: 'smile', aL: -.15, aR: a.prop ? .35 : -.15 });
+  });
+}
+
+if (SHOT) {
+  posar(0); renderer.render(scene, camera); rotulos.render(scene, camera);
+  document.body.dataset.pronto = '1';
+} else {
+  const controles = new OrbitControls(camera, renderer.domElement);
+  Object.assign(controles, { enableDamping: true, enablePan: false, minDistance: 34, maxDistance: 96,
+    minPolarAngle: .45, maxPolarAngle: 1.2, minAzimuthAngle: -.8, maxAzimuthAngle: .8 });
+  controles.target.copy(ALVO);
+  addEventListener('resize', ajustar);
+  renderer.setAnimationLoop(ms => {
+    posar(ms / 1000); controles.update();
+    renderer.render(scene, camera); rotulos.render(scene, camera);
+  });
+}
+
+</script>
+</body>
+</html>

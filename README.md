@@ -1,4 +1,17 @@
+<div align="center">
+
+<a href="https://bruninhuco69.github.io/power-platform-skills/diagrama/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/img/pipeline-escuro.webp">
+    <img src="docs/img/pipeline-claro.webp" width="100%" alt="O pipeline /pp montado em blocos: dez etapas numeradas em quatro blocos (definição, identidade, construção e entrega), o orquestrador de boné, os oito agentes de gorro colorido, os pinos vermelhos onde você age no ambiente e as três voltas: ajuste do protótipo, correção de teste e mudança com o app no ar">
+  </picture>
+</a>
+
 # Power Platform Kit para Claude Code
+
+**Da ideia em uma linha ao app publicado.**<br>
+Power Apps Canvas + Power Automate, com SQL Server ou Dataverse: um comando guiado por etapa,
+agentes que constroem e provam o que fizeram, e você só onde precisa de gente.
 
 ![versão](https://img.shields.io/badge/vers%C3%A3o-0.3.0-2563eb)
 ![comandos](https://img.shields.io/badge/comandos-%2Fpp%3A*-2563eb)
@@ -6,20 +19,61 @@
 ![idioma](https://img.shields.io/badge/idioma-pt--BR-6b7280)
 ![licença](https://img.shields.io/badge/licen%C3%A7a-MIT-16a34a)
 
-Plugin do Claude Code que leva um app **Power Apps Canvas + Power Automate** de uma ideia em uma
-linha até o app publicado, **um comando guiado por vez**. Você não precisa conhecer o método: toda
-etapa termina dizendo qual comando rodar em seguida, numa sessão nova. O backend pode ser **SQL
-Server com stored procedures** ou **Dataverse**.
+[**Site**](https://bruninhuco69.github.io/power-platform-skills/) ·
+[**Diagrama 3D**](https://bruninhuco69.github.io/power-platform-skills/diagrama/) ·
+[**Apresentação em PDF**](docs/Power-Platform-Kit.pdf) ·
+[**Instalação**](#instalação) ·
+[**Contribuir**](#como-contribuir)
 
-**Site:** <https://bruninhuco69.github.io/power-platform-skills/>
+</div>
+
+---
+
+## Em 30 segundos
+
+```text
+/plugin marketplace add Bruninhuco69/power-platform-skills
+/plugin install pp@power-platform-kit
+/pp:novo um app para acompanhar pedidos entre as unidades
+```
+
+Depois é só seguir o bloco **Próximo passo** que fecha cada etapa. Requisitos e outras formas de
+instalar estão em [Instalação](#instalação).
 
 > **Idioma.** Tudo está em **português do Brasil**: etapas, regras, moldes, este README e o site.
 > Os exemplos de Power Fx seguem a barra de fórmulas pt-BR (`;` separa argumentos, `;;` encadeia).
 > A versão em inglês vem depois.
 
----
+## Por que existe
 
-## Sumário
+Comecei no Power BI e fui para Power Apps, Power Automate, RPA e automação de processos. Em todo
+projeto os mesmos problemas voltavam, e quase sempre se resolviam do mesmo jeito. Transformei esse
+jeito em regra, e as regras num kit que o Claude Code segue do começo ao fim: menos retrabalho, o
+mesmo padrão em todos os apps e cada entrega com prova de que funciona.
+
+| O problema de sempre | O que o kit faz |
+|---|---|
+| Tela construída antes de entender o problema | Brainstorm, requisitos e um protótipo navegável aprovado antes da primeira fórmula |
+| Fórmula que não delega e some com registro | Padrões de delegação na skill de Canvas, e o QA confere antes de você testar |
+| Fluxo sem tratamento de erro | Try/Catch, autorização por ação, log e resposta de 4 campos; a tela chama dentro de `IfError` |
+| Usuário de uma unidade vendo dado de outra | O bloqueio fica no fluxo e na procedure (ou no security role); a tela só filtra, e o teste nega por perfil e por unidade |
+
+## Apresentação em PDF
+
+Quatro páginas para mandar ao time: o que é, as dez etapas, quem pensa e quem executa, e as
+convenções. [**Baixar o PDF**](docs/Power-Platform-Kit.pdf).
+
+<table>
+  <tr>
+    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-1.jpg" alt="Página 1: capa, por que existe e como começar"></a></td>
+    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-2.jpg" alt="Página 2: as dez etapas em quatro blocos e as voltas"></a></td>
+    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-3.jpg" alt="Página 3: quem pensa e quem executa, os agentes e os perfis de modelo"></a></td>
+    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-4.jpg" alt="Página 4: app que já existe, convenções, código aberto e requisitos"></a></td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>Sumário</strong></summary>
 
 - [Como funciona](#como-funciona)
 - [Requisitos](#requisitos)
@@ -35,9 +89,19 @@ Server com stored procedures** ou **Dataverse**.
 - [Créditos e marcas](#créditos-e-marcas)
 - [Licença](#licença)
 
+</details>
+
 ---
 
 ## Como funciona
+
+O diagrama do topo é o pipeline inteiro: dez etapas em quatro blocos, da ideia (`1`) ao app
+publicado (`10`). Os gorros coloridos são os agentes, os pinos vermelhos marcam onde você age no
+ambiente, e as mangueiras são as voltas. [Abra a versão em 3D](https://bruninhuco69.github.io/power-platform-skills/diagrama/)
+para girar e aproximar.
+
+<details>
+<summary>O mesmo diagrama em texto (Mermaid)</summary>
 
 ```mermaid
 flowchart TD
@@ -94,6 +158,8 @@ flowchart TD
     O -.->|Coordena e acompanha · /pp:progresso| CONSTRUCAO
     O -.->|Coordena e acompanha · /pp:progresso| ENTREGA
 ```
+
+</details>
 
 Quatro ideias deixam o caminho fácil de seguir:
 
@@ -382,6 +448,9 @@ skills/
   dataverse/             references/  assets/  scripts/extrair-nomes-as-built.py
 docs/
   index.html             o site (GitHub Pages)
+  diagrama/              o diagrama 3D em blocos (three.js), também no site
+  img/                   as imagens do README (diagrama nos temas claro e escuro, páginas do PDF)
+  Power-Platform-Kit.pdf a apresentação de 4 páginas
   PADRAO-SKILL.md        o padrão que toda skill segue
   CONFIG.md              referência do power-platform.config.json
 tests/                   testes pytest de cada script, dos catálogos e do lint
@@ -389,6 +458,10 @@ tools/lint_skills.py     lint de estrutura + sanitização
 ```
 
 ## Como contribuir
+
+O kit é aberto para quem quiser somar: melhorar uma etapa, adicionar um componente, corrigir uma
+regra que não bate com o seu dia a dia. Abra uma issue ou mande um pull request: eu acompanho e
+reviso cada um.
 
 Toda skill segue o [`docs/PADRAO-SKILL.md`](docs/PADRAO-SKILL.md). As regras principais:
 
@@ -418,10 +491,10 @@ Para barrar também os nomes internos da sua organização, crie `tools/sanitiza
 
 ## Próximos passos
 
+- **Skill `power-bi` completa**, no mesmo nível desta: modelo estrela, Power Query M e DAX. É a próxima.
 - Versão em inglês do README, do site e das skills.
 - Um `gate.py` único que roda todos os validadores das camadas que uma onda tocou.
 - Um conferidor de nomes que compara telas e fluxos com o `NOMES-AS-BUILT`.
-- Skill `power-bi`: modelo estrela, Power Query M, DAX.
 - Avaliações de gatilho para a descrição de cada skill.
 
 O histórico de versões está no [`CHANGELOG.md`](CHANGELOG.md).
@@ -434,8 +507,13 @@ O histórico de versões está no [`CHANGELOG.md`](CHANGELOG.md).
   são marcas deles, citadas aqui só para descrever compatibilidade.
 - A separação entre quem pensa e quem executa (cabeça julga, mãos fazem e provam, veredito por
   entrega) é inspirada no guia ["The Fable Loop"](https://thomaslentine.com/fable-guide.html), de Thomas Lentine.
+- O diagrama em blocos foi montado em three.js com a técnica de blocos da
+  [lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) (MIT, LemoLab). O Clawd é o mascote do
+  Claude; o desenho de referência é da [ClaudeAnimationBase](https://github.com/JohnHeibel/ClaudeAnimationBase)
+  (MIT, John Heibel). Uso de fã: não é material oficial da Anthropic.
 - Power Apps, Power Automate, Power Platform, Dataverse e SQL Server são marcas do grupo de
-  empresas Microsoft. Este projeto não é afiliado à Microsoft.
+  empresas Microsoft. Claude e Claude Code são marcas da Anthropic. Este projeto não é afiliado a
+  nenhuma das duas.
 
 ## Licença
 
