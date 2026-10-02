@@ -41,6 +41,7 @@ estilo do GSD. O plugin passa a se chamar `pp` (comandos `/pp:*`).
 - `nomes_as_built` padrão em `AMBIENTE-AS-BUILT/NOMES-AS-BUILT.md`.
 - README, site (`docs/index.html`, GitHub Pages) e descrições do plugin em **pt-BR**, como as
   skills; a versão em inglês fica para depois.
+- Licença MIT (`LICENSE`), também declarada no `plugin.json`.
 
 ### Removido
 - Agente `arquiteto-telas` (virou `agente-mockups`).

@@ -4,6 +4,7 @@
 ![comandos](https://img.shields.io/badge/comandos-%2Fpp%3A*-2563eb)
 ![claude code](https://img.shields.io/badge/Claude_Code-plugin-d97757)
 ![idioma](https://img.shields.io/badge/idioma-pt--BR-6b7280)
+![licença](https://img.shields.io/badge/licen%C3%A7a-MIT-16a34a)
 
 Plugin do Claude Code que leva um app **Power Apps Canvas + Power Automate** de uma ideia em uma
 linha até o app publicado, **um comando guiado por vez**. Você não precisa conhecer o método: toda
@@ -32,6 +33,7 @@ Server com stored procedures** ou **Dataverse**.
 - [Como contribuir](#como-contribuir)
 - [Próximos passos](#próximos-passos)
 - [Créditos e marcas](#créditos-e-marcas)
+- [Licença](#licença)
 
 ---
 
@@ -379,3 +381,8 @@ O histórico de versões está no [`CHANGELOG.md`](CHANGELOG.md).
   são marcas deles, citadas aqui só para descrever compatibilidade.
 - Power Apps, Power Automate, Power Platform, Dataverse e SQL Server são marcas do grupo de
   empresas Microsoft. Este projeto não é afiliado à Microsoft.
+
+## Licença
+
+[MIT](LICENSE). Pode usar, copiar, modificar e distribuir, inclusive em projetos comerciais,
+desde que mantenha o aviso de copyright e a licença. O software vem sem garantia.
