@@ -78,7 +78,7 @@ flowchart TD
 
 | # | Comando | Quem executa | O que o usuário faz | Entrega | Portão de saída |
 |---|---|---|---|---|---|
-| 1 | `/pp:novo` | Orquestrador | conta a ideia e o nome | pasta, git, config, `ESTADO.md` | `ESTADO.md` criado |
+| 1 | `/pp:novo` | Orquestrador | despeja a ideia do jeito que tiver; escolhe pasta, commits e modelos | pasta, git, config, `ideia-bruta.md`, `ESTADO.md` | `ESTADO.md` criado |
 | 2 | `/pp:brainstorm` | Agente Brainstorm (conversa) | escolhe o modo (entrevista, pessoas, problema, mesa redonda) e responde às perguntas | `brainstorm.md`, `prd.md` com o MVP | todo requisito do MVP com perfil e prioridade; bloqueadores com dono |
 | 3 | `/pp:design` | Agente Designer Branding (conversa) | escolhe cores, fontes, estilo | `ux-design-system.md` | paleta em hex, contraste calculado, componentes do catálogo |
 | 4 | `/pp:mockups` | Agente de Mockups em Imagem | autoriza (ou não) gerar as imagens | `inventario-telas.md`, `mockups/` | spec com `0 erro(s)`; imagens geradas ou dispensa registrada |
@@ -129,6 +129,7 @@ etapa precisou. Detalhe: `references/subagentes.md`.
 |---|---|---|
 | `ESTADO.md` (raiz) | novo | todas: onde o projeto está |
 | `power-platform.config.json`, `00-LEIA-PRIMEIRO.md` (raiz) | novo | todas |
+| `docs/planejamento/ideia-bruta.md` | novo: tudo o que o usuário mandou, como veio | brainstorm (confirma em vez de perguntar) |
 | `docs/planejamento/brainstorm.md`, `prd.md` | brainstorm | design em diante |
 | `docs/planejamento/ux-design-system.md` | design | mockups, protótipo, construir |
 | `docs/planejamento/inventario-telas.md`, `mockups/` | mockups | protótipo, arquitetura, construir |

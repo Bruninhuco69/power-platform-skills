@@ -20,11 +20,20 @@ Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py
 
 1. `estado.py comecar brainstorm`. Exit 1: mostre a saída e pare.
 2. Leia `ESTADO.md` (a ideia), `power-platform.config.json` e, se existirem,
-   `docs/planejamento/brainstorm.md` e `prd.md`: **se o log já tem conteúdo, retome** de onde ele
-   parou, no modo gravado na última linha `modo:`, e diga o que já está decidido.
+   `docs/planejamento/ideia-bruta.md`, `brainstorm.md` e `prd.md`: **se o log já tem conteúdo,
+   retome** de onde ele parou, no modo gravado na última linha `modo:`, e diga o que já está decidido.
 3. Leia `KIT/skills/power-platform/references/brainstorm-modos.md` (os modos e as personas),
    `KIT/skills/power-platform/references/brainstorm.md` (roteiro dos blocos 0 a 11 e as perguntas
    que custam caro se vierem tarde) e `KIT/skills/power-platform/assets/prd-molde.md`.
+
+## O que a ideia já trouxe
+
+Se a seção 3 de `ideia-bruta.md` tem conteúdo e o log ainda não tem a linha `ideia confirmada`:
+mostre em até 8 linhas o que já veio (problema, perfis, funcionalidades, regras, volumes) e
+pergunte uma vez só: "Entendi isto da sua ideia. Está certo? Corrija o que não estiver." O que o
+usuário confirmar entra no log como `decisão` ou `insight` com a origem `ideia`; grave a linha
+`ideia confirmada: <data>`. Daí em diante, pergunta que a ideia já responde vira confirmação
+rápida, não pergunta do zero. A seção 4 (dúvidas) entra nas perguntas do roteiro.
 
 ## Escolher o modo
 

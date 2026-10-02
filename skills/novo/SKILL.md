@@ -1,7 +1,7 @@
 ---
 name: novo
 description: "Use quando for começar um app Power Apps novo do zero: etapa 1 do pipeline do kit (Orquestrador). Recebe a ideia, cria a pasta do projeto, o git, o power-platform.config.json, o 00-LEIA-PRIMEIRO.md e o ESTADO.md, e aponta o próximo comando. Não use para app que já existe (descreva o problema e o orquestrador `power-platform` escolhe o caminho) nem para continuar um projeto já iniciado (use `/pp:progresso`)."
-argument-hint: "[a ideia do app em uma frase]"
+argument-hint: "[a ideia do app: uma frase, uma lista ou um texto colado]"
 user-invocable: true
 disable-model-invocation: true
 ---
@@ -26,8 +26,12 @@ python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py" <comando>
 
 ## Passos
 
-1. **A ideia.** Se `$ARGUMENTS` trouxe a ideia, use-a. Senão pergunte: "Conte a ideia do app em uma
-   ou duas frases: o que ele resolve e para quem?". Uma pergunta por vez.
+1. **A ideia, do jeito que vier.** Se `$ARGUMENTS` trouxe, use. Senão pergunte: "Conte a ideia do
+   app: uma frase, uma lista bagunçada, um texto colado, um print ou uma planilha servem. Quanto
+   mais vier agora, menos o brainstorm vai perguntar." Aceite o que vier, sem pedir formato.
+   - Tire dela a **ideia em uma frase** (o que resolve e para quem) para o `ESTADO.md`.
+   - Senha, chave ou token no meio: não grave e avise para trocar.
+   - Veio só uma frase: siga; o brainstorm conduz o resto.
 2. **O nome.** Proponha um nome curto, derivado da ideia (ex.: `Pedidos`), e confirme. Sem
    espaço nem acento no nome da pasta.
 3. **Três escolhas numa rodada só:** uma chamada de `AskUserQuestion` com as três perguntas
@@ -51,7 +55,11 @@ python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py" <comando>
      `projeto` = nome; **tire** `trilha_dados` e `prefixo_publisher` (a arquitetura decide);
      `git_commit_por_etapa` da resposta em Commits;
    - `00-LEIA-PRIMEIRO.md` a partir de `KIT/skills/power-platform/assets/leia-primeiro-molde.md`, com a ideia;
-   - pastas `docs/planejamento/` e `docs/decisoes/`.
+   - pastas `docs/planejamento/` e `docs/decisoes/`;
+   - `docs/planejamento/ideia-bruta.md` no molde `KIT/skills/power-platform/assets/ideia-bruta-molde.md`:
+     o que veio no passo 1 (texto como veio; print ou planilha descritos na tabela de anexos) e a
+     seção 3 preenchida com o que já dá para tirar, cada item com a origem. Não complete o que a
+     ideia não diz: bloco sem informação fica "—".
 5. **Modelos:** `modelos.py aplicar <perfil> [trocas]` da raiz do projeto (na subpasta,
    `--raiz <Nome>` antes de `aplicar`). Mostre a saída e diga em uma linha: as próximas etapas
    abrem a sessão em `<modelo>` e cada agente recebe o seu; esta sessão continua no modelo atual.
@@ -62,7 +70,8 @@ python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py" <comando>
 
 ## Portão de saída
 
-`ESTADO.md`, `power-platform.config.json` (com `modelos`) e `00-LEIA-PRIMEIRO.md` existem na raiz;
+`ESTADO.md`, `power-platform.config.json` (com `modelos`) e `00-LEIA-PRIMEIRO.md` existem na raiz,
+e `docs/planejamento/ideia-bruta.md` guarda tudo o que o usuário mandou;
 `git status` funciona. Confira com `ls` e `modelos.py mostrar` antes de encerrar.
 
 ## Encerrar
