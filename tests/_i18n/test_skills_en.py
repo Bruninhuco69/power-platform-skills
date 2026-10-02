@@ -68,6 +68,24 @@ def test_skill_en_segue_o_padrao(skill):
     assert lint.checar_links(skill, texto, RAIZ) == []
 
 
+AGENTES_EN = sorted((en, pt) for en, pt in FEITOS_EN.items() if en.startswith("en/agents/"))
+
+
+@pytest.mark.parametrize("en, pt", AGENTES_EN, ids=lambda p: Path(p).stem)
+def test_agente_en_tem_o_cabecalho_do_pt(en, pt):
+    """O `modelos.py` lê o `effort`; ferramentas, cor e ordem das chaves são as mesmas; skill é a do pp-en."""
+    cab_en, erro_en = lint.ler_frontmatter((RAIZ / en).read_text(encoding="utf-8"))
+    cab_pt, erro_pt = lint.ler_frontmatter((RAIZ / pt).read_text(encoding="utf-8"))
+    assert erro_en is None and erro_pt is None
+    assert list(cab_en) == list(cab_pt)
+    assert cab_en["name"] == Path(en).stem
+    assert cab_en["skills" if "skills" in cab_pt else "name"] == (
+        [s.replace("pp:", "pp-en:", 1) for s in cab_pt["skills"]] if "skills" in cab_pt else Path(en).stem)
+    assert {k: v for k, v in cab_en.items() if k in ("tools", "color", "effort")} == \
+           {k: v for k, v in cab_pt.items() if k in ("tools", "color", "effort")}
+    assert not re.search(r"[ãõçÃÕÇ]|\bnão\b", cab_en["description"])
+
+
 def test_todo_arquivo_en_e_um_par_feito_do_mapa():
     orfaos = [p for p in _arquivos_en() if p not in FEITOS_EN]
     assert orfaos == [], "arquivo en-US fora do mapa ou com o par ainda `pendente`"

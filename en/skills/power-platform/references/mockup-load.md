@@ -51,8 +51,8 @@ through the Web API ([dataverse-builder.md](dataverse-builder.md)). The user pic
 
 Template: `assets/mockup-load-template.json`, with `Unit` and `Order` and the codes `AAA`/`BBB`/`CCC`.
 `pp-en:architecture-agent` writes the spec, at the same time as the data model, in this track folder:
-- `Backend/Dataverse/carga-mockup.json`;
-- `Backend/SQL Server/carga-mockup.json`, outside `pastas.procedures`.
+- `Backend/Dataverse/mockup-load.json`;
+- `Backend/SQL Server/mockup-load.json`, outside `pastas.procedures`.
 
 | Field | Required | Content |
 |---|---|---|
@@ -98,13 +98,13 @@ Run from the project root (the script looks upward for `power-platform.config.js
 
 ```bash
 # validates and shows the load order, without writing
-python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/carga-mockup.json
+python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/mockup-load.json
 # writes mockup-load.xlsx (and mockup-load.sql on the SQL track)
-python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/carga-mockup.json --saida Backend/Dataverse
+python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/mockup-load.json --saida Backend/Dataverse
 # also one file per table, for the assistant that reads only the 1st sheet
-python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/carga-mockup.json --saida Backend/Dataverse --uma-por-tabela
+python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/mockup-load.json --saida Backend/Dataverse --uma-por-tabela
 # Dataverse through the builder: also the plan and the flow (dataverse-builder.md)
-python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/carga-mockup.json --saida Backend/Dataverse --flow
+python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/mockup-load.json --saida Backend/Dataverse --flow
 ```
 
 What comes out:
@@ -170,7 +170,7 @@ up to 12 do not have this protection. The import also does not write owner or cr
 1. **Export the schema:** the same `EntityDefinitions` + `$expand=Attributes` query from
    `references/as-built-names.md` of the `dataverse` skill, saved as `export.json`.
 2. **Compare:**
-   `python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/carga-mockup.json --conferir export.json`
+   `python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/mockup-load.json --conferir export.json`
    - **C103:** the type came out wrong. Recreate the column while there are only mockup rows.
    - **C105:** the primary name came out wrong. Recreate the table, because it cannot change later.
    - **C101/C102:** the table or column was not found by display name. Fix the name, or give

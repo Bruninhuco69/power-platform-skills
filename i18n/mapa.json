@@ -7,35 +7,35 @@
     },
     "agents/agente-arquitetura.md": {
       "en": "en/agents/architecture-agent.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "agents/agente-automate.md": {
       "en": "en/agents/automate-agent.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "agents/agente-canvas.md": {
       "en": "en/agents/canvas-agent.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "agents/agente-mockups.md": {
       "en": "en/agents/mockups-agent.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "agents/agente-pesquisa.md": {
       "en": "en/agents/research-agent.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "agents/agente-prototipo.md": {
       "en": "en/agents/prototype-agent.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "agents/agente-qa.md": {
       "en": "en/agents/qa-agent.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "agents/agente-sql.md": {
       "en": "en/agents/sql-agent.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "docs/Power-Platform-Kit.pdf": {
       "en": "docs/Power-Platform-Kit.en.pdf",
@@ -51,15 +51,15 @@
     },
     "skills/arquitetura/SKILL.md": {
       "en": "en/skills/architecture/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/brainstorm/SKILL.md": {
       "en": "en/skills/brainstorm/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/construir/SKILL.md": {
       "en": "en/skills/build/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/SKILL.md": {
       "en": "en/skills/dataverse/SKILL.md",
@@ -107,23 +107,23 @@
     },
     "skills/design/SKILL.md": {
       "en": "en/skills/design/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/homologar/SKILL.md": {
       "en": "en/skills/uat/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/mockups/SKILL.md": {
       "en": "en/skills/mockups/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/mudanca/SKILL.md": {
       "en": "en/skills/change/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/novo/SKILL.md": {
       "en": "en/skills/new/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/power-automate/SKILL.md": {
       "en": "en/skills/power-automate/SKILL.md",
@@ -875,15 +875,15 @@
     },
     "skills/progresso/SKILL.md": {
       "en": "en/skills/progress/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/prototipo/SKILL.md": {
       "en": "en/skills/prototype/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/publicar/SKILL.md": {
       "en": "en/skills/publish/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/SKILL.md": {
       "en": "en/skills/sql-procedures/SKILL.md",
@@ -951,7 +951,7 @@
     },
     "skills/testar/SKILL.md": {
       "en": "en/skills/test/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     }
   }
 }

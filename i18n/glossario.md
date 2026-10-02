@@ -30,6 +30,8 @@ kit está em `i18n/mapa.json`; aqui ficam os nomes que não são arquivo do kit.
 | `arquitetura.md`, `GOAL.md` | `architecture.md`, `GOAL.md` |
 | `NOMES-AS-BUILT.md`, `AMBIENTE-AS-BUILT/` | `AS-BUILT-NAMES.md`, `AS-BUILT-ENVIRONMENT/` |
 | `docs/decisoes/ADR-<NNN>.md` | `docs/decisions/ADR-<NNN>.md` |
+| `Backend/Dataverse/modelo-tabelas.md` | `Backend/Dataverse/table-model.md` |
+| `ajustes-prototipo.md`: classes `identidade`, `tela`, `comportamento`; situação `feito` | classes `identity`, `screen`, `behavior`; status `done` |
 | `carga-mockup.json`, `.xlsx`, `.sql`, `carga-mockup-tabelas/` | `mockup-load.json`, `.xlsx`, `.sql`, `mockup-load-tables/` |
 | `construtor-dataverse/` (`plano-dataverse.json`, `construtor-escopo.json`) | `dataverse-builder/` (`dataverse-plan.json`, `builder-scope.json`) |
 | `docs/qa/QA-<data>.md`, `docs/qa/UAT-<data>.md`, `docs/qa/correcoes.md` | `docs/qa/QA-<date>.md`, `docs/qa/UAT-<date>.md`, `docs/qa/fixes.md` |
@@ -64,6 +66,10 @@ kit está em `i18n/mapa.json`; aqui ficam os nomes que não são arquivo do kit.
   script lê: id de padrão de navegação (`lateral-fixo`, `gaveta`, `inicio-cartoes`…), chave de perfil
   (`gestor`, `operador`, `?perfil=`) e chave de `modelos.agentes` no config (`agente-*`). Fica também,
   por ser nome de coluna, a convenção de flag de permissão `Flg_Pode<X>`.
+- Entrada da etapa para o agente: a chave fica (`RAIZ`, `KIT`, `TRILHA`, `TELAS`, `FLUXOS`,
+  `CORRECOES`, `MUDANCA`, `MODO`, `TOKENS`, `ONDE`, `PARA QUE`), o valor é em inglês (`TOKENS: yes`,
+  `MODO: new | adjustment`, `ONDE: project | web | both`). Nos scripts, o agente pelo nome en-US
+  (`modelos.py de qa-agent`, `estado.py veredito test --agente qa-agent`) e a etapa pelo id en-US.
 - Scripts: um só código (`_idioma.py`). Subcomando, opção e valor de opção ficam como no pt-BR
   (`estado.py concluir`, `--motivo`, `--resultado aceito`); o `estado.py` aceita também o id en-US da
   etapa (`estado.py comecar new`).

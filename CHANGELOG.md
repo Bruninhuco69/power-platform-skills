@@ -59,6 +59,16 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
     "Use when … Do not use", até 250 linhas, links que existem), todo arquivo en-US é par `feito` do
     mapa, nenhum `/pp:` nem agente pt no texto en-US, o construtor com o mesmo código do pt-BR e os
     moldes en-US nos scripts.
+- **Etapas e agentes em en-US** (parte c do plugin `pp-en`).
+  - **As 12 skills de etapa** (`en/skills/new`, `brainstorm`, `design`, `mockups`, `prototype`,
+    `architecture`, `build`, `test`, `uat`, `publish`, `progress`, `change`): os comandos
+    `/pp-en:*`, com o `estado.py` chamado pelo id en-US da etapa.
+  - **Os 8 agentes** (`en/agents/*-agent.md`): o mesmo cabeçalho do pt-BR (`tools`, `color`,
+    `effort`, que o `modelos.py` lê) e `skills` do `pp-en`.
+  - **Entrada da etapa para o agente:** a chave fica (`RAIZ`, `TELAS`, `TOKENS`, `ONDE`…), o valor
+    é em inglês (`TOKENS: yes`, `ONDE: both`); classes da rodada de ajustes `identity`, `screen`,
+    `behavior`. O glossário registra.
+  - Teste novo: cada agente en-US com o cabeçalho do pt-BR.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.

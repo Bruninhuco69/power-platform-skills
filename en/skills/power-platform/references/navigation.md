@@ -147,6 +147,6 @@ Use these drawings in each option's `preview` (monospaced, up to 40 columns).
 |---|---|
 | `/pp-en:design` | asks, records in `ux-design-system.md` §2.1 (pattern, reason, component) and shows the navigation in the `identity.html` sample |
 | `/pp-en:mockups` | `pp-en:mockups-agent` copies the pattern into the inventory frame and into the spec's `moldura.navegacao`; the navigation map follows the pattern (with cards, every screen goes back to home) |
-| `/pp-en:prototype` | `pp-en:prototype-agent` puts the id in `NAVEGACAO`; the "Navigation" selector in the prototype bar lets the user compare the five patterns live. Switching patterns is an `identidade` item of the adjustment and goes back to `/pp-en:design` |
+| `/pp-en:prototype` | `pp-en:prototype-agent` puts the id in `NAVEGACAO`; the "Navigation" selector in the prototype bar lets the user compare the five patterns live. Switching patterns is an `identity` item of the adjustment and goes back to `/pp-en:design` |
 | `/pp-en:build app` | `pp-en:canvas-agent` pastes the component from the §1 table, in the right variation, on every screen (with `inicio-cartoes`, the "‹ Home" button on every screen that is not the home) |
 | `/pp-en:test` | the script checks the navigation with each role: item hidden by flag, active item, back to home, drawer closing when the screen changes |

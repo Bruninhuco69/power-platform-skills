@@ -1,7 +1,7 @@
 # Dataverse Builder: the flow that creates the tables and the mockup load through the Web API
 
 The alternative to the spreadsheet on the Dataverse track. `montar-carga-mockup.py --flow` compiles
-`carga-mockup.json` into a **plan** (`dataverse-plan.json`), and a fixed flow, the **Dataverse Builder**,
+`mockup-load.json` into a **plan** (`dataverse-plan.json`), and a fixed flow, the **Dataverse Builder**,
 runs the plan through the Web API:
 - creates the tables, each with its primary name;
 - creates the columns with the spec's type, including Choice with its options, Email, URL, Phone,
@@ -61,7 +61,7 @@ Without the prerequisites in §2, use the spreadsheet (`mockup-load.md` §4).
 ## 3. Generate
 
 ```bash
-python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/carga-mockup.json --flow --saida Backend/Dataverse
+python <skills>/power-platform/scripts/montar-carga-mockup.py Backend/Dataverse/mockup-load.json --flow --saida Backend/Dataverse
 ```
 
 Besides the spreadsheet, this produces:
