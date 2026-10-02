@@ -18,6 +18,9 @@ Promoção: `KIT/skills/power-platform/references/alm-ambientes.md` §10 (proced
 
 1. `estado.py comecar publicar`. Exit 1: mostre a saída e pare.
 2. Leia `prd.md`, `inventario-telas.md`, `arquitetura.md`, `GOAL.md` e o último `docs/qa/UAT-*.md`.
+3. **Reaberta por uma mudança** (`MUD-<NNN>` no motivo): é uma versão nova. Checklist e documentos
+   só no que a mudança alterou (o manual, se mudou o uso; o guia técnico, se mudou contrato ou
+   banco); a tag sobe a versão (`v1.1.0`); a `MUD` vira "publicada".
 
 ## Passos
 

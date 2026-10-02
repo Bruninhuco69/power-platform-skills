@@ -20,6 +20,9 @@ Promoção entre ambientes: `KIT/skills/power-platform/references/alm-ambientes.
 1. `estado.py comecar homologar`. Exit 1: mostre a saída e pare.
 2. Leia `docs/planejamento/prd.md` (perfis, requisitos P0), o último `docs/qa/QA-*.md` e a seção ALM
    de `arquitetura.md`.
+3. **Reaberta por uma mudança** (o motivo no `ESTADO.md` cita `MUD-<NNN>`): leia o
+   `docs/mudancas/MUD-<NNN>.md`. O UAT cobre os pedidos da mudança (seção 2) mais um ciclo curto
+   do requisito P0 principal, para pegar regressão; não refaz o roteiro inteiro.
 
 ## Passos
 

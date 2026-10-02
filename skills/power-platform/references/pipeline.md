@@ -106,6 +106,11 @@ A construção (etapa 7) roda **uma onda por sessão**: o `GOAL.md` tem as ondas
 Reabrir uma etapa reabre as seguintes que já tinham sido tocadas: depois de corrigir, os testes
 rodam de novo. O motivo fica no `ESTADO.md` e no histórico.
 
+**Depois de publicado**, mudança vem pelo `/pp:mudanca`: a lista é escopada, cada frente vira um
+spec em `docs/mudancas/MUD-<NNN>.md`, os agentes fazem em paralelo, a sessão julga, o QA da
+mudança roda e a homologação e a publicação reabrem (`reabrir homologar`). Mudança grande (perfil
+ou entidade nova, troca de trilha) reabre o pipeline no brainstorm.
+
 ## 4. Agentes: quem conversa e quem trabalha sozinho
 
 Subagente **não conversa com o usuário** (o Claude Code tira dele a ferramenta de perguntar). Por isso:
@@ -139,6 +144,7 @@ etapa precisou. Detalhe: `references/subagentes.md`.
 | `AMBIENTE-AS-BUILT/` com `NOMES-AS-BUILT.md` | arquitetura (🔴 humano) | construir: nome real de tabela e coluna |
 | telas e fluxos (`pastas` do config) | construir | testar, publicar |
 | `docs/qa/` | testar, homologar | publicar |
+| `docs/mudancas/MUD-<NNN>.md` | mudanca | homologar, publicar (versão nova) |
 | `docs/entrega/` | publicar | equipe e suporte |
 
 ## 6. Por que uma sessão por etapa

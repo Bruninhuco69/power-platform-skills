@@ -1,6 +1,6 @@
 ---
 name: power-platform
-description: "Use quando a tarefa de um projeto Power Platform (Power Apps Canvas, Power Automate, SQL Server, Dataverse) pedir método ou tocar mais de uma camada: começar um app novo, \"quero criar um app\", ideia de app, \"onde parei\", \"qual o próximo passo\", pipeline /pp, feature de ponta a ponta (tela + flow + banco), \"o número não bate\", \"usuário de uma unidade vê dado de outra\", \"está lento\", auditar o app inteiro, fila GOAL.md, subagentes em paralelo, promover DEV/HML/PRD (solução, variável de ambiente, pac CLI) ou \"está pronto?\". Coordena o pipeline guiado de app novo (/pp:novo até /pp:publicar, uma sessão por etapa, ESTADO.md) e, em app existente, roteia para a skill de domínio e fecha com validadores e evidência. Não use para pergunta pontual de fórmula ou ajuste de uma tela (use `powerapps-canvas`), flow isolado (use `power-automate`), procedure ou DDL isolados (use `sql-procedures`) nem modelagem de tabela (use `dataverse`)."
+description: "Use quando a tarefa de um projeto Power Platform (Power Apps Canvas, Power Automate, SQL Server, Dataverse) pedir método ou tocar mais de uma camada: começar um app novo, \"quero criar um app\", ideia de app, \"onde parei\", \"qual o próximo passo\", pipeline /pp, feature de ponta a ponta (tela + flow + banco), \"o número não bate\", \"usuário de uma unidade vê dado de outra\", \"está lento\", auditar o app inteiro, fila GOAL.md, subagentes em paralelo, promover DEV/HML/PRD (solução, variável de ambiente, pac CLI) ou \"está pronto?\". Coordena o pipeline guiado de app novo (/pp:novo até /pp:publicar, uma sessão por etapa, ESTADO.md; depois, /pp:mudanca) e, em app existente, roteia para a skill de domínio e fecha com validadores e evidência. Não use para pergunta pontual de fórmula ou ajuste de uma tela (use `powerapps-canvas`), flow isolado (use `power-automate`), procedure ou DDL isolados (use `sql-procedures`) nem modelagem de tabela (use `dataverse`)."
 argument-hint: "[novo|onde-estou|feature|investigar|auditar|promover|pronto] [alvo]"
 user-invocable: true
 ---
@@ -65,6 +65,7 @@ de uma camada. O conhecimento de Power Fx, YAML, flow, procedure e tabela vive n
 | "quero criar um app", ideia de app, começar do zero | explique o pipeline em 4 linhas e mande rodar `/pp:novo <ideia>` | o usuário roda o comando |
 | "onde parei", "qual o próximo passo", "continua" com `ESTADO.md` | `estado.py mostrar` e devolva o bloco "Próximo passo" | você |
 | pedido de uma etapa (brainstorm, design, mockups, protótipo, arquitetura, construir, testar, homologar, publicar) | aponte o comando `/pp:<etapa>` numa sessão nova; o `estado.py` diz se está na ordem | o usuário roda o comando |
+| lista de mudanças num app já publicado pelo kit (ou com o config do kit) | aponte `/pp:mudanca <lista>` numa sessão nova | o usuário roda o comando |
 | "como faço", "qual fórmula", uma tela, YAML colável | skill `powerapps-canvas` e responda direto | você |
 | galeria vazia, contador "2.000", `CountRows`, filtro de data | SQL → `powerapps-canvas` (+ `sql-procedures`); Dataverse → `dataverse` | você |
 | "cola esse flow", Try/Catch, HTTP, `$batch`, log | `power-automate` (+ `powerapps-canvas` do lado do app) | você |
@@ -130,7 +131,7 @@ Tela ou flow alterado: a prova final é colar no Studio/designer, ou registrar �
 
 | Arquivo | Quando ler |
 |---|---|
-| `references/pipeline.md` | app novo: o desenho, as 10 etapas, as voltas, onde fica cada arquivo |
+| `references/pipeline.md` | app novo: o desenho, as 10 etapas, as voltas, `/pp:mudanca` depois de publicado, onde fica cada arquivo |
 | `references/formato-saida.md` | toda etapa `/pp:*`: banner, checkpoint, próximo passo |
 | `references/decisoes-padrao.md` | passo 1, sempre: padrões decididos (A/C/T/F/B/N/P) |
 | `references/brainstorm-modos.md` | `/pp:brainstorm`: os 4 modos (entrevista, pessoas, problema, mesa redonda) e as personas |

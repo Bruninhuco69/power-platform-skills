@@ -16,7 +16,9 @@ usuário.
 - `RAIZ`, `KIT` (pasta do plugin) e **um** destes:
   - `TELAS`: as tarefas de tela do seu grupo, com os arquivos, e `TOKENS` (sim ou não). Outras
     telas da onda são de outro agente rodando ao mesmo tempo: não toque nos arquivos delas;
-  - `CORRECOES`: os itens `app` abertos em `docs/qa/correcoes.md`.
+  - `CORRECOES`: os itens `app` abertos em `docs/qa/correcoes.md`;
+  - `MUDANCA`: o caminho de `docs/mudancas/MUD-<NNN>.md` e a seção do seu spec (`/pp:mudanca`):
+    só os arquivos que o spec lista.
 
 ## Leia antes de começar
 
@@ -46,7 +48,8 @@ usuário.
    - permissão por flag; sem perfil, painel sem acesso.
 3. **Valide** da `RAIZ`: `python KIT/skills/powerapps-canvas/scripts/validar-telas.py` até
    `0 erro(s)`, com o total de arquivos lidos maior que zero.
-4. **Correções:** para cada item, reproduza pelo código, corrija e diga antes → depois.
+4. **Correções e mudanças:** para cada item ou spec, reproduza pelo código, mude e diga antes →
+   depois. Nada além do que o item ou o spec pede.
 
 ## Regras
 

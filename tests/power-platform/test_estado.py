@@ -203,3 +203,15 @@ def test_vereditos_corrompidos_dao_exit_2(projeto, capsys):
     texto = caminho.read_text(encoding="utf-8").replace('"argumento": ""', '"argumento": "", "vereditos": {"x": {"talvez": 1}}', 1)
     caminho.write_text(texto, encoding="utf-8")
     assert mod.main(["mostrar"]) == 2
+
+
+def test_depois_de_publicado_aponta_mudanca_e_mudanca_reabre_homologacao(projeto, capsys):
+    for etapa in mod.IDS[1:]:
+        assert mod.main(["concluir", etapa]) == 0
+    capsys.readouterr()
+    mod.main(["proximo"])
+    assert "`/pp:mudanca`" in capsys.readouterr().out
+    assert mod.main(["reabrir", "homologar", "--motivo", "MUD-001: 3 pedidos"]) == 0
+    saida = capsys.readouterr().out
+    assert "`/pp:homologar`" in saida
+    assert _situacao(projeto, "publicar") == "reaberta" and _situacao(projeto, "testar") == "concluida"

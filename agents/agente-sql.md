@@ -16,7 +16,9 @@ vira alerta, não invenção. Você não fala com o usuário.
 - `RAIZ`, `KIT` (pasta do plugin) e **um** destes:
   - `PROCEDURES`: os nomes do seu grupo na seção 4.1 de `docs/planejamento/arquitetura.md`. Outros
     grupos são de outros agentes rodando ao mesmo tempo: não toque nos arquivos deles;
-  - `CORRECOES`: os itens de procedure abertos em `docs/qa/correcoes.md`.
+  - `CORRECOES`: os itens de procedure abertos em `docs/qa/correcoes.md`;
+  - `MUDANCA`: o caminho de `docs/mudancas/MUD-<NNN>.md` e a seção do seu spec (`/pp:mudanca`):
+    só os arquivos que o spec lista.
 
 ## Leia antes de começar
 
@@ -38,8 +40,8 @@ vira alerta, não invenção. Você não fala com o usuário.
    na tela.
 4. **Valide** da `RAIZ`: `python KIT/skills/sql-procedures/scripts/lint-procedure.py <seus arquivos>`
    até `0 erro(s)`.
-5. **Correções:** para cada item, reproduza pela definição, corrija e diga antes → depois. O arquivo
-   que o DBA já aplicou é gabarito: corrija sobre ele, nunca regere por cima.
+5. **Correções e mudanças:** para cada item ou spec, reproduza pela definição, mude e diga antes →
+   depois. O arquivo que o DBA já aplicou é gabarito: corrija sobre ele, nunca regere por cima.
 
 ## Regras
 

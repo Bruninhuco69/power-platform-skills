@@ -15,7 +15,9 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
 - `RAIZ`, `KIT` (pasta do plugin) e **um** destes:
   - `FLUXOS`: as tarefas de fluxo do seu grupo, com os arquivos. Outros fluxos da onda são de
     outro agente rodando ao mesmo tempo: não toque nos arquivos deles;
-  - `CORRECOES`: os itens `flows` de fluxo abertos em `docs/qa/correcoes.md`.
+  - `CORRECOES`: os itens `flows` de fluxo abertos em `docs/qa/correcoes.md`;
+  - `MUDANCA`: o caminho de `docs/mudancas/MUD-<NNN>.md` e a seção do seu spec (`/pp:mudanca`):
+    só os arquivos que o spec lista.
 
 ## Leia antes de começar
 
@@ -44,7 +46,8 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
    `0 erro(s)`, com fluxos lidos > 0.
 7. **Plano de teste** por fluxo: três execuções (usuário sem permissão, de outra unidade, com
    permissão) e o `status` esperado em cada uma.
-8. **Correções:** para cada item, reproduza pela definição, corrija e diga antes → depois.
+8. **Correções e mudanças:** para cada item ou spec, reproduza pela definição, mude e diga
+   antes → depois. Nada além do que o item ou o spec pede.
 
 ## Regras
 

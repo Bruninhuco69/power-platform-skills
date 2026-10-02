@@ -260,8 +260,8 @@ def bloco_proximo(dados: dict, raiz: Path | None = None) -> str:
     if etapa_id is None:
         return "\n".join([
             LINHA, "", "## 🎉 App publicado", "",
-            "Todas as etapas estão concluídas. Mudança nova no app: descreva o que quer e o orquestrador",
-            "(skill `power-platform`) escolhe o caminho; para ver o histórico, `/pp:progresso`.", "", LINHA,
+            "Todas as etapas estão concluídas. Mudanças no app (corrigir, ajustar, acrescentar): `/pp:mudanca`",
+            "com a lista, numa sessão nova. Para ver o histórico, `/pp:progresso`.", "", LINHA,
         ])
     etapa = POR_ID[etapa_id]
     registro = dados["etapas"][etapa_id]
