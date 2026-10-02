@@ -60,6 +60,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
 - README com nova capa: diagrama, links rápidos, "Em 30 segundos", por que o kit existe e os
   problemas que ele evita. O Mermaid fica recolhido em "o mesmo diagrama em texto"; a skill de
   Power BI abre os próximos passos; "Como contribuir" convida a mandar pull request.
+- **Duas línguas:** o kit passa a ser mantido em pt-BR e en-US, e toda alteração entra nas duas
+  (README, "Como contribuir"). A versão en-US está em construção.
 
 ## [0.3.0] — 2026-10-02
 

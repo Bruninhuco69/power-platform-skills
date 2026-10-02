@@ -40,9 +40,10 @@ agentes que constroem e provam o que fizeram, e você só onde precisa de gente.
 Depois é só seguir o bloco **Próximo passo** que fecha cada etapa. Requisitos e outras formas de
 instalar estão em [Instalação](#instalação).
 
-> **Idioma.** Tudo está em **português do Brasil**: etapas, regras, moldes, este README e o site.
-> Os exemplos de Power Fx seguem a barra de fórmulas pt-BR (`;` separa argumentos, `;;` encadeia).
-> A versão em inglês vem depois.
+> **Idioma.** O kit é mantido em **português do Brasil (pt-BR)** e **inglês (en-US)**, e toda
+> alteração entra nas duas línguas. Hoje as etapas, as regras, os moldes, este README e o site estão
+> em pt-BR; a versão en-US está em construção. O Power Fx segue a barra de fórmulas de cada idioma:
+> no pt-BR, `;` separa argumentos e `;;` encadeia; no en-US, `,` e `;`.
 
 ## Por que existe
 
@@ -476,6 +477,11 @@ Toda skill segue o [`docs/PADRAO-SKILL.md`](docs/PADRAO-SKILL.md). As regras pri
 - scripts aceitam `--help` e retornam exit code 0, 1 ou 2;
 - todo script tem testes.
 
+**Toda alteração entra em pt-BR e en-US.** O kit é mantido nas duas línguas: skill, agente,
+referência, molde, catálogo, mensagem de script, teste, README e site. Cada pull request traz a
+mudança nas duas versões, com o mesmo conteúdo; mudança numa língua só não entra. Na versão en-US,
+o Power Fx da barra de fórmulas usa `,` para separar argumentos e `;` para encadear.
+
 Antes de abrir um pull request:
 
 ```bash
@@ -497,7 +503,8 @@ Para barrar também os nomes internos da sua organização, crie `tools/sanitiza
 ## Próximos passos
 
 - **Skill `power-bi` completa**, no mesmo nível desta: modelo estrela, Power Query M e DAX. É a próxima.
-- Versão em inglês do README, do site e das skills.
+- **Versão en-US completa**, em construção: README, site, diagrama, PDF e o plugin `pp-en` no mesmo
+  marketplace. Daqui em diante, toda alteração entra em pt-BR e en-US.
 - Um `gate.py` único que roda todos os validadores das camadas que uma onda tocou.
 - Um conferidor de nomes que compara telas e fluxos com o `NOMES-AS-BUILT`.
 - Avaliações de gatilho para a descrição de cada skill.
