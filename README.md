@@ -1,5 +1,7 @@
 <div align="center">
 
+🇧🇷 Português · [🇺🇸 English](README.en.md)
+
 <a href="https://stage2dev.github.io/power-platform-skills/diagrama/">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/img/pipeline-escuro.webp">

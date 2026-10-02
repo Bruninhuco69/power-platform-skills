@@ -1,0 +1,937 @@
+{
+  "_leia": "pt-BR → en-US de cada arquivo do kit. situacao: \"feito\" (o en-US existe e acompanha o pt-BR) ou \"pendente\". Toda alteração atualiza este mapa no mesmo commit (CLAUDE.md); o lint confere (L014).",
+  "arquivos": {
+    "README.md": {
+      "en": "README.en.md",
+      "situacao": "feito"
+    },
+    "agents/agente-arquitetura.md": {
+      "en": "en/agents/architecture-agent.md",
+      "situacao": "pendente"
+    },
+    "agents/agente-automate.md": {
+      "en": "en/agents/automate-agent.md",
+      "situacao": "pendente"
+    },
+    "agents/agente-canvas.md": {
+      "en": "en/agents/canvas-agent.md",
+      "situacao": "pendente"
+    },
+    "agents/agente-mockups.md": {
+      "en": "en/agents/mockups-agent.md",
+      "situacao": "pendente"
+    },
+    "agents/agente-pesquisa.md": {
+      "en": "en/agents/research-agent.md",
+      "situacao": "pendente"
+    },
+    "agents/agente-prototipo.md": {
+      "en": "en/agents/prototype-agent.md",
+      "situacao": "pendente"
+    },
+    "agents/agente-qa.md": {
+      "en": "en/agents/qa-agent.md",
+      "situacao": "pendente"
+    },
+    "agents/agente-sql.md": {
+      "en": "en/agents/sql-agent.md",
+      "situacao": "pendente"
+    },
+    "docs/Power-Platform-Kit.pdf": {
+      "en": "docs/Power-Platform-Kit.en.pdf",
+      "situacao": "pendente"
+    },
+    "docs/diagrama/index.html": {
+      "en": "docs/diagrama/index.html?lang=en",
+      "situacao": "pendente"
+    },
+    "docs/index.html": {
+      "en": "docs/en/index.html",
+      "situacao": "pendente"
+    },
+    "skills/arquitetura/SKILL.md": {
+      "en": "en/skills/architecture/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/brainstorm/SKILL.md": {
+      "en": "en/skills/brainstorm/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/construir/SKILL.md": {
+      "en": "en/skills/build/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/SKILL.md": {
+      "en": "en/skills/dataverse/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/assets/nomes-as-built-molde.md": {
+      "en": "en/skills/dataverse/assets/as-built-names-template.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/references/delegacao-dataverse.md": {
+      "en": "en/skills/dataverse/references/dataverse-delegation.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/references/importacao-dados.md": {
+      "en": "en/skills/dataverse/references/data-import.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/references/licoes-de-campo.md": {
+      "en": "en/skills/dataverse/references/field-lessons.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/references/modelagem.md": {
+      "en": "en/skills/dataverse/references/modeling.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/references/nomes-as-built.md": {
+      "en": "en/skills/dataverse/references/as-built-names.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/references/nomes-e-tipos.md": {
+      "en": "en/skills/dataverse/references/names-and-types.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/references/seguranca.md": {
+      "en": "en/skills/dataverse/references/security.md",
+      "situacao": "pendente"
+    },
+    "skills/dataverse/scripts/extrair-nomes-as-built.py": {
+      "en": "en/skills/dataverse/scripts/extrair-nomes-as-built.py",
+      "situacao": "pendente"
+    },
+    "skills/design/SKILL.md": {
+      "en": "en/skills/design/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/homologar/SKILL.md": {
+      "en": "en/skills/uat/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/mockups/SKILL.md": {
+      "en": "en/skills/mockups/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/mudanca/SKILL.md": {
+      "en": "en/skills/change/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/novo/SKILL.md": {
+      "en": "en/skills/new/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/SKILL.md": {
+      "en": "en/skills/power-automate/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/INDICE.md": {
+      "en": "en/skills/power-automate/assets/components/INDEX.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/autorizar-por-flag.json": {
+      "en": "en/skills/power-automate/assets/components/authorize-by-flag.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/autorizar-por-flag.md": {
+      "en": "en/skills/power-automate/assets/components/authorize-by-flag.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/batch-upsert-changeset.json": {
+      "en": "en/skills/power-automate/assets/components/batch-upsert-changeset.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/batch-upsert-changeset.md": {
+      "en": "en/skills/power-automate/assets/components/batch-upsert-changeset.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/catch-conector.json": {
+      "en": "en/skills/power-automate/assets/components/connector-catch.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/catch-conector.md": {
+      "en": "en/skills/power-automate/assets/components/connector-catch.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/compensacao-dataverse.json": {
+      "en": "en/skills/power-automate/assets/components/dataverse-compensation.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/compensacao-dataverse.md": {
+      "en": "en/skills/power-automate/assets/components/dataverse-compensation.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/config-recebimento.json": {
+      "en": "en/skills/power-automate/assets/components/inbound-config.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/config-recebimento.md": {
+      "en": "en/skills/power-automate/assets/components/inbound-config.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/config.json": {
+      "en": "en/skills/power-automate/assets/components/config.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/config.md": {
+      "en": "en/skills/power-automate/assets/components/config.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/derivar-valor-switch.json": {
+      "en": "en/skills/power-automate/assets/components/derive-value-switch.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/derivar-valor-switch.md": {
+      "en": "en/skills/power-automate/assets/components/derive-value-switch.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/email-suporte-com-parcial.json": {
+      "en": "en/skills/power-automate/assets/components/support-email-with-partial.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/email-suporte-com-parcial.md": {
+      "en": "en/skills/power-automate/assets/components/support-email-with-partial.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/escopo-unidade.json": {
+      "en": "en/skills/power-automate/assets/components/unit-scope.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/escopo-unidade.md": {
+      "en": "en/skills/power-automate/assets/components/unit-scope.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/escopo-unidades-dataverse.json": {
+      "en": "en/skills/power-automate/assets/components/dataverse-units-scope.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/escopo-unidades-dataverse.md": {
+      "en": "en/skills/power-automate/assets/components/dataverse-units-scope.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/estado-antes.json": {
+      "en": "en/skills/power-automate/assets/components/state-before.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/estado-antes.md": {
+      "en": "en/skills/power-automate/assets/components/state-before.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/exportar-csv-arquivo.json": {
+      "en": "en/skills/power-automate/assets/components/export-csv-file.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/exportar-csv-arquivo.md": {
+      "en": "en/skills/power-automate/assets/components/export-csv-file.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/filtros-json-da-tela.json": {
+      "en": "en/skills/power-automate/assets/components/screen-filters-json.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/filtros-json-da-tela.md": {
+      "en": "en/skills/power-automate/assets/components/screen-filters-json.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/gravar-via-procedure.json": {
+      "en": "en/skills/power-automate/assets/components/write-via-procedure.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/gravar-via-procedure.md": {
+      "en": "en/skills/power-automate/assets/components/write-via-procedure.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/html-para-pdf.json": {
+      "en": "en/skills/power-automate/assets/components/html-to-pdf.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/html-para-pdf.md": {
+      "en": "en/skills/power-automate/assets/components/html-to-pdf.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/identificar-chamador.json": {
+      "en": "en/skills/power-automate/assets/components/identify-caller.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/identificar-chamador.md": {
+      "en": "en/skills/power-automate/assets/components/identify-caller.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/indice-chaves-destino.json": {
+      "en": "en/skills/power-automate/assets/components/target-key-index.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/indice-chaves-destino.md": {
+      "en": "en/skills/power-automate/assets/components/target-key-index.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/ler-chamador-dataverse.json": {
+      "en": "en/skills/power-automate/assets/components/read-caller-dataverse.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/ler-chamador-dataverse.md": {
+      "en": "en/skills/power-automate/assets/components/read-caller-dataverse.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/ler-chamador-sql.json": {
+      "en": "en/skills/power-automate/assets/components/read-caller-sql.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/ler-chamador-sql.md": {
+      "en": "en/skills/power-automate/assets/components/read-caller-sql.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/log-execucao.json": {
+      "en": "en/skills/power-automate/assets/components/run-log.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/log-execucao.md": {
+      "en": "en/skills/power-automate/assets/components/run-log.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/mapear-lote.json": {
+      "en": "en/skills/power-automate/assets/components/map-batch.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/mapear-lote.md": {
+      "en": "en/skills/power-automate/assets/components/map-batch.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/nega-resposta-terminate.json": {
+      "en": "en/skills/power-automate/assets/components/deny-response-terminate.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/nega-resposta-terminate.md": {
+      "en": "en/skills/power-automate/assets/components/deny-response-terminate.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/normalizar-entrada.json": {
+      "en": "en/skills/power-automate/assets/components/normalize-input.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/normalizar-entrada.md": {
+      "en": "en/skills/power-automate/assets/components/normalize-input.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/paginacao-nativa.json": {
+      "en": "en/skills/power-automate/assets/components/native-pagination.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/paginacao-nativa.md": {
+      "en": "en/skills/power-automate/assets/components/native-pagination.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/resolver-id-diretorio.json": {
+      "en": "en/skills/power-automate/assets/components/resolve-directory-id.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/resolver-id-diretorio.md": {
+      "en": "en/skills/power-automate/assets/components/resolve-directory-id.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/se-nada-mudou.json": {
+      "en": "en/skills/power-automate/assets/components/if-nothing-changed.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/se-nada-mudou.md": {
+      "en": "en/skills/power-automate/assets/components/if-nothing-changed.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/switch-acao.json": {
+      "en": "en/skills/power-automate/assets/components/action-switch.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/switch-acao.md": {
+      "en": "en/skills/power-automate/assets/components/action-switch.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/token-cache-e-resposta-http.json": {
+      "en": "en/skills/power-automate/assets/components/token-cache-and-http-response.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/token-cache-e-resposta-http.md": {
+      "en": "en/skills/power-automate/assets/components/token-cache-and-http-response.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/traduzir-codigo-e-responder.json": {
+      "en": "en/skills/power-automate/assets/components/translate-code-and-respond.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/traduzir-codigo-e-responder.md": {
+      "en": "en/skills/power-automate/assets/components/translate-code-and-respond.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/trigger-http-recebimento.md": {
+      "en": "en/skills/power-automate/assets/components/trigger-http-inbound.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/trigger-power-apps-v2.md": {
+      "en": "en/skills/power-automate/assets/components/trigger-power-apps-v2.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/trilha-de-auditoria.json": {
+      "en": "en/skills/power-automate/assets/components/audit-trail.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/trilha-de-auditoria.md": {
+      "en": "en/skills/power-automate/assets/components/audit-trail.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/upsert-unitario.json": {
+      "en": "en/skills/power-automate/assets/components/single-upsert.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/upsert-unitario.md": {
+      "en": "en/skills/power-automate/assets/components/single-upsert.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/validar-com-mensagem.json": {
+      "en": "en/skills/power-automate/assets/components/validate-with-message.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/componentes/validar-com-mensagem.md": {
+      "en": "en/skills/power-automate/assets/components/validate-with-message.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/contrato-flow-molde.md": {
+      "en": "en/skills/power-automate/assets/flow-contract-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/assets/flow-gravar-molde.json": {
+      "en": "en/skills/power-automate/assets/flow-write-template.json",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/anatomia-flow.md": {
+      "en": "en/skills/power-automate/references/flow-anatomy.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/autorizacao-no-flow.md": {
+      "en": "en/skills/power-automate/references/authorization-in-flow.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/contrato-app-flow.md": {
+      "en": "en/skills/power-automate/references/app-flow-contract.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/dataverse-batch-upsert.md": {
+      "en": "en/skills/power-automate/references/dataverse-batch-upsert.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/expressoes-wdl-armadilhas.md": {
+      "en": "en/skills/power-automate/references/wdl-expression-pitfalls.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/formato-clipboard.md": {
+      "en": "en/skills/power-automate/references/clipboard-format.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/gabarito-designer.md": {
+      "en": "en/skills/power-automate/references/designer-baseline.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/gerador-e-gabarito.md": {
+      "en": "en/skills/power-automate/references/generator-and-baseline.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/http-entrada-externa.md": {
+      "en": "en/skills/power-automate/references/http-external-inbound.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/licoes-de-campo.md": {
+      "en": "en/skills/power-automate/references/field-lessons.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/log-execucao.md": {
+      "en": "en/skills/power-automate/references/run-log.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/references/sql-no-flow.md": {
+      "en": "en/skills/power-automate/references/sql-in-flow.md",
+      "situacao": "pendente"
+    },
+    "skills/power-automate/scripts/verificar-fluxo.py": {
+      "en": "en/skills/power-automate/scripts/verificar-fluxo.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/SKILL.md": {
+      "en": "en/skills/power-platform/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/adr-molde.md": {
+      "en": "en/skills/power-platform/assets/adr-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/arquitetura-molde.md": {
+      "en": "en/skills/power-platform/assets/architecture-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/carga-mockup-molde.json": {
+      "en": "en/skills/power-platform/assets/mockup-load-template.json",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/construtor-dataverse.json": {
+      "en": "en/skills/power-platform/assets/dataverse-builder.json",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/goal-molde.md": {
+      "en": "en/skills/power-platform/assets/goal-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/ideia-bruta-molde.md": {
+      "en": "en/skills/power-platform/assets/raw-idea-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/inventario-telas-molde.md": {
+      "en": "en/skills/power-platform/assets/screen-inventory-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/leia-primeiro-molde.md": {
+      "en": "en/skills/power-platform/assets/read-me-first-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/mockups-molde.json": {
+      "en": "en/skills/power-platform/assets/mockups-template.json",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/mudanca-molde.md": {
+      "en": "en/skills/power-platform/assets/change-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/power-platform.config.exemplo.json": {
+      "en": "en/skills/power-platform/assets/power-platform.config.example.json",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/prd-molde.md": {
+      "en": "en/skills/power-platform/assets/prd-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/prototipo-molde.html": {
+      "en": "en/skills/power-platform/assets/prototype-template.html",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/assets/ux-design-system-molde.md": {
+      "en": "en/skills/power-platform/assets/ux-design-system-template.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/prompts/dados.md": {
+      "en": "en/skills/power-platform/prompts/data.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/prompts/dev.md": {
+      "en": "en/skills/power-platform/prompts/dev.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/prompts/flow.md": {
+      "en": "en/skills/power-platform/prompts/flow.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/prompts/performance.md": {
+      "en": "en/skills/power-platform/prompts/performance.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/prompts/sql.md": {
+      "en": "en/skills/power-platform/prompts/sql.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/prompts/ux.md": {
+      "en": "en/skills/power-platform/prompts/ux.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/alm-ambientes.md": {
+      "en": "en/skills/power-platform/references/alm-environments.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/brainstorm-modos.md": {
+      "en": "en/skills/power-platform/references/brainstorm-modes.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/brainstorm.md": {
+      "en": "en/skills/power-platform/references/brainstorm.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/carga-mockup.md": {
+      "en": "en/skills/power-platform/references/mockup-load.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/construtor-dataverse.md": {
+      "en": "en/skills/power-platform/references/dataverse-builder.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/decisoes-padrao.md": {
+      "en": "en/skills/power-platform/references/default-decisions.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/design-system-e-telas.md": {
+      "en": "en/skills/power-platform/references/design-system-and-screens.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/formato-saida.md": {
+      "en": "en/skills/power-platform/references/output-format.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/matriz-tecnologia.md": {
+      "en": "en/skills/power-platform/references/technology-matrix.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/mockups.md": {
+      "en": "en/skills/power-platform/references/mockups.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/modelos.md": {
+      "en": "en/skills/power-platform/references/models.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/modo-goal-fila.md": {
+      "en": "en/skills/power-platform/references/goal-queue-mode.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/modo-investigar.md": {
+      "en": "en/skills/power-platform/references/investigate-mode.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/navegacao.md": {
+      "en": "en/skills/power-platform/references/navigation.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/pipeline.md": {
+      "en": "en/skills/power-platform/references/pipeline.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/portao-final.md": {
+      "en": "en/skills/power-platform/references/final-gate.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/protocolo.md": {
+      "en": "en/skills/power-platform/references/protocol.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/salvaguardas.md": {
+      "en": "en/skills/power-platform/references/safeguards.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/subagentes.md": {
+      "en": "en/skills/power-platform/references/subagents.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/references/verificacao-visual.md": {
+      "en": "en/skills/power-platform/references/visual-verification.md",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/_carga_conferir.py": {
+      "en": "en/skills/power-platform/scripts/_carga_conferir.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/_carga_construtor.py": {
+      "en": "en/skills/power-platform/scripts/_carga_construtor.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/_carga_modelo.py": {
+      "en": "en/skills/power-platform/scripts/_carga_modelo.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/_carga_plano.py": {
+      "en": "en/skills/power-platform/scripts/_carga_plano.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/_carga_sql.py": {
+      "en": "en/skills/power-platform/scripts/_carga_sql.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/_carga_valores.py": {
+      "en": "en/skills/power-platform/scripts/_carga_valores.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/_carga_xlsx.py": {
+      "en": "en/skills/power-platform/scripts/_carga_xlsx.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/capturar-telas.py": {
+      "en": "en/skills/power-platform/scripts/capturar-telas.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/desenhar-mockups.py": {
+      "en": "en/skills/power-platform/scripts/desenhar-mockups.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/estado.py": {
+      "en": "en/skills/power-platform/scripts/estado.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/modelos.py": {
+      "en": "en/skills/power-platform/scripts/modelos.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/montar-carga-mockup.py": {
+      "en": "en/skills/power-platform/scripts/montar-carga-mockup.py",
+      "situacao": "pendente"
+    },
+    "skills/power-platform/scripts/verificar-prototipo.py": {
+      "en": "en/skills/power-platform/scripts/verificar-prototipo.py",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/SKILL.md": {
+      "en": "en/skills/powerapps-canvas/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/app-formulas-tokens.md": {
+      "en": "en/skills/powerapps-canvas/assets/app-formulas-tokens.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/app-onstart-molde.md": {
+      "en": "en/skills/powerapps-canvas/assets/app-onstart-template.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/INDICE.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/INDEX.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/abas.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/tabs.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/badge-status.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/status-badge.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/barra-filtros.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/filter-bar.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/botoes.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/buttons.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/cabecalho-tela.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/screen-header.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/card-kpi.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/kpi-card.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/estado-vazio.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/empty-state.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/exportar.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/export.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/galeria-tabela.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/table-gallery.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/inicio-cartoes.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/home-cards.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/linha-expansivel.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/expandable-row.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/menu-lateral.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/side-menu.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/menu-topo.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/top-menu.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/modal-confirmacao.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/confirm-modal.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/modal-destrutivo-motivo.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/destructive-reason-modal.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/modal-formulario.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/form-modal.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/modal-informativo.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/info-modal.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/ordenacao-coluna.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/column-sort.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/overlay-loading.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/loading-overlay.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/paginacao-cursor.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/cursor-pagination.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/painel-sem-acesso.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/no-access-panel.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/rodape-contagem.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/count-footer.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/selecao-em-lote.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/bulk-selection.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/seletor-unidade.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/unit-selector.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/componentes/toast.md": {
+      "en": "en/skills/powerapps-canvas/assets/components/toast.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/assets/tela-molde.md": {
+      "en": "en/skills/powerapps-canvas/assets/screen-template.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/acessibilidade.md": {
+      "en": "en/skills/powerapps-canvas/references/accessibility.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/anti-padroes.md": {
+      "en": "en/skills/powerapps-canvas/references/anti-patterns.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/chamada-flow.md": {
+      "en": "en/skills/powerapps-canvas/references/flow-call.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/delegacao.md": {
+      "en": "en/skills/powerapps-canvas/references/delegation.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/design-tokens.md": {
+      "en": "en/skills/powerapps-canvas/references/design-tokens.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/escopo-e-permissao.md": {
+      "en": "en/skills/powerapps-canvas/references/scope-and-permission.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/estilo.md": {
+      "en": "en/skills/powerapps-canvas/references/style.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/licoes-de-campo.md": {
+      "en": "en/skills/powerapps-canvas/references/field-lessons.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/nomenclatura.md": {
+      "en": "en/skills/powerapps-canvas/references/naming.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/performance.md": {
+      "en": "en/skills/powerapps-canvas/references/performance.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/powerfx-essencial.md": {
+      "en": "en/skills/powerapps-canvas/references/powerfx-essentials.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/propriedades-inexistentes.md": {
+      "en": "en/skills/powerapps-canvas/references/nonexistent-properties.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/timers-async.md": {
+      "en": "en/skills/powerapps-canvas/references/timers-async.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/ux-componentes.md": {
+      "en": "en/skills/powerapps-canvas/references/ux-components.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/ux-feedback.md": {
+      "en": "en/skills/powerapps-canvas/references/ux-feedback.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/references/yaml-pa-formato.md": {
+      "en": "en/skills/powerapps-canvas/references/pa-yaml-format.md",
+      "situacao": "pendente"
+    },
+    "skills/powerapps-canvas/scripts/validar-telas.py": {
+      "en": "en/skills/powerapps-canvas/scripts/validar-telas.py",
+      "situacao": "pendente"
+    },
+    "skills/progresso/SKILL.md": {
+      "en": "en/skills/progress/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/prototipo/SKILL.md": {
+      "en": "en/skills/prototype/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/publicar/SKILL.md": {
+      "en": "en/skills/publish/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/SKILL.md": {
+      "en": "en/skills/sql-procedures/SKILL.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/assets/contrato-procedure-molde.md": {
+      "en": "en/skills/sql-procedures/assets/procedure-contract-template.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/assets/funcao-leitura-molde.sql": {
+      "en": "en/skills/sql-procedures/assets/read-function-template.sql",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/assets/pedido-ddl-dba-molde.md": {
+      "en": "en/skills/sql-procedures/assets/dba-ddl-request-template.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/assets/procedure-escrita-molde.sql": {
+      "en": "en/skills/sql-procedures/assets/write-procedure-template.sql",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/colunas-calculadas-delegacao.md": {
+      "en": "en/skills/sql-procedures/references/computed-columns-delegation.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/contrato-proc-flow.md": {
+      "en": "en/skills/sql-procedures/references/proc-flow-contract.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/deploy-e-dba.md": {
+      "en": "en/skills/sql-procedures/references/deploy-and-dba.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/escopo-por-unidade.md": {
+      "en": "en/skills/sql-procedures/references/unit-scope.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/licoes-de-campo.md": {
+      "en": "en/skills/sql-procedures/references/field-lessons.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/migracao-dados.md": {
+      "en": "en/skills/sql-procedures/references/data-migration.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/modelo-de-dados.md": {
+      "en": "en/skills/sql-procedures/references/data-model.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/padrao-procedure.md": {
+      "en": "en/skills/sql-procedures/references/procedure-standard.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/references/seguranca-e-permissoes.md": {
+      "en": "en/skills/sql-procedures/references/security-and-permissions.md",
+      "situacao": "pendente"
+    },
+    "skills/sql-procedures/scripts/lint-procedure.py": {
+      "en": "en/skills/sql-procedures/scripts/lint-procedure.py",
+      "situacao": "pendente"
+    },
+    "skills/testar/SKILL.md": {
+      "en": "en/skills/test/SKILL.md",
+      "situacao": "pendente"
+    }
+  }
+}

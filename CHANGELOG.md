@@ -5,6 +5,18 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
 ## [Não lançado]
 
 ### Adicionado
+- **Base bilíngue pt-BR/en-US.**
+  - **Plugin `pp-en`** na pasta `en/` (`en/.claude-plugin/plugin.json`, mesma versão do `pp`), listado
+    no `marketplace.json` ao lado do `pp`. Ainda sem skills.
+  - **`i18n/mapa.json`:** cada arquivo de `skills/` e `agents/`, mais README, site, diagrama e PDF, com
+    o caminho en-US (nomes em inglês: `/pp-en:new`, `research-agent`, `references/field-lessons.md`…)
+    e a situação, `feito` ou `pendente`.
+  - **Lint L014** (paridade): arquivo pt-BR sem entrada no mapa ou entrada `feito` sem o arquivo
+    en-US é erro; `pendente` é aviso, e o lint imprime `N pendente(s) de tradução` antes do total.
+  - **`README.en.md`**, tradução do README com Power Fx en-US; os dois READMEs apontam um para o
+    outro no topo, e a instalação do `pp-en` fica "coming soon" até o plugin ter skills.
+  - **`CLAUDE.md`** na raiz: toda alteração nas duas línguas, o mapa, Power Fx por idioma e as três
+    checagens antes de commitar.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.
