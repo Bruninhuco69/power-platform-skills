@@ -17,6 +17,18 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
     outro no topo, e a instalação do `pp-en` fica "coming soon" até o plugin ter skills.
   - **`CLAUDE.md`** na raiz: toda alteração nas duas línguas, o mapa, Power Fx por idioma e as três
     checagens antes de commitar.
+- **Site, diagrama 3D e PDF em en-US.**
+  - **`docs/en/index.html`:** o site traduzido, com o mesmo layout, tokens e temas claro/escuro. Os
+    dois sites ganham um seletor de idioma (PT · EN) no menu e `hreflang`; no celular (abaixo de
+    480 px) o botão do GitHub sai do menu, que o herói já tem o link.
+  - **Diagrama 3D:** `docs/diagrama/index.html?lang=en` troca rótulos, estampas
+    (`new` … `publish`), voltas (`/pp-en:design`, `build`, `/pp-en:change`), legenda e título. Sem o
+    parâmetro, a imagem é a mesma de antes, pixel a pixel. Imagens novas `docs/img/pipeline-en-claro.webp`
+    e `pipeline-en-escuro.webp` no topo do `README.en.md`.
+  - **`docs/Power-Platform-Kit.en.pdf`:** a apresentação de 4 páginas A4 em inglês, com miniaturas
+    `docs/img/pdf-en-1.jpg` a `-4.jpg` no `README.en.md`.
+  - O `README.en.md` aponta para o site, o diagrama e o PDF em inglês; o mapa marca os três como
+    `feito`.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.

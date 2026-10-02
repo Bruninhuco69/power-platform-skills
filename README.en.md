@@ -2,10 +2,10 @@
 
 [🇧🇷 Português](README.md) · 🇺🇸 English
 
-<a href="https://stage2dev.github.io/power-platform-skills/diagrama/">
+<a href="https://stage2dev.github.io/power-platform-skills/diagrama/?lang=en">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/img/pipeline-escuro.webp">
-    <img src="docs/img/pipeline-claro.webp" width="100%" alt="The /pp pipeline built from blocks: ten numbered stages in four blocks (definition, identity, build and delivery), the orchestrator in a cap, the eight agents in colored beanies, the red pins where you act in the environment, and the three loops: prototype adjustment, test fix and change with the app live">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/img/pipeline-en-escuro.webp">
+    <img src="docs/img/pipeline-en-claro.webp" width="100%" alt="The /pp pipeline built from blocks: ten numbered stages in four blocks (definition, identity, build and delivery), the orchestrator in a cap, the eight agents in colored beanies, the red pins where you act in the environment, and the three loops: prototype adjustment, test fix and change with the app live">
   </picture>
 </a>
 
@@ -21,9 +21,9 @@ agents that build and prove what they did, and you only where a person is needed
 ![language](https://img.shields.io/badge/language-en--US-6b7280)
 ![license](https://img.shields.io/badge/license-MIT-16a34a)
 
-[**Site**](https://stage2dev.github.io/power-platform-skills/) ·
-[**3D diagram**](https://stage2dev.github.io/power-platform-skills/diagrama/) ·
-[**PDF presentation**](docs/Power-Platform-Kit.pdf) ·
+[**Site**](https://stage2dev.github.io/power-platform-skills/en/) ·
+[**3D diagram**](https://stage2dev.github.io/power-platform-skills/diagrama/?lang=en) ·
+[**PDF presentation**](docs/Power-Platform-Kit.en.pdf) ·
 [**Installation**](#installation) ·
 [**Contribute**](#how-to-contribute)
 
@@ -47,9 +47,10 @@ Then just follow the **Next step** block that closes each stage. Requirements an
 install are in [Installation](#installation).
 
 > **Language.** The kit is maintained in **Brazilian Portuguese (pt-BR)** and **English (en-US)**,
-> and every change lands in both languages. Today the stages, rules, templates and site are in
-> pt-BR; the en-US version is under construction, starting with this README. Power Fx follows each
-> language's formula bar: in en-US, `,` separates arguments and `;` chains; in pt-BR, `;` and `;;`.
+> and every change lands in both languages. This README, the site, the 3D diagram and the PDF are
+> already in en-US; the stages, rules and templates (the `pp-en` plugin) are being translated. Power
+> Fx follows each language's formula bar: in en-US, `,` separates arguments and `;` chains; in
+> pt-BR, `;` and `;;`.
 
 ## Why it exists
 
@@ -68,15 +69,14 @@ less rework, the same standard across every app, and every delivery with proof t
 ## PDF presentation
 
 Four pages to send to your team: what it is, the ten stages, who thinks and who executes, and the
-conventions. [**Download the PDF**](docs/Power-Platform-Kit.pdf) (in Portuguese for now; the English
-edition is on its way).
+conventions. [**Download the PDF**](docs/Power-Platform-Kit.en.pdf).
 
 <table>
   <tr>
-    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-1.jpg" alt="Page 1: cover, why it exists and how to start"></a></td>
-    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-2.jpg" alt="Page 2: the ten stages in four blocks and the loops"></a></td>
-    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-3.jpg" alt="Page 3: who thinks and who executes, the agents and the model profiles"></a></td>
-    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-4.jpg" alt="Page 4: existing apps, conventions, open source and requirements"></a></td>
+    <td><a href="docs/Power-Platform-Kit.en.pdf"><img src="docs/img/pdf-en-1.jpg" alt="Page 1: cover, why it exists and how to start"></a></td>
+    <td><a href="docs/Power-Platform-Kit.en.pdf"><img src="docs/img/pdf-en-2.jpg" alt="Page 2: the ten stages in four blocks and the loops"></a></td>
+    <td><a href="docs/Power-Platform-Kit.en.pdf"><img src="docs/img/pdf-en-3.jpg" alt="Page 3: who thinks and who executes, the agents and the model profiles"></a></td>
+    <td><a href="docs/Power-Platform-Kit.en.pdf"><img src="docs/img/pdf-en-4.jpg" alt="Page 4: existing apps, conventions, open source and requirements"></a></td>
   </tr>
 </table>
 
@@ -105,7 +105,7 @@ edition is on its way).
 
 The diagram at the top is the whole pipeline: ten stages in four blocks, from the idea (`1`) to the
 published app (`10`). The colored beanies are the agents, the red pins mark where you act in the
-environment, and the hoses are the loops. [Open the 3D version](https://stage2dev.github.io/power-platform-skills/diagrama/)
+environment, and the hoses are the loops. [Open the 3D version](https://stage2dev.github.io/power-platform-skills/diagrama/?lang=en)
 to rotate and zoom.
 
 <details>
@@ -517,8 +517,8 @@ git) with one regex per line.
 
 - **A full `power-bi` skill**, at the same level as this one: star schema, Power Query M and DAX.
   It's next.
-- **The complete en-US version**, under construction: README, site, diagram, PDF and the `pp-en`
-  plugin in the same marketplace. From now on, every change lands in pt-BR and en-US.
+- **The complete en-US version**: README, site, diagram and PDF are done; the `pp-en` plugin, in the
+  same marketplace, is being translated. From now on, every change lands in pt-BR and en-US.
 - A single `gate.py` that runs every validator for the layers a wave touched.
 - A name checker that compares screens and flows against `AS-BUILT-NAMES`.
 - Trigger evaluations for each skill's description.
