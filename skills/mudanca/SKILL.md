@@ -47,7 +47,8 @@ Julgamento: `KIT/skills/power-platform/references/subagentes.md`. Molde:
    (ambíguo, conflito com regra, quem aprova), juntos: até 4 perguntas fechadas numa chamada do
    `AskUserQuestion`, mais uma aberta se precisar. "Corrija o que não estiver certo."
 4. **Contexto** (você não faz a leitura ampla). Um `pp:agente-pesquisa` por área tocada (telas,
-   fluxos, banco), na **mesma mensagem**, com `ONDE: projeto` e a pergunta: quais arquivos a mudança
+   fluxos, banco), na **mesma mensagem**, com `ONDE: projeto`, `PARA QUE: escrever os specs da
+   mudança` e a pergunta: quais arquivos a mudança
    toca, as convenções deles, as pegadinhas, e **o que mais depende disso** (outra tela que usa a
    coluna, outro fluxo que chama a procedure). Modelo: `modelos.py de agente-pesquisa`. Julgue.
 5. **Specs** na seção 3 do MUD, um por frente: o agente, os **arquivos exatos**, o que muda

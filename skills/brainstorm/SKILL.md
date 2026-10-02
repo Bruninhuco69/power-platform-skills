@@ -86,8 +86,9 @@ redonda, com o ícone de quem levantou). O log é o que permite parar e retomar.
 
 ## Regras
 
-- Uma pergunta por vez, inclusive na mesa redonda; pergunta fechada em `AskUserQuestion`, com a
-  opção recomendada primeiro.
+- Uma pergunta aberta por vez, inclusive na mesa redonda (a próxima depende da resposta);
+  pergunta fechada em `AskUserQuestion`, com a opção recomendada primeiro. Fechadas e independentes
+  entre si (ex.: os bloqueadores) podem ir juntas, até 4 por chamada (`formato-saida.md` §3).
 - Persona pergunta e propõe; quem decide é o usuário. Persona não afirma fato sobre o ambiente ou a
   empresa do usuário.
 - "Acho que" vira `[SUPOSIÇÃO: quem confirma, até quando]`, nunca fato.

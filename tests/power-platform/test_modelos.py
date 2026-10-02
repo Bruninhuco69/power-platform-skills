@@ -152,3 +152,21 @@ def test_proximo_passo_mostra_o_modelo_da_sessao(projeto, capsys):
 def test_help_pela_linha_de_comando():
     ok = subprocess.run([sys.executable, str(SCRIPT), "--help"], capture_output=True, text=True, encoding="utf-8")
     assert ok.returncode == 0 and "aplicar" in ok.stdout
+
+
+def test_settings_invalido_nao_deixa_o_config_pela_metade(projeto):
+    (projeto / ".claude").mkdir()
+    (projeto / ".claude" / "settings.local.json").write_text('{"model": "opus", // comentário\n}', encoding="utf-8")
+    assert mod.main(["aplicar", "maximo"]) == 2
+    assert "modelos" not in _config(projeto)
+
+
+def test_avisa_quando_troca_model_posto_fora_do_kit(projeto, capsys):
+    (projeto / ".claude").mkdir()
+    (projeto / ".claude" / "settings.local.json").write_text('{"model": "haiku"}', encoding="utf-8")
+    assert mod.main(["aplicar", "equilibrado"]) == 0
+    assert "era `haiku`, posto fora do kit" in capsys.readouterr().out
+
+
+def test_de_com_raiz_sem_config_da_exit_2(tmp_path):
+    assert mod.main(["--raiz", str(tmp_path), "de", "agente-qa"]) == 2

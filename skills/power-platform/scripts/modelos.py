@@ -183,11 +183,9 @@ def texto_mostrar(raiz: Path, modelos: dict) -> str:
         effort = effort_do_agente(agente)
         valor = _rotulo_modelo(modelos["agentes"].get(agente, "")) + (f" · effort {effort}" if effort else "")
         linhas.append(_linha(agente, valor))
-    settings = raiz / SETTINGS
-    if settings.is_file():
-        model = _ler_json(settings, "settings.local.json").get("model", "")
-        if model and model != modelos["sessao"]:
-            linhas.append(f"⚠ {SETTINGS.as_posix()} diz `model: {model}`: é nele que a sessão abre.")
+    model = _ler_settings(raiz).get("model", "")
+    if model and model != modelos["sessao"]:
+        linhas.append(f"⚠ {SETTINGS.as_posix()} diz `model: {model}`: é nele que a sessão abre.")
     return "\n".join(linhas)
 
 
@@ -201,14 +199,20 @@ def _garantir_gitignore(raiz: Path) -> bool:
     return True
 
 
-def _aplicar_sessao(raiz: Path, novo: str, anterior: str) -> str:
+def _ler_settings(raiz: Path) -> dict:
     caminho = raiz / SETTINGS
-    settings = _ler_json(caminho, "settings.local.json") if caminho.is_file() else {}
+    return _ler_json(caminho, "settings.local.json") if caminho.is_file() else {}
+
+
+def _aplicar_sessao(raiz: Path, settings: dict, novo: str, anterior: str) -> str:
+    caminho = raiz / SETTINGS
     if novo:
-        if settings.get("model") == novo:
+        atual = settings.get("model")
+        if atual == novo:
             return f"{SETTINGS.as_posix()} já abre a sessão em `{novo}`"
         _gravar_json(caminho, {**settings, "model": novo})
-        return f"{SETTINGS.as_posix()}: sessão abre em `{novo}`"
+        trocou = f" (era `{atual}`, posto fora do kit)" if atual and atual != anterior else ""
+        return f"{SETTINGS.as_posix()}: sessão abre em `{novo}`{trocou}"
     if "model" in settings and settings["model"] == anterior:
         _gravar_json(caminho, {k: v for k, v in settings.items() if k != "model"})
         return f"{SETTINGS.as_posix()}: `model` removido (a sessão abre no modelo padrão da conta)"
@@ -222,9 +226,10 @@ def cmd_aplicar(raiz: Path, args: argparse.Namespace) -> int:
     trocas = {"sessao": args.sessao, "planejamento": args.planejamento, "execucao": args.execucao,
               "pesquisa": args.pesquisa}
     modelos = montar_modelos(POR_ID[args.perfil], trocas)
+    settings = _ler_settings(raiz)  # inválido: para aqui, antes de gravar qualquer coisa
     _gravar_json(caminho, {**config, "modelos": modelos})
     print(f"✓ {NOME_CONFIG}: perfil {modelos['perfil']}")
-    print(f"✓ {_aplicar_sessao(raiz, modelos['sessao'], anterior['sessao'])}")
+    print(f"✓ {_aplicar_sessao(raiz, settings, modelos['sessao'], anterior['sessao'])}")
     if _garantir_gitignore(raiz):
         print(f"✓ .gitignore: {LINHA_GITIGNORE}")
     print()
@@ -274,6 +279,8 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         config = (args.raiz.resolve() / NOME_CONFIG) if args.raiz else achar_config(Path.cwd().resolve())
         if args.comando == "de":
+            if args.raiz and not config.is_file():
+                raise ErroUso(f"--raiz {args.raiz}: sem {NOME_CONFIG} nessa pasta")
             return cmd_de(config.parent if config and config.is_file() else None, args)
         if config is None or not config.is_file():
             raise ErroUso(f"nenhum {NOME_CONFIG} aqui nem nas pastas acima: rode da raiz do projeto")

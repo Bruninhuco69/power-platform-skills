@@ -7,8 +7,11 @@ na volta e como julgar a entrega. Os modelos de prompt para auditoria de app exi
 **A sessão é a cabeça, o agente é a mão.** A sessão da etapa define o pedido, junta o contexto,
 julga o que volta e decide com o usuário. O agente faz o trabalho pesado (escrever tela, fluxo,
 procedure, protótipo, spec) e prova o que fez. A cabeça não faz o trabalho da mão: o que está
-errado no arquivo do agente volta para ele, com a evidência. Registros da etapa (`ESTADO.md`,
-`GOAL.md`, `docs/qa/`, rodadas de ajuste) são da cabeça.
+errado no arquivo do agente volta para ele, com a evidência. São da cabeça os **registros** da
+etapa (`ESTADO.md`, `GOAL.md`, `docs/qa/`, rodadas de ajuste) e os **pedidos**: o contrato
+app↔flow que falta antes de construir, o spec de uma mudança, o ajuste de uma linha num spec que
+o usuário pediu (ex.: a descrição de uma tela no `mockups.json`). São da mão os **artefatos
+construídos**: tela, fluxo, procedure, DDL, protótipo, inventário.
 
 ## Sumário
 
