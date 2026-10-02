@@ -1,7 +1,7 @@
 {
   "name": "pp",
   "version": "0.2.0",
-  "description": "Guided pipeline for Power Apps Canvas + Power Automate apps on SQL Server or Dataverse: one /pp:* command per step (idea, brainstorm, branding, image mockups, clickable HTML prototype, architecture, build, QA, UAT, publish), one fresh session per step, specialist subagents, paste-ready YAML screens and designer flows, and executable validators.",
+  "description": "Pipeline guiado para apps Power Apps Canvas + Power Automate com SQL Server ou Dataverse: um comando /pp:* por etapa (ideia, brainstorm, identidade visual, mockups em imagem, protótipo HTML navegável, arquitetura, construção, testes, homologação, publicação), uma sessão nova por etapa, subagentes especialistas, telas YAML e fluxos prontos para colar e validadores executáveis.",
   "author": {
     "name": "Bruno"
   },

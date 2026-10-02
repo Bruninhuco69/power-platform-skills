@@ -39,6 +39,8 @@ estilo do GSD. O plugin passa a se chamar `pp` (comandos `/pp:*`).
 - `/goal` deixou de ser modo do kit (é comando nativo do Claude Code): a fila `GOAL.md` é andada pelo
   `/pp:construir`, uma onda por sessão.
 - `nomes_as_built` padrão em `AMBIENTE-AS-BUILT/NOMES-AS-BUILT.md`.
+- README, site (`docs/index.html`, GitHub Pages) e descrições do plugin em **pt-BR**, como as
+  skills; a versão em inglês fica para depois.
 
 ### Removido
 - Agente `arquiteto-telas` (virou `agente-mockups`).

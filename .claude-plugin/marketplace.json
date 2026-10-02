@@ -5,13 +5,13 @@
     "name": "Bruno"
   },
   "metadata": {
-    "description": "Claude Code plugin for Power Apps + Power Automate projects on SQL Server or Dataverse."
+    "description": "Plugin do Claude Code para projetos Power Apps + Power Automate com SQL Server ou Dataverse."
   },
   "plugins": [
     {
       "name": "pp",
       "source": "./",
-      "description": "From idea to a published Power Apps app, one guided /pp:* command per step, with specialist agents, component catalogs, SQL Server procedures, Dataverse and validators.",
+      "description": "Da ideia ao app Power Apps publicado, um comando /pp:* guiado por etapa, com agentes especialistas, catálogos de componentes, procedures SQL Server, Dataverse e validadores.",
       "version": "0.2.0"
     }
   ]
