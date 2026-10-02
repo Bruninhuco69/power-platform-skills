@@ -83,7 +83,7 @@ flowchart TD
 | 3 | `/pp:design` | Agente Designer Branding (conversa) | escolhe cores, fontes, estilo | `ux-design-system.md` | paleta em hex, contraste calculado, componentes do catálogo |
 | 4 | `/pp:mockups` | Agente de Mockups em Imagem | autoriza (ou não) gerar as imagens | `inventario-telas.md`, `mockups/` | spec com `0 erro(s)`; imagens geradas ou dispensa registrada |
 | 5 | `/pp:prototipo` | Agente Gerador de Mockup HTML | abre o protótipo e aprova ou pede ajuste | `prototipo/index.html` | verificador com `0 erro(s)` e aceite do usuário |
-| 6 | `/pp:arquitetura` | Agente de Arquitetura (+ Agentes SQL em paralelo) | confirma a trilha de dados; cria as tabelas 🔴 | `arquitetura.md`, ADR, scripts de dados, `GOAL.md` | contrato app ↔ flow fechado; fila de construção em ondas |
+| 6 | `/pp:arquitetura` | Agente de Arquitetura (+ Agentes SQL em paralelo) | confirma a trilha de dados; cria as tabelas pela carga mockup (no Dataverse, pelo construtor ou pela planilha) e confere os tipos 🔴 | `arquitetura.md`, ADR, scripts de dados, carga mockup (`.xlsx`, `.sql`; no Dataverse, plano e construtor), `GOAL.md` | contrato app ↔ flow fechado; fila de construção em ondas |
 | 7 | `/pp:construir` | Agentes Power Apps Canvas e Power Automate, um por grupo de arquivos | cola telas e fluxos no ambiente 🔴 | telas `.pa.yaml`, fluxos `.json` | validadores com `0 erro(s)`; contrato conferido; colado sem erro |
 | 8 | `/pp:testar` | Agente de Testes e Qualidade | roda os testes no ambiente 🔴 | `docs/qa/QA-<data>.md` | todos os critérios passam, com evidência |
 | 9 | `/pp:homologar` | Orquestrador, com o usuário | conduz o UAT com usuários reais 🔴 | `docs/qa/UAT-<data>.md` | aceite assinado (quem e quando) |
@@ -141,6 +141,7 @@ etapa precisou. Detalhe: `references/subagentes.md`.
 | `docs/planejamento/prototipo/index.html`, `ajustes-prototipo.md` | protótipo | design (ajuste), construir |
 | `docs/planejamento/arquitetura.md`, `docs/decisoes/ADR-*.md` | arquitetura | construir, testar, publicar |
 | `GOAL.md` (raiz) | arquitetura | construir, testar |
+| `Backend/<trilha>/carga-mockup.json`, `.xlsx`, `.sql`; `plano-dataverse.json` e `construtor-dataverse/` (Dataverse) | arquitetura | humano: criar as tabelas (Dataverse, pelo construtor ou pela planilha) ou dar dado ao DEV (SQL) |
 | `AMBIENTE-AS-BUILT/` com `NOMES-AS-BUILT.md` | arquitetura (🔴 humano) | construir: nome real de tabela e coluna |
 | telas e fluxos (`pastas` do config) | construir | testar, publicar |
 | `docs/qa/` | testar, homologar | publicar |

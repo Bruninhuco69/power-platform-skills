@@ -37,11 +37,15 @@ CODIGOS_ERRO = {
     "F016-condicao-constante.json": "F016",
     "F017-conexao-ausente.json": "F017",
     "F019-segmentos-guid-repetido.json": "F019",
+    "F020-condicao-em-texto.json": "F020",
 }
 CODIGOS_AVISO = {
     "F012-coalesce-string.json": "F012",
     "F014-literal-de-ambiente.json": "F014",
     "F018-parametro-interpolado.json": "F018",
+    "F021-inicializar-variavel-no-escopo.json": "F021",
+    "F022-variavel-pura.json": "F022",
+    "F023-fazer-ate-em-texto.json": "F023",
 }
 
 
@@ -80,7 +84,7 @@ def test_fixture_acusa_aviso_esperado(arquivo, codigo):
 
 def test_cada_codigo_tem_fixture():
     cobertos = set(CODIGOS_ERRO.values()) | set(CODIGOS_AVISO.values())
-    assert cobertos == {f"F{n:03d}" for n in range(1, 20)}
+    assert cobertos == {f"F{n:03d}" for n in range(1, 24)}
 
 
 def test_no_folha_do_designer_passa():
@@ -165,3 +169,49 @@ def test_response_http_antecipada_e_aviso():
     ctx = vf.Contexto("x")
     vf.checar_respostas(ctx, acoes)
     assert [(a.nivel, a.codigo) for a in ctx.achados] == [("AVISO", "F015")]
+
+
+# ---------- colagem no designer novo (F020-F023) ----------
+
+def _no_if(expressao) -> dict:
+    return {"type": "If", "expression": expressao, "actions": {}, "else": {"actions": {}}}
+
+
+def _analisar(acoes: dict, colagem: bool) -> list[tuple[str, str]]:
+    ctx = vf.Contexto("x", colagem=colagem)
+    vf.analisar_acoes(ctx, acoes, None, None)
+    return [(a.nivel, a.codigo) for a in ctx.achados]
+
+
+def test_f020_condicao_sem_and_ou_or_na_raiz_e_aviso():
+    acoes = {"Se": _no_if({"equals": ["@empty(triggerBody()?['text'])", "@true"]})}
+    assert _analisar(acoes, colagem=True) == [("AVISO", "F020")]
+    acoes = {"Se": _no_if({"and": [{"equals": ["@empty(triggerBody()?['text'])", "@true"]}]})}
+    assert _analisar(acoes, colagem=True) == []
+
+
+def test_f020_condicao_em_texto_e_erro_tambem_na_definicao():
+    assert _analisar({"Se": _no_if("@empty(triggerBody()?['text'])")}, colagem=False) == [("ERRO", "F020")]
+
+
+def test_f021_inicializar_variavel_fora_da_raiz_da_definicao_e_erro():
+    iniciar = {"type": "InitializeVariable", "inputs": {"variables": [{"name": "Total", "type": "integer", "value": 0}]}}
+    assert _analisar({"Iniciar": iniciar}, colagem=False) == []
+    assert _analisar({"Escopo": {"type": "Scope", "actions": {"Iniciar": iniciar}}}, colagem=False) == [("ERRO", "F021")]
+
+
+def test_f022_variavel_iniciada_dentro_do_trecho_colado_e_erro():
+    acoes = {"Escopo": {"type": "Scope", "actions": {
+        "Iniciar": {"type": "InitializeVariable", "inputs": {"variables": [{"name": "Total", "type": "integer", "value": 0}]}},
+        "Ler": {"type": "Compose", "inputs": "@{variables('Total')}", "runAfter": {"Iniciar": ["Succeeded"]}},
+        "Dobro": {"type": "Compose", "inputs": "@mul(variables('Total'), 2)", "runAfter": {"Ler": ["Succeeded"]}},
+    }}}
+    assert sorted(_analisar(acoes, colagem=True)) == [("AVISO", "F021"), ("ERRO", "F022")]
+
+
+def test_f022_e_f023_nao_valem_para_a_definicao_exportada():
+    acoes = {"Ler": {"type": "Compose", "inputs": "@variables('Total')"},
+             "Esperar": {"type": "Until", "expression": "@equals(variables('Total'), 3)", "limit": {"count": 3},
+                         "actions": {}}}
+    assert _analisar(acoes, colagem=False) == []
+    assert sorted(_analisar(acoes, colagem=True)) == [("AVISO", "F022"), ("AVISO", "F023")]

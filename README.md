@@ -245,7 +245,7 @@ Depois é só seguir o bloco **Próximo passo** no fim de cada etapa. Em resumo:
 | 3 | `/pp:design` | Agente Designer Branding (conversa com você) | escolhe cores, estilo, fonte e o jeito de navegar; aprova uma amostra visual | `ux-design-system.md`, `identidade.html` |
 | 4 | `/pp:mockups` | Agente de Mockups em Imagem + script | confere a lista de telas; autoriza as imagens | `inventario-telas.md`, `mockups/*.png` |
 | 5 | `/pp:prototipo` | Agente Gerador de Mockup HTML | navega pelo protótipo; aprova ou pede ajustes | `prototipo/index.html` |
-| 6 | `/pp:arquitetura` | Agente de Arquitetura, depois Agentes SQL em paralelo | escolhe SQL Server ou Dataverse; cria as tabelas 🔴 | `arquitetura.md`, ADR, DDL e procedures (ou modelo Dataverse), `GOAL.md` |
+| 6 | `/pp:arquitetura` | Agente de Arquitetura, depois Agentes SQL em paralelo | escolhe SQL Server ou Dataverse; cria as tabelas 🔴 (no Dataverse, pelo flow construtor ou importando a carga mockup, e confere os tipos) | `arquitetura.md`, ADR, DDL e procedures (ou modelo Dataverse), carga mockup `.xlsx` (e `.sql` no SQL; no Dataverse, o plano e o flow construtor), `GOAL.md` |
 | 7 | `/pp:construir` | Agentes Canvas ∥ Power Automate, um por grupo de telas ou fluxos | cola telas e fluxos 🔴; uma onda por sessão | telas `.pa.yaml`, JSON dos fluxos |
 | 8 | `/pp:testar` | Agente de Testes e Qualidade | roda o roteiro de teste no ambiente 🔴 | `docs/qa/QA-<data>.md` |
 | 9 | `/pp:homologar` | Orquestrador, com você | faz a homologação com usuários reais 🔴 | `docs/qa/UAT-<data>.md` |
@@ -417,6 +417,11 @@ exige um ADR.
 - **Uma trilha de dados por projeto:** SQL Server *ou* Dataverse.
 - **O nome real vence.** Fórmulas e fluxos são escritos com os nomes lidos do ambiente
   (`NOMES-AS-BUILT`), nunca com os do plano.
+- **Toda tabela nasce com carga mockup.** Um `.xlsx` com dados fictícios, uma aba por tabela na ordem
+  de carga; no SQL, também o `INSERT` para o banco de DEV. O Dataverse deduz o tipo de cada coluna
+  pelos dados e erra com frequência: o kit avisa e confere (`montar-carga-mockup.py --conferir`)
+  antes de qualquer dado real. Ou, no Dataverse, o **construtor**: um flow que cria as tabelas, as
+  colunas com o tipo do modelo, os relacionamentos e a carga mockup direto pela Web API (`--flow`).
 - **Escrita sempre passa por um fluxo,** com a resposta de 4 campos e `.Run()` dentro de `IfError`.
 - **O fluxo lê a identidade do usuário do próprio contexto** e autoriza cada ação. Os parâmetros do
   fluxo são posicionais, e um novo entra sempre no fim.
@@ -441,7 +446,7 @@ skills/
   power-platform/        orquestrador: pipeline, estado, roteamento, protocolo, portões, ALM
     references/  assets/  prompts/
     scripts/estado.py  modelos.py  desenhar-mockups.py  verificar-prototipo.py
-            capturar-telas.py
+            capturar-telas.py  montar-carga-mockup.py (+ _carga_*.py)
   powerapps-canvas/      references/  assets/componentes/  scripts/validar-telas.py
   power-automate/        references/  assets/componentes/  scripts/verificar-fluxo.py
   sql-procedures/        references/  assets/  scripts/lint-procedure.py

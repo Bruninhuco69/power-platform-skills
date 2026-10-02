@@ -51,7 +51,8 @@ repete.
    Por quê: chave `Pending` não resolve Lookup na importação nem no upsert, e o erro é silencioso.
 9. **Texto não vira Choice nem Lookup depois.** Decida o tipo antes de importar; importar
    primeiro e ajustar depois é refazer a tabela.
-   Por quê: o assistente de importação cria colunas de texto e o Dataverse não as converte.
+   Por quê: o assistente de importação cria colunas de texto e o Dataverse não as converte. A carga
+   mockup do `/pp:arquitetura` existe para errar o tipo no mockup, onde recriar é de graça.
 10. **Nunca afirme "✅ feito" sobre nome ou tipo sem o comando que reencontra a evidência**
     (extração datada do ambiente). Por quê: P2 e P5 de `decisoes-padrao.md`.
 
@@ -67,6 +68,8 @@ repete.
    | "Qualquer usuário vê todas as unidades", role, BU, owner team | `references/seguranca.md` |
    | Criar tabela, relacionamento, chave, coluna calculada, auditoria | `references/modelagem.md` |
    | Importar CSV/Excel, migrar dado legado, carga com Lookup | `references/importacao-dados.md` |
+| Criar as tabelas a partir da carga mockup `.xlsx`; conferir os tipos que o Dataverse deduziu | `skills/power-platform/references/carga-mockup.md` e `scripts/montar-carga-mockup.py --conferir` (do orquestrador) |
+| Criar tabelas, colunas tipadas, relacionamentos e a carga mockup direto pela Web API, por um flow | `skills/power-platform/references/construtor-dataverse.md` (`montar-carga-mockup.py --flow`) |
    | "Isso já aconteceu?" (lições de campo) | `references/licoes-de-campo.md` |
 
 2. **Confirme a trilha.** `trilha_dados` do projeto deve ser `dataverse` (A4). Se a pergunta é
@@ -139,3 +142,4 @@ Comandos da raiz do projeto (nota em Scripts); o lint do repositório roda da ra
 8. Security Role em Organização tratada como isolamento — [seguranca](references/seguranca.md).
 9. Lookup trocado por texto sem integridade: unidade inválida entra, homônimo colide — [modelagem](references/modelagem.md).
 10. Importar antes de criar Choice, Lookup e chave — [importacao-dados](references/importacao-dados.md).
+11. Confiar no tipo que o Dataverse deduziu do Excel: ele erra com frequência; confira com `--conferir` antes do dado real, ou crie pelo construtor, que manda o tipo do spec — `skills/power-platform/references/carga-mockup.md`, `construtor-dataverse.md`.

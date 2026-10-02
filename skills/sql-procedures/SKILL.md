@@ -79,6 +79,7 @@ de `power-automate`; a fórmula que consome a coluna calculada é de `powerapps-
 | Conta do conector, GRANT, "a procedure autoriza?" | `seguranca-e-permissoes.md` |
 | Pacote ao DBA, pedido de DDL, banco congelado, provas | `deploy-e-dba.md`, `assets/pedido-ddl-dba-molde.md` |
 | Carga do legado para SQL Server | `migracao-dados.md` |
+| Dado fictício no banco de DEV para testar tela e procedure (`carga-mockup.sql`) | `skills/power-platform/references/carga-mockup.md` §6 (script `montar-carga-mockup.py` do orquestrador) |
 | Entender o que já deu errado em projetos reais | `licoes-de-campo.md` |
 | Auditar procedures existentes | rode o lint (abaixo) e `padrao-procedure.md` §13 |
 

@@ -12,6 +12,8 @@ Não é regra por si: o que vale está nos arquivos citados.
 4. [Coluna sem dono é coluna morta](#4-coluna-sem-dono-é-coluna-morta)
 5. [Mapa fonte do app → tabela é do app, não do ambiente](#5-mapa-fonte-do-app--tabela-é-do-app-não-do-ambiente)
 6. [Data nula e o limite mínimo da plataforma](#6-data-nula-e-o-limite-mínimo-da-plataforma)
+7. [Metadado e carga pela Web API](#7-metadado-e-carga-pela-web-api)
+8. [A importação da planilha trocou dia e mês](#8-a-importação-da-planilha-trocou-dia-e-mês)
 
 ---
 
@@ -57,3 +59,32 @@ Não é regra por si: o que vale está nos arquivos citados.
 |---|---|
 | **O que aconteceu** | Um flow de recebimento trocava a data nula de origem (`0001-01-01`) por `1753-01-01` antes de gravar. O motivo provável é o limite mínimo de data da plataforma `[não verificado: a causa não foi registrada]`. |
 | **Previne** | Ao receber data de sistema externo, decida e registre como a data nula é gravada (vazio ou um sentinela) em vez de deixar o valor mínimo da origem passar sem critério. Ver `skills/power-automate/references/dataverse-batch-upsert.md`. |
+
+## 7. Metadado e carga pela Web API
+
+Um flow que cria o esquema e carrega as linhas pela Web API (um plano lido por um intérprete, o mesmo
+desenho do construtor do kit) juntou estes pontos antes da primeira execução. A coluna Origem diz de
+onde cada um vem: o Learn, ou o que se viu no projeto de referência.
+
+| Ponto | Regra | Origem |
+|---|---|---|
+| Componente fora da solução | `MSCRM.SolutionUniqueName` em toda criação de metadado | Learn |
+| `PUT` de coluna | substitui a definição inteira: `GET` da coluna, mude o campo, `PUT` de tudo sem `@odata.context`, com `MSCRM.MergeLabels: true` para não apagar o rótulo de outro idioma | Learn |
+| Numeração automática numa coluna com dados | a coluna nasce texto, a carga grava os códigos, depois `PUT` com `AutoNumberFormat` e `SetAutoNumberSeed` acima do último código | Learn; aceitação do `PUT` não verificada |
+| Opção de Choice com `Value: null` | a plataforma numera pelo prefixo de valor do publisher. Quem não fixa o inteiro lê a Choice (`$expand=OptionSet,GlobalOptionSet`: a local responde num, a global no outro) e casa pelo rótulo | Learn; numeração não verificada |
+| Coluna sobre Choice global | `GlobalOptionSet@odata.bind: "/GlobalOptionSetDefinitions(Name='x')"` | Learn |
+| Chave alternativa | o índice é assíncrono: `EntityKeyIndexStatus` passa por `Pending`/`InProgress` até `Active` ou `Failed`; `Failed` pede `ReactivateEntityKey`. Procurando a chave pelo nome num texto, inclua as aspas, para não casar com uma de nome mais longo | Learn |
+| Publisher | procure pelo prefixo antes de criar; `crNNN` costuma ser o publisher padrão do ambiente: confira antes de rodar | projeto de referência |
+| Linha que pode rodar de novo | ID fixo (uuid5 da tabela e da chave natural) e `PATCH` com `If-None-Match: *`: só cria; `412` = já existe. `If-Match: *` só atualiza (`skills/power-automate/references/dataverse-batch-upsert.md`) | Learn |
+| Lookup circular | a linha nasce sem o Lookup, e um `PATCH` depois liga as duas | projeto de referência |
+| Dono e data de criação reais | `ownerid@odata.bind: /systemusers(<id>)`, com o usuário achado por `internalemailaddress` (e-mail codificado na URL, `'` dobrado); `overriddencreatedon` para a data de abertura | Learn; não verificado para a conta que roda |
+
+O construtor do kit (`skills/power-platform/references/construtor-dataverse.md`) já segue os pontos de
+solução, chave, ID fixo e Choice local. Os outros valem para quem escrever outra carga.
+
+## 8. A importação da planilha trocou dia e mês
+
+| | |
+|---|---|
+| **O que aconteceu** | A importação da planilha no Dataverse trocou dia e mês das datas. Ela também não grava dono, compartilhamento nem data de criação, e por isso a carga daquele projeto foi para a Web API. [verificado: projeto de referência] |
+| **Previne** | `references/importacao-dados.md` §4. A carga mockup do kit gera datas só com dia 13 ou mais: se a importação trocar, o mês fica inválido e a linha é recusada, em vez de entrar com a data errada. Depois de importar, confira uma data na tabela. Dono e data de criação pedem a Web API (§7). |

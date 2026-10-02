@@ -40,6 +40,7 @@ pontos 🔴.
 | ID | Estado | Tarefa | Arquivos | Pronto quando | Evidência (comando → saída, data) |
 |---|---|---|---|---|---|
 | T-01 | ⬜ | `git init`, `power-platform.config.json`, `00-LEIA-PRIMEIRO.md` | os três, na raiz | trilha ativa declarada nos três | |
+| T-02a | 🔴 | Criar as tabelas com a carga mockup (Dataverse: rodar o construtor com o `plano-dataverse.json`, ou importar o `.xlsx`; SQL: DDL e `carga-mockup.sql` no DEV) | `Backend/<trilha>/carga-mockup.*`, `plano-dataverse.json` | Dataverse: `montar-carga-mockup.py <spec> --conferir <export.json>` com 0 erro(s) (o Dataverse erra a tipagem: conferir antes do dado real); SQL: o script roda sem erro | |
 | T-02 | 🔴 | Levantar `NOMES-AS-BUILT` do ambiente real | `AMBIENTE-AS-BUILT/NOMES-AS-BUILT.md` | tabelas, colunas, tipos, procedures, conexões com captura datada | |
 | T-03 | ⬜ | ADR das decisões já tomadas | `docs/decisoes/ADR-*.md` | um ADR por decisão fora do padrão | |
 

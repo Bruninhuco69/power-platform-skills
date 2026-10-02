@@ -61,6 +61,7 @@ implementa, não os redefine.
 | Expressão que falha só em execução | `references/expressoes-wdl-armadilhas.md` |
 | Flow que grava em SQL | `references/sql-no-flow.md` (a procedure é de `sql-procedures`) |
 | Receber lote de sistema externo | `references/http-entrada-externa.md`, `references/dataverse-batch-upsert.md` |
+| Criar tabelas e carga mockup no Dataverse pela Web API (flow pronto, `$batch`) | `skills/power-platform/references/construtor-dataverse.md` (do orquestrador) |
 | Log de execução, suporte | `references/log-execucao.md` |
 | Gerar flows por script, pipeline | `references/gerador-e-gabarito.md` |
 | Documento de contrato | `assets/contrato-flow-molde.md` |
@@ -107,7 +108,7 @@ implementa, não os redefine.
 
 | Comando | O que checa | Exit |
 |---|---|---|
-| `python <pasta-da-skill>/scripts/verificar-fluxo.py <arquivo\|pasta>` | F001 JSON; F002 envelope; F003/F019 identidade e segmentos do nó; F004 nome duplicado; F005 `runAfter` órfão; F006 referência a ação inexistente; F007 `items()`; F008 caso de `Switch`; F009 `Catch` sem `Skipped`; F010 `Response` sem os 4 campos; F011 `outputs()` de `Select`/`Query`; F012 `coalesce(string())`; F013 expressão > 8.192; F014 literal de ambiente; F015 `Response` sem `Terminate`; F016 condição constante; F017 conexão ausente; F018 `@{}` em parâmetro | 0 sem erro, 1 com erro, 2 uso incorreto |
+| `python <pasta-da-skill>/scripts/verificar-fluxo.py <arquivo\|pasta>` | F001 JSON; F002 envelope; F003/F019 identidade e segmentos do nó; F004 nome duplicado; F005 `runAfter` órfão; F006 referência a ação inexistente; F007 `items()`; F008 caso de `Switch`; F009 `Catch` sem `Skipped`; F010 `Response` sem os 4 campos; F011 `outputs()` de `Select`/`Query`; F012 `coalesce(string())`; F013 expressão > 8.192; F014 literal de ambiente; F015 `Response` sem `Terminate`; F016 condição constante; F017 conexão ausente; F018 `@{}` em parâmetro; F020 condição de `If` em texto ou sem `and`/`or`; F021 `Inicializar variável` fora da raiz; F022 variável sozinha num campo colado; F023 `Fazer até` em texto colado | 0 sem erro, 1 com erro, 2 uso incorreto |
 | `python <pasta-da-skill>/scripts/verificar-fluxo.py --estrito <...>` | também `coalesce(string(x), '')` (F012) | idem |
 | `python <pasta-da-skill>/scripts/verificar-fluxo.py --config <arquivo>` | usa `pastas.flows` e `ignorar` de `power-platform.config.json` | idem |
 
