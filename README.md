@@ -1,6 +1,6 @@
 # Power Platform Kit para Claude Code
 
-![versão](https://img.shields.io/badge/vers%C3%A3o-0.2.0-2563eb)
+![versão](https://img.shields.io/badge/vers%C3%A3o-0.3.0-2563eb)
 ![comandos](https://img.shields.io/badge/comandos-%2Fpp%3A*-2563eb)
 ![claude code](https://img.shields.io/badge/Claude_Code-plugin-d97757)
 ![idioma](https://img.shields.io/badge/idioma-pt--BR-6b7280)
@@ -95,7 +95,7 @@ flowchart TD
     O -.->|Coordena e acompanha · /pp:progresso| ENTREGA
 ```
 
-Três ideias deixam o caminho fácil de seguir:
+Quatro ideias deixam o caminho fácil de seguir:
 
 1. **Um comando por etapa.** São dez etapas, de `/pp:novo` a `/pp:publicar`. Cada uma confere se a
    anterior terminou; se você rodar fora de ordem, ela diz qual rodar no lugar.
@@ -115,6 +115,9 @@ Três ideias deixam o caminho fácil de seguir:
 3. **Você só para onde precisa de gente:** aprovar o MVP, a identidade visual e o protótipo; criar
    tabelas, colar telas e fluxos, rodar a homologação e publicar. O resto é produzido e validado
    para você.
+4. **Quem pensa não é quem executa.** A sessão de cada etapa define o pedido e julga; os agentes
+   escrevem e provam o que fizeram. Cada entrega recebe um veredito (aceito, revisão ou levada a
+   você) antes de chegar até você, e o modelo de cada papel é escolhido no `/pp:novo`.
 
 Perdeu o fio? `/pp:progresso` mostra a qualquer momento onde o projeto está e o próximo comando. O
 estado fica no `ESTADO.md`, na raiz do projeto.
@@ -171,13 +174,13 @@ Depois é só seguir o bloco **Próximo passo** no fim de cada etapa. Em resumo:
 
 | # | Comando | Quem trabalha | O que você faz | O que sai |
 |---|---|---|---|---|
-| 1 | `/pp:novo` | Orquestrador | conta a ideia e o nome; escolhe se cada etapa vira um commit | repositório git, `power-platform.config.json`, `00-LEIA-PRIMEIRO.md`, `ESTADO.md` |
-| 2 | `/pp:brainstorm` | Agente Brainstorm (conversa com você) | escolhe o modo do brainstorm; responde às perguntas; decide o que entra no MVP | `docs/planejamento/brainstorm.md`, `prd.md` |
+| 1 | `/pp:novo` | Orquestrador | conta a ideia do jeito que tiver (frase, lista, print); escolhe pasta, commits e modelos numa rodada | repositório git, `power-platform.config.json`, `ideia-bruta.md`, `00-LEIA-PRIMEIRO.md`, `ESTADO.md` |
+| 2 | `/pp:brainstorm` | Agente Brainstorm (conversa com você) | confirma o que a ideia já trouxe; escolhe o modo; responde ao que falta; decide o que entra no MVP | `docs/planejamento/brainstorm.md`, `prd.md` |
 | 3 | `/pp:design` | Agente Designer Branding (conversa com você) | escolhe cores, estilo, fonte e o jeito de navegar; aprova uma amostra visual | `ux-design-system.md`, `identidade.html` |
 | 4 | `/pp:mockups` | Agente de Mockups em Imagem + script | confere a lista de telas; autoriza as imagens | `inventario-telas.md`, `mockups/*.png` |
 | 5 | `/pp:prototipo` | Agente Gerador de Mockup HTML | navega pelo protótipo; aprova ou pede ajustes | `prototipo/index.html` |
-| 6 | `/pp:arquitetura` | Agente de Arquitetura | escolhe SQL Server ou Dataverse; cria as tabelas 🔴 | `arquitetura.md`, ADR, scripts de dados, `GOAL.md` |
-| 7 | `/pp:construir` | Agente Canvas ∥ Agente Power Automate | cola telas e fluxos 🔴; uma onda por sessão | telas `.pa.yaml`, JSON dos fluxos |
+| 6 | `/pp:arquitetura` | Agente de Arquitetura, depois Agentes SQL em paralelo | escolhe SQL Server ou Dataverse; cria as tabelas 🔴 | `arquitetura.md`, ADR, DDL e procedures (ou modelo Dataverse), `GOAL.md` |
+| 7 | `/pp:construir` | Agentes Canvas ∥ Power Automate, um por grupo de telas ou fluxos | cola telas e fluxos 🔴; uma onda por sessão | telas `.pa.yaml`, JSON dos fluxos |
 | 8 | `/pp:testar` | Agente de Testes e Qualidade | roda o roteiro de teste no ambiente 🔴 | `docs/qa/QA-<data>.md` |
 | 9 | `/pp:homologar` | Orquestrador, com você | faz a homologação com usuários reais 🔴 | `docs/qa/UAT-<data>.md` |
 | 10 | `/pp:publicar` | Orquestrador | publica em produção 🔴 | manual do usuário, guia técnico, checklist de go-live |
@@ -218,6 +221,32 @@ cada opção. A escolha vale para os mockups, o protótipo e a construção.
 No protótipo, o seletor "Navegação" troca o padrão ao vivo para comparar; se preferir outro, é
 um item de ajuste e o pipeline volta ao `/pp:design`.
 
+### Quem pensa e quem executa
+
+A sessão de cada etapa é a cabeça: conversa com você, escreve o pedido de cada agente e julga o
+que volta. Os agentes são as mãos: escrevem telas, fluxos, procedures e o protótipo, e fecham a
+entrega dizendo **como verificaram** (o comando e o que saiu), o que cumpriram, o que acham
+arriscado e a confiança que têm. A sessão roda o validador de novo e dá um veredito por agente:
+**aceito**, **revisão** (o mesmo agente, com um pedido mais preciso; no máximo duas) ou
+**escalado** (vem para você decidir). O `/pp:progresso` mostra quantas revisões cada etapa
+precisou. Antes de mostrar a amostra do design ou o protótipo, o Claude fotografa as telas e olha
+(texto cortado, sobreposição, contraste).
+
+Como pensar e julgar é a parte pequena do trabalho, a cabeça pode usar um modelo mais forte e as
+mãos um mais rápido. No `/pp:novo` você escolhe o perfil:
+
+| Perfil | Sessão de cada etapa | Arquitetura e QA | Telas, fluxos, SQL, mockups, protótipo | Pesquisa |
+|---|---|---|---|---|
+| **Equilibrado** (recomendado) | Opus | Opus | Sonnet | Sonnet |
+| Máximo | Fable, se a conta tem (senão Opus) | Opus | Opus | Sonnet |
+| Econômico | Sonnet | Sonnet | Sonnet | Haiku |
+| Herdar | o modelo em que a sessão abrir | idem | idem | idem |
+
+A sessão abre no modelo escolhido pelo `.claude/settings.local.json` do projeto (pessoal, fora do
+Git), e cada agente recebe o seu na chamada. Dá para trocar um papel depois:
+`modelos.py aplicar equilibrado --execucao opus`. Detalhes em
+[`references/modelos.md`](skills/power-platform/references/modelos.md).
+
 ### As voltas
 
 - **Protótipo não aprovado:** os pedidos de ajuste vão para `ajustes-prototipo.md` e o próximo passo
@@ -226,6 +255,10 @@ um item de ajuste e o pipeline volta ao `/pp:design`.
 - **Teste ou homologação com falha:** cada falha vai para `docs/qa/correcoes.md`, marcada como app
   ou fluxos, e o próximo passo é `/pp:construir app` ou `/pp:construir flows`. Depois da correção, o
   teste roda de novo.
+- **Depois de publicado:** mande a lista de mudanças com `/pp:mudanca`. Cada pedido vira um spec em
+  `docs/mudancas/MUD-<NNN>.md`, os agentes fazem em paralelo, o QA da mudança roda e a homologação
+  e a publicação reabrem para uma versão nova. Mudança grande (perfil ou entidade nova) reabre o
+  pipeline no brainstorm.
 
 ### Mockups (chave da OpenAI opcional)
 
@@ -257,14 +290,16 @@ só a partir do inventário de telas. Detalhes em
 | Designer Branding | `/pp:design` | na própria sessão da etapa | — |
 | `pp:agente-mockups` | `/pp:mockups` | subagente | lê e escreve; **sem shell**, então não consegue chamar a API de imagens |
 | `pp:agente-prototipo` | `/pp:prototipo` | subagente | lê, escreve, shell (verificador do protótipo) |
-| `pp:agente-arquitetura` | `/pp:arquitetura` | subagente | lê, escreve, shell (lint de procedure) |
-| `pp:agente-canvas` | `/pp:construir` | subagente, em paralelo com o próximo | lê, escreve, shell (`validar-telas.py`) |
-| `pp:agente-automate` | `/pp:construir` | subagente | lê, escreve, shell (`verificar-fluxo.py`) |
+| `pp:agente-arquitetura` | `/pp:arquitetura` | subagente | lê, escreve, shell; escreve o spec das procedures, não o corpo |
+| `pp:agente-sql` | `/pp:arquitetura`, correções | subagente, um por grupo de procedures, em paralelo | lê, escreve, shell (`lint-procedure.py`) |
+| `pp:agente-canvas` | `/pp:construir` | subagente, um por grupo de até 3 telas, em paralelo | lê, escreve, shell (`validar-telas.py`) |
+| `pp:agente-automate` | `/pp:construir` | subagente, um por grupo de até 3 fluxos, em paralelo | lê, escreve, shell (`verificar-fluxo.py`) |
 | `pp:agente-qa` | `/pp:testar` | subagente | só lê, mais shell para os validadores |
+| `pp:agente-pesquisa` | brainstorm, arquitetura, construção, `/pp:mudanca` | subagente, quando falta um fato | só lê, mais busca na documentação oficial; nada do projeto vai para a web |
 
 Subagente não consegue fazer perguntas a você, por isso os dois agentes que conversam rodam na
-própria sessão da etapa. A etapa que chama um subagente sempre confere o trabalho dele (roda o
-validador, abre o arquivo) antes de seguir.
+própria sessão da etapa. A etapa que chama um subagente julga o trabalho dele (roda o validador de
+novo, confere o pedido item a item) e dá o veredito antes de seguir.
 
 ## Trabalhando num app que já existe
 
@@ -274,6 +309,7 @@ validador, abre o arquivo) antes de seguir.
 | "Um usuário de uma unidade vê dados de outra" | Confere a camada que de fato bloqueia o acesso: fluxo + procedure no SQL, ou papéis de segurança no Dataverse. A tela só filtra. |
 | "Audite o app inteiro" | Roda revisores em paralelo por disciplina (UX, desenvolvimento, performance, dados, fluxos, SQL) e confere de novo os achados mais fortes antes de relatar. |
 | "Coloque um filtro de status nesta tela" | Vai direto para o `powerapps-canvas`, sem o protocolo completo. |
+| Uma lista de mudanças num app publicado pelo kit | `/pp:mudanca <lista>`: escopo de cada pedido, um spec por frente, agentes em paralelo, julgamento, QA e reabertura da homologação. |
 | "Promova para HML/PRD" | Cobre soluções, variáveis de ambiente, connection references e o CLI `pac`, e diz o que vai por colagem e o que vai por solução. |
 | "Está pronto?" | Roda o portão final: todos os validadores que se aplicam, mais o checklist. |
 
@@ -330,15 +366,16 @@ exige um ADR.
 
 ```text
 .claude-plugin/          plugin.json + marketplace.json
-agents/                  agente-mockups, agente-prototipo, agente-arquitetura,
-                         agente-canvas, agente-automate, agente-qa
+agents/                  agente-mockups, agente-prototipo, agente-arquitetura, agente-sql,
+                         agente-canvas, agente-automate, agente-qa, agente-pesquisa
 skills/
   novo/ brainstorm/ design/ mockups/ prototipo/ arquitetura/
-  construir/ testar/ homologar/ publicar/ progresso/
+  construir/ testar/ homologar/ publicar/ progresso/ mudanca/
                          os comandos /pp:* de cada etapa (finos: apontam para as skills abaixo)
   power-platform/        orquestrador: pipeline, estado, roteamento, protocolo, portões, ALM
     references/  assets/  prompts/
-    scripts/estado.py  desenhar-mockups.py  verificar-prototipo.py
+    scripts/estado.py  modelos.py  desenhar-mockups.py  verificar-prototipo.py
+            capturar-telas.py
   powerapps-canvas/      references/  assets/componentes/  scripts/validar-telas.py
   power-automate/        references/  assets/componentes/  scripts/verificar-fluxo.py
   sql-procedures/        references/  assets/  scripts/lint-procedure.py
@@ -395,6 +432,8 @@ O histórico de versões está no [`CHANGELOG.md`](CHANGELOG.md).
   [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD)** (código sob licença MIT, de BMad
   Code, LLC). Este projeto não é afiliado nem endossado pela BMad Code, LLC. "BMad" e "BMad Method"
   são marcas deles, citadas aqui só para descrever compatibilidade.
+- A separação entre quem pensa e quem executa (cabeça julga, mãos fazem e provam, veredito por
+  entrega) é inspirada no guia ["The Fable Loop"](https://thomaslentine.com/fable-guide.html), de Thomas Lentine.
 - Power Apps, Power Automate, Power Platform, Dataverse e SQL Server são marcas do grupo de
   empresas Microsoft. Este projeto não é afiliado à Microsoft.
 

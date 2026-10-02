@@ -156,7 +156,8 @@ section.alt .card { background: var(--bg); box-shadow: none; }
   .step .out { grid-column: 3; grid-row: 2; }
 }
 .loops { display: grid; gap: 16px; margin-top: 18px; }
-@media (min-width: 820px) { .loops { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 820px) { .loops { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .loops { grid-template-columns: repeat(4, 1fr); } }
 .loop { border: 1px dashed var(--line-2); border-radius: var(--radius); padding: 18px 20px; background: transparent; }
 .loop h3 { font-size: 15px; display: flex; align-items: center; gap: 8px; }
 .loop p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
@@ -259,7 +260,7 @@ footer p { margin: 0 0 8px; }
 <header class="hero" id="top">
   <div class="wrap">
     <div>
-      <span class="eyebrow"><span class="dot"></span>Plugin do Claude Code · v0.2.0</span>
+      <span class="eyebrow"><span class="dot"></span>Plugin do Claude Code · v0.3.0</span>
       <h1>Da ideia em uma linha ao <em>app Power Apps publicado</em>.</h1>
       <p class="lead">Um comando <code>/pp:*</code> guiado por etapa. Toda etapa termina dizendo exatamente o que rodar em seguida, numa sessão nova. Power Apps Canvas + Power Automate, com SQL Server (stored procedures) ou Dataverse.</p>
       <div class="cta">
@@ -268,7 +269,7 @@ footer p { margin: 0 0 8px; }
       </div>
       <div class="meta-row">
         <span><b>10</b> etapas guiadas</span>
-        <span><b>6</b> subagentes especialistas</span>
+        <span><b>8</b> subagentes especialistas</span>
         <span><b>59</b> componentes prontos</span>
         <span>Tudo em <b>pt-BR</b></span>
         <span>Licença <b>MIT</b></span>
@@ -302,8 +303,8 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
 
 <div class="wrap stats-wrap">
   <div class="stats">
-    <div class="stat"><b>11</b><span>comandos /pp:*</span></div>
-    <div class="stat"><b>8</b><span>agentes (2 conversam com você)</span></div>
+    <div class="stat"><b>12</b><span>comandos /pp:*</span></div>
+    <div class="stat"><b>10</b><span>agentes (2 conversam com você)</span></div>
     <div class="stat"><b>25</b><span>componentes Canvas</span></div>
     <div class="stat"><b>34</b><span>blocos de Power Automate</span></div>
     <div class="stat"><b>4</b><span>modos de brainstorm</span></div>
@@ -314,8 +315,8 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
   <div class="wrap">
     <p class="kicker">Como funciona</p>
     <h2>Você não precisa conhecer o método.</h2>
-    <p class="sub">O kit carrega o método por você. Três ideias deixam o caminho fácil, mesmo para quem nunca fez um levantamento de requisitos nem um Power App.</p>
-    <div class="cards c3">
+    <p class="sub">O kit carrega o método por você. Quatro ideias deixam o caminho fácil, mesmo para quem nunca fez um levantamento de requisitos nem um Power App.</p>
+    <div class="cards c4">
       <div class="card">
         <span class="num">1</span>
         <h3>Um comando por etapa</h3>
@@ -330,6 +331,11 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
         <span class="num">3</span>
         <h3>Você só para onde precisa de gente</h3>
         <p>Aprovar o MVP, a identidade e o protótipo; criar tabelas, colar telas e fluxos, homologar e publicar. O resto é produzido e validado para você.</p>
+      </div>
+      <div class="card">
+        <span class="num">4</span>
+        <h3>Quem pensa não é quem executa</h3>
+        <p>A sessão define o pedido e julga; os agentes escrevem e provam o que fizeram. Cada entrega recebe um veredito (aceito, revisão ou levada a você) antes de chegar até você.</p>
       </div>
     </div>
     <p class="note">Perdeu o fio? <code>/pp:progresso</code> mostra a qualquer momento onde o projeto está e o próximo comando. O estado fica no <code>ESTADO.md</code>, na raiz do projeto.</p>
@@ -348,8 +354,8 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
         <div class="step">
           <span class="n">1</span>
           <div class="top"><span class="cmd">/pp:novo</span><span class="ttl">Projeto novo</span><span class="who">Orquestrador</span></div>
-          <div class="you">Conte a ideia e o nome; escolha se cada etapa vira um commit.</div>
-          <div class="out"><code>power-platform.config.json</code> <code>ESTADO.md</code> <code>00-LEIA-PRIMEIRO.md</code>, repositório git</div>
+          <div class="you">Conte a ideia do jeito que tiver (frase, lista, print); escolha pasta, commits e modelos numa rodada.</div>
+          <div class="out"><code>power-platform.config.json</code> <code>ideia-bruta.md</code> <code>ESTADO.md</code>, repositório git</div>
         </div>
       </div>
 
@@ -386,16 +392,16 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
       </div>
 
       <div class="block" style="--c: var(--b3)">
-        <div class="block-h"><span class="bar"></span><h3>3 · Construção na Power Platform</h3><small>Canvas ∥ Automate</small></div>
+        <div class="block-h"><span class="bar"></span><h3>3 · Construção na Power Platform</h3><small>Canvas ∥ Automate ∥ SQL</small></div>
         <div class="step">
           <span class="n">6</span>
-          <div class="top"><span class="cmd">/pp:arquitetura</span><span class="ttl">Arquitetura</span><span class="who">pp:agente-arquitetura</span><span class="human">🔴 pessoa</span></div>
+          <div class="top"><span class="cmd">/pp:arquitetura</span><span class="ttl">Arquitetura</span><span class="who">pp:agente-arquitetura + pp:agente-sql ∥</span><span class="human">🔴 pessoa</span></div>
           <div class="you">Escolha SQL Server ou Dataverse com a matriz de decisão; crie as tabelas no ambiente.</div>
-          <div class="out"><code>arquitetura.md</code> ADR, scripts de dados, ondas no <code>GOAL.md</code></div>
+          <div class="out"><code>arquitetura.md</code> ADR, DDL e procedures (ou modelo Dataverse), ondas no <code>GOAL.md</code></div>
         </div>
         <div class="step">
           <span class="n">7</span>
-          <div class="top"><span class="cmd">/pp:construir</span><span class="ttl">Construção, uma onda por sessão</span><span class="who">pp:agente-canvas ∥ pp:agente-automate</span><span class="human">🔴 pessoa</span></div>
+          <div class="top"><span class="cmd">/pp:construir</span><span class="ttl">Construção, uma onda por sessão</span><span class="who">pp:agente-canvas ∥ pp:agente-automate, por grupo</span><span class="human">🔴 pessoa</span></div>
           <div class="you">Cole as telas e os fluxos gerados no Power Apps Studio e no Power Automate.</div>
           <div class="out">telas <code>.pa.yaml</code>, JSON dos fluxos, ambos validados</div>
         </div>
@@ -436,6 +442,10 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
       <div class="loop">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Parou no meio?</h3>
         <p>Rode o mesmo comando de novo. A etapa retoma do que está em disco, e o <code>/pp:progresso</code> sempre sabe onde você está.</p>
+      </div>
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Depois de publicado</h3>
+        <p>Mande a lista de mudanças com <code>/pp:mudanca</code>. Cada pedido vira um spec, os agentes fazem em paralelo, o QA roda e a homologação reabre para uma versão nova.</p>
       </div>
     </div>
   </div>
@@ -494,7 +504,7 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
   <div class="wrap">
     <p class="kicker">Os agentes</p>
     <h2>Especialistas com o mínimo de ferramentas.</h2>
-    <p class="sub">Subagente não consegue fazer perguntas a você, por isso os dois agentes que conversam rodam na própria sessão da etapa. A etapa que chama um subagente sempre confere o trabalho dele antes de seguir.</p>
+    <p class="sub">Subagente não consegue fazer perguntas a você, por isso os dois agentes que conversam rodam na própria sessão da etapa. A etapa que chama um subagente julga o trabalho dele antes de seguir.</p>
     <table class="table stack">
       <thead><tr><th>Agente</th><th>Etapa</th><th>Roda como</th><th>Ferramentas</th></tr></thead>
       <tbody>
@@ -502,10 +512,23 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
         <tr><td data-l="Agente">Designer Branding</td><td data-l="Etapa"><code>/pp:design</code></td><td data-l="Roda como"><span class="pill s">sua sessão</span></td><td data-l="Ferramentas">conversa com você; monta uma amostra visual</td></tr>
         <tr><td data-l="Agente"><code>pp:agente-mockups</code></td><td data-l="Etapa"><code>/pp:mockups</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas">lê e escreve; <b>sem shell</b>, então não consegue chamar a API de imagens</td></tr>
         <tr><td data-l="Agente"><code>pp:agente-prototipo</code></td><td data-l="Etapa"><code>/pp:prototipo</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas">lê, escreve, shell (verificador do protótipo)</td></tr>
-        <tr><td data-l="Agente"><code>pp:agente-arquitetura</code></td><td data-l="Etapa"><code>/pp:arquitetura</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas">lê, escreve, shell (lint de procedure)</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-arquitetura</code></td><td data-l="Etapa"><code>/pp:arquitetura</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas">lê, escreve, shell; escreve o spec das procedures, não o corpo</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-sql</code></td><td data-l="Etapa"><code>/pp:arquitetura</code></td><td data-l="Roda como"><span class="pill a">subagente ∥</span></td><td data-l="Ferramentas">lê, escreve, shell (<code>lint-procedure.py</code>); um por grupo de procedures</td></tr>
         <tr><td data-l="Agente"><code>pp:agente-canvas</code></td><td data-l="Etapa"><code>/pp:construir</code></td><td data-l="Roda como"><span class="pill a">subagente ∥</span></td><td data-l="Ferramentas">lê, escreve, shell (<code>validar-telas.py</code>)</td></tr>
         <tr><td data-l="Agente"><code>pp:agente-automate</code></td><td data-l="Etapa"><code>/pp:construir</code></td><td data-l="Roda como"><span class="pill a">subagente ∥</span></td><td data-l="Ferramentas">lê, escreve, shell (<code>verificar-fluxo.py</code>)</td></tr>
         <tr><td data-l="Agente"><code>pp:agente-qa</code></td><td data-l="Etapa"><code>/pp:testar</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas"><b>só lê</b>, mais shell para os validadores</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-pesquisa</code></td><td data-l="Etapa">quando falta um fato</td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas"><b>só lê</b>, mais busca na documentação oficial; nada do projeto vai para a web</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:40px">Quem pensa e quem executa</h3>
+    <p class="sub">A sessão de cada etapa é a cabeça: escreve o pedido de cada agente, roda o validador de novo e dá um veredito por entrega: <b>aceito</b>, <b>revisão</b> (o mesmo agente, com um pedido mais preciso, no máximo duas) ou <b>escalado</b> (vem para você). Antes de mostrar a amostra do design ou o protótipo, o Claude fotografa as telas e olha. Como pensar e julgar é a parte pequena do trabalho, a cabeça pode usar um modelo mais forte e as mãos um mais rápido. Você escolhe o perfil no <code>/pp:novo</code>.</p>
+    <table class="table stack">
+      <thead><tr><th>Perfil</th><th>Sessão de cada etapa</th><th>Arquitetura e QA</th><th>Telas, fluxos, SQL, protótipo</th><th>Pesquisa</th></tr></thead>
+      <tbody>
+        <tr><td data-l="Perfil"><b>Equilibrado</b> <span class="pill s" style="margin-left:6px">recomendado</span></td><td data-l="Sessão">Opus</td><td data-l="Arquitetura e QA">Opus</td><td data-l="Execução">Sonnet</td><td data-l="Pesquisa">Sonnet</td></tr>
+        <tr><td data-l="Perfil">Máximo</td><td data-l="Sessão">Fable, se a conta tem (senão Opus)</td><td data-l="Arquitetura e QA">Opus</td><td data-l="Execução">Opus</td><td data-l="Pesquisa">Sonnet</td></tr>
+        <tr><td data-l="Perfil">Econômico</td><td data-l="Sessão">Sonnet</td><td data-l="Arquitetura e QA">Sonnet</td><td data-l="Execução">Sonnet</td><td data-l="Pesquisa">Haiku</td></tr>
+        <tr><td data-l="Perfil">Herdar</td><td data-l="Sessão">o modelo em que a sessão abrir</td><td data-l="Arquitetura e QA">idem</td><td data-l="Execução">idem</td><td data-l="Pesquisa">idem</td></tr>
       </tbody>
     </table>
   </div>
@@ -523,6 +546,7 @@ Cada etapa começa limpa e lê tudo do disco.</span></pre>
         <tr><td data-l="Você diz">“Um usuário vê dados de outra unidade”</td><td data-l="O que o Claude faz">Confere a camada que de fato bloqueia o acesso: fluxo + procedure no SQL, papéis de segurança no Dataverse. A tela só filtra.</td></tr>
         <tr><td data-l="Você diz">“Audite o app inteiro”</td><td data-l="O que o Claude faz">Revisores em paralelo por disciplina (UX, desenvolvimento, performance, dados, fluxos, SQL) e nova conferência dos achados mais fortes.</td></tr>
         <tr><td data-l="Você diz">“Coloque um filtro de status aqui”</td><td data-l="O que o Claude faz">Vai direto para o <code>powerapps-canvas</code>, sem o protocolo completo.</td></tr>
+        <tr><td data-l="Você diz">Uma lista de mudanças num app publicado pelo kit</td><td data-l="O que o Claude faz"><code>/pp:mudanca</code>: um spec por pedido, agentes em paralelo, julgamento, QA da mudança e a homologação reaberta.</td></tr>
         <tr><td data-l="Você diz">“Promova para HML/PRD”</td><td data-l="O que o Claude faz">Soluções, variáveis de ambiente, connection references e o CLI <code>pac</code>; o que vai por colagem e o que vai por solução.</td></tr>
         <tr><td data-l="Você diz">“Está pronto?”</td><td data-l="O que o Claude faz">Roda o portão final: todos os validadores que se aplicam, mais o checklist.</td></tr>
       </tbody>
@@ -606,6 +630,7 @@ claude plugin install pp@power-platform-kit</pre></div>
     <div>
       <h4>Créditos e marcas</h4>
       <p>O ciclo de planejamento e as personas do brainstorm são inspirados no <a href="https://github.com/bmad-code-org/BMAD-METHOD">BMAD Method</a> (código sob licença MIT, de BMad Code, LLC). Este projeto não é afiliado nem endossado pela BMad Code, LLC. "BMad" e "BMad Method" são marcas deles, citadas só para descrever compatibilidade.</p>
+      <p>A separação entre quem pensa e quem executa (veredito por entrega) é inspirada no guia <a href="https://thomaslentine.com/fable-guide.html">"The Fable Loop"</a>, de Thomas Lentine.</p>
       <p>Power Apps, Power Automate, Power Platform, Dataverse e SQL Server são marcas do grupo de empresas Microsoft. Este projeto não é afiliado à Microsoft. Claude e Claude Code são produtos da Anthropic.</p>
     </div>
   </div>

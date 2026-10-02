@@ -1,6 +1,6 @@
 {
   "name": "pp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Pipeline guiado para apps Power Apps Canvas + Power Automate com SQL Server ou Dataverse: um comando /pp:* por etapa (ideia, brainstorm, identidade visual, mockups em imagem, protótipo HTML navegável, arquitetura, construção, testes, homologação, publicação), uma sessão nova por etapa, subagentes especialistas, telas YAML e fluxos prontos para colar e validadores executáveis.",
   "author": {
     "name": "Bruno"

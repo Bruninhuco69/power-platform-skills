@@ -2,6 +2,41 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: semver.
 
+## [0.3.0] — 2026-10-02
+
+Quem pensa não é quem executa: a sessão de cada etapa define o pedido e julga; os agentes fazem e
+provam. Inspirado no guia ["The Fable Loop"](https://thomaslentine.com/fable-guide.html).
+
+### Adicionado
+- **Entrega padrão e veredito.** Todo agente fecha com Como verifiquei / Conformidade / Alertas /
+  Confiança; a etapa dá um veredito por agente (aceito, revisão com pedido mais apertado, no
+  máximo duas, ou escalado) e registra com `estado.py veredito`, que soma na coluna Julgamento do
+  `ESTADO.md`. Erro no arquivo do agente volta para ele; a sessão não edita tela nem fluxo.
+- **Perfis de modelo no `/pp:novo`** (`scripts/modelos.py`, `references/modelos.md`):
+  equilibrado (Opus pensa, Sonnet executa), máximo, econômico e herdar. A sessão abre no modelo
+  do `.claude/settings.local.json`; cada agente recebe o seu na chamada; arquitetura e QA com
+  `effort: high`. Pasta, commits e modelos numa rodada só de perguntas.
+- **`agente-pesquisa`**: só lê (projeto e documentação oficial) e devolve achado com fonte; usado
+  no brainstorm (viabilidade, licença), na arquitetura, em erro de colagem desconhecido, no
+  `/pp:mudanca` e na auditoria de app existente.
+- **Verificação visual**: `scripts/capturar-telas.py` fotografa o protótipo (por tela, por padrão
+  de navegação, por perfil) ou a amostra do design com o Chrome/Edge sem janela;
+  `references/verificacao-visual.md` diz o que olhar. O protótipo aceita `?perfil=&nav=` na URL.
+- **Ideia do jeito que vier**: o `/pp:novo` guarda frase, lista, texto ou print em
+  `ideia-bruta.md`, e o brainstorm confirma em vez de perguntar do zero.
+- **`agente-sql`**: escreve as procedures do spec da seção 4.1 da arquitetura, um por grupo, em
+  paralelo. A construção divide a onda pela nova coluna Arquivos do `GOAL.md`: um agente Canvas
+  por grupo de até 3 telas, um Automate por grupo de até 3 fluxos, no máximo 5 por mensagem.
+- **`/pp:mudanca`**: lista de mudanças num app publicado, com escopo, perguntas numa rodada,
+  pesquisa, um spec por frente (`docs/mudancas/MUD-<NNN>.md`), agentes em paralelo, julgamento,
+  QA da mudança e a homologação reaberta para uma versão nova.
+
+### Mudado
+- O `agente-arquitetura` escreve o spec das procedures, não o corpo; o `agente-automate` não mexe
+  mais em procedure.
+- O resumo de toda etapa segue um formato só: entregue, verificado, revisado, com você, não
+  verificado.
+
 ## [0.2.0] — 2026-10-01
 
 Pipeline guiado: da ideia ao app publicado, um comando por etapa, uma sessão nova por etapa, no

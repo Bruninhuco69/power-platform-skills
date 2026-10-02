@@ -12,7 +12,7 @@
       "name": "pp",
       "source": "./",
       "description": "Da ideia ao app Power Apps publicado, um comando /pp:* guiado por etapa, com agentes especialistas, catálogos de componentes, procedures SQL Server, Dataverse e validadores.",
-      "version": "0.2.0"
+      "version": "0.3.0"
     }
   ]
 }
