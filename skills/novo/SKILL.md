@@ -46,7 +46,7 @@ python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py" <comando>
 4. **Crie a estrutura** na raiz do projeto:
    - `git init` se a pasta não está dentro de um repositório;
    - `.gitignore` com: `dist/`, `.env`, `*.msapp`, `*.zip`, `__pycache__/`, `*.tmp`,
-     `AMBIENTE-AS-BUILT/capturas/`, `.claude/settings.local.json`;
+     `AMBIENTE-AS-BUILT/capturas/`, `docs/planejamento/**/capturas/`, `.claude/settings.local.json`;
    - `power-platform.config.json` a partir de `KIT/skills/power-platform/assets/power-platform.config.exemplo.json`:
      `projeto` = nome; **tire** `trilha_dados` e `prefixo_publisher` (a arquitetura decide);
      `git_commit_por_etapa` da resposta em Commits;

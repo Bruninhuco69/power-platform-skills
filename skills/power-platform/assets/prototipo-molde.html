@@ -32,6 +32,8 @@
      gaveta, topo, inicio-cartoes). O menu lateral é a fonte dos itens: a barra no topo e os cartões
      da tela inicial são gerados dele (data-descricao vira a frase do cartão). O seletor "Navegação"
      da barra deixa o usuário comparar os cinco; trocar de padrão é ajuste de identidade (/pp:design).
+  A URL aceita ?perfil=<chave de PERFIS>&nav=<padrão>#/tela-xxx: é assim que scripts/capturar-telas.py
+  fotografa cada tela para a verificação visual. Não remova.
   Cada data-componente aponta para powerapps-canvas/assets/componentes/<nome>.md: mesmo papel,
   posição, textos e estados. Fidelidade: nada só no hover, sem arrastar, sem reflow; animação só
   no spinner e no fade. Abre por duplo clique (file://), sem recurso externo.
@@ -1427,6 +1429,9 @@ function iniciar() {
   if (UNIDADES.includes(salvo.lotacao)) estado.lotacao = salvo.lotacao;
   if (RESPOSTAS.includes(salvo.resposta)) estado.resposta = salvo.resposta;
   if (LATENCIAS.some(l => l.ms === salvo.latencia)) estado.latencia = salvo.latencia;
+  const parametros = new URLSearchParams(location.search); // ?perfil=&nav=: usados pelo capturar-telas.py
+  if (parametros.get('perfil') in PERFIS) estado.perfil = parametros.get('perfil');
+  if (PADROES_NAV.some(n => n.id === parametros.get('nav'))) estado.nav = parametros.get('nav');
   const controles = [
     ['ctl-perfil', Object.keys(PERFIS).map(k => opcao(k, PERFIS[k] ? k : 'sem acesso')), 'perfil', String],
     ['ctl-unidade', UNIDADES.map(u => opcao(u, u)), 'lotacao', String],

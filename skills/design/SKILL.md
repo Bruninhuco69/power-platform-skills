@@ -13,6 +13,7 @@ mostra o resultado numa amostra que ele abre no navegador.
 
 `KIT` = `${CLAUDE_PLUGIN_ROOT}`. Formato de saída: `KIT/skills/power-platform/references/formato-saida.md`.
 Script: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
+Capturas: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/capturar-telas.py"`.
 
 ## Antes de começar
 
@@ -60,8 +61,12 @@ Script: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`
    com uma moldura de tela no padrão de navegação escolhido (menu, cabeçalho, área de conteúdo), as
    cores (nome do token + hex), a escala de fonte, botões primário e secundário, um toast de
    cada status, um card de KPI e uma linha de galeria. Cor só por variável CSS `--fx...`.
-10. **Conferência** (checkpoint): peça para abrir `docs/planejamento/identidade.html` com duplo clique.
-   "Digite 'aprovado' ou diga o que mudar." Ajuste e regere a amostra até aprovar.
+10. **Olhe antes de mostrar** (`KIT/skills/power-platform/references/verificacao-visual.md`):
+   `capturar-telas.py docs/planejamento/identidade.html`, abra a imagem e confira a tabela do §2
+   (texto inteiro, nada sobreposto, contraste, a moldura no padrão escolhido). Corrija e fotografe
+   de novo até passar. Sem navegador: diga "verificação visual: não verificado".
+11. **Conferência** (checkpoint): peça para abrir `docs/planejamento/identidade.html` com duplo clique.
+   "Digite 'aprovado' ou diga o que mudar." Ajuste, fotografe e regere a amostra até aprovar.
 
 ## Modo ajuste (o protótipo voltou)
 
@@ -71,7 +76,7 @@ Script: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`
      lateral pela barra no topo, por exemplo), que você resolve aqui;
    - `tela`: falta tela, campo, ação, ordem, que vai para `/pp:mockups`;
    - `comportamento`: para onde um botão leva, estado ou texto, que vai para `/pp:prototipo`.
-3. Aplique os itens `identidade` (passos 3 a 10, só no que mudou). Mudou a navegação: a moldura
+3. Aplique os itens `identidade` (passos 3 a 11, só no que mudou). Mudou a navegação: a moldura
    dos mockups e do protótipo muda junto; avise que o `/pp:mockups` refaz as imagens.
 4. Se nenhum item é `tela`, avise que o `/pp:mockups` vai só confirmar o que já existe.
 
@@ -80,6 +85,7 @@ Script: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`
 - [ ] `ux-design-system.md` sem "a definir"; todo token de cor com hex; contraste calculado e ≥ 4,5:1.
 - [ ] Padrão de navegação escolhido pelo usuário e registrado na seção 2.1.
 - [ ] Componentes escolhidos do catálogo; lacunas listadas.
+- [ ] Amostra fotografada e conferida (`verificacao-visual.md`) antes de ir ao usuário.
 - [ ] Usuário aprovou a amostra `identidade.html` (frase e data registradas no design system).
 
 ## Encerrar

@@ -144,6 +144,7 @@ Tela ou flow alterado: a prova final é colar no Studio/designer, ou registrar �
 | `references/modo-investigar.md` | "o número não bate", lentidão, "não atualiza" |
 | `references/subagentes.md` | antes de abrir qualquer subagente; julgar a entrega (aceito, revisão, escalado) |
 | `references/modelos.md` | perfis de modelo (quem pensa, quem executa), como trocar e como medir |
+| `references/verificacao-visual.md` | `/pp:design`, `/pp:prototipo`: fotografar a página e olhar antes de mostrar |
 | `references/alm-ambientes.md` | solução, DEV/HML/PRD, variável de ambiente, `pac`; `/pp:homologar`, `/pp:publicar` |
 | `references/salvaguardas.md` | trilha, ambiente, gerador × gabarito, evidência, doc × disco, Git |
 | `references/portao-final.md` | antes de dizer "pronto"; verdes falsos conhecidos |

@@ -53,6 +53,9 @@ Entradas: `docs/planejamento/inventario-telas.md`, `mockups/mockups.json`, as im
    `python KIT/skills/power-platform/scripts/verificar-prototipo.py docs/planejamento/prototipo --mockups docs/planejamento/mockups/mockups.json`
    até `0 erro(s)`. Aviso `V013` (PNG ausente) é aceitável quando os mockups foram dispensados:
    diga isso na entrega.
+   Depois **olhe**: `python KIT/skills/power-platform/scripts/capturar-telas.py docs/planejamento/prototipo/index.html`
+   e abra cada imagem; confira a tabela do §2 de `KIT/skills/power-platform/references/verificacao-visual.md`.
+   Corrija e fotografe de novo. Sem navegador (exit 2): "verificação visual: não verificado".
 8. **Modo ajuste:** aplique os itens `comportamento` e `tela` (a tela já veio refeita no spec e na
    imagem) e liste, por item, o que mudou.
 
@@ -67,7 +70,8 @@ Entradas: `docs/planejamento/inventario-telas.md`, `mockups/mockups.json`, as im
 ## Entrega (sua mensagem final é o entregável)
 
 1. Tabela: Tela | `data-mockups` | Componentes | Perfis.
-2. A última linha do verificador (`N erro(s), M aviso(s)`) e a explicação de cada aviso.
+2. A última linha do verificador (`N erro(s), M aviso(s)`) e a explicação de cada aviso; a última
+   linha do `capturar-telas.py` e o que a verificação visual achou e corrigiu.
 3. Divergências mockup × Canvas registradas no inventário.
 4. No ajuste: item → o que mudou.
 

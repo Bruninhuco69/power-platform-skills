@@ -15,6 +15,7 @@ confere e leva ao usuário a pergunta do desenho: **protótipo aprovado?**
 Script de estado: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
 Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py"`.
 Verificador: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/verificar-prototipo.py"`.
+Capturas: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/capturar-telas.py"`.
 
 ## Antes de começar
 
@@ -32,7 +33,10 @@ Verificador: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/verifi
 2. **Julgue a entrega** (`KIT/skills/power-platform/references/subagentes.md`, "Julgar a entrega"):
    `verificar-prototipo.py docs/planejamento/prototipo --mockups docs/planejamento/mockups/mockups.json`
    precisa terminar em `0 erro(s)`, e toda tela do inventário tem a sua `<section data-tela>`.
-   Erro ou tela faltando: revisão, com a saída. Registre com
+   Depois **olhe** (`KIT/skills/power-platform/references/verificacao-visual.md`):
+   `capturar-telas.py docs/planejamento/prototipo/index.html` e abra cada imagem; confira a
+   tabela do §2. Para perfis diferentes, `--perfil <chave>` nas telas que mudam por perfil.
+   Erro, tela faltando ou defeito visual: revisão, com a saída ou a imagem e a região. Registre com
    `estado.py veredito prototipo --agente agente-prototipo --resultado <...> --motivo "..."`.
 3. **Abra para o usuário.** Ofereça abrir o arquivo (`start "" "docs/planejamento/prototipo/index.html"`
    no Windows, `open` no macOS, `xdg-open` no Linux) ou o duplo clique. Explique em 3 linhas:
@@ -55,6 +59,7 @@ Verificador: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/verifi
 
 - [ ] `verificar-prototipo.py` com `0 erro(s)` (última linha no resumo; avisos V013 explicados).
 - [ ] Toda tela do inventário tem `<section data-tela>` com `data-mockups` de origem.
+- [ ] Telas fotografadas e olhadas (`verificacao-visual.md`), ou "não verificado" se não há navegador.
 - [ ] Aprovação registrada no inventário **ou** rodada de ajustes registrada.
 
 ## Encerrar
