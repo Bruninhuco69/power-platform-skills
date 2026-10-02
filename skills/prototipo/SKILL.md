@@ -27,9 +27,11 @@ Verificador: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/verifi
 
 1. **Agente.** Mostre `◆ Chamando o Agente Gerador de Mockup HTML...` e chame `pp:agente-prototipo`
    com `RAIZ`, `KIT` (o valor de `${CLAUDE_PLUGIN_ROOT}`) e `MODO` (no ajuste, os itens da rodada).
-2. **Confira você mesmo:**
+2. **Julgue a entrega** (`KIT/skills/power-platform/references/subagentes.md`, "Julgar a entrega"):
    `verificar-prototipo.py docs/planejamento/prototipo --mockups docs/planejamento/mockups/mockups.json`
-   precisa terminar em `0 erro(s)`. Erro que persiste: devolva ao agente com a saída.
+   precisa terminar em `0 erro(s)`, e toda tela do inventário tem a sua `<section data-tela>`.
+   Erro ou tela faltando: revisão, com a saída. Registre com
+   `estado.py veredito prototipo --agente agente-prototipo --resultado <...> --motivo "..."`.
 3. **Abra para o usuário.** Ofereça abrir o arquivo (`start "" "docs/planejamento/prototipo/index.html"`
    no Windows, `open` no macOS, `xdg-open` no Linux) ou o duplo clique. Explique em 3 linhas:
    - o seletor de perfil no topo mostra o app como cada perfil vê;

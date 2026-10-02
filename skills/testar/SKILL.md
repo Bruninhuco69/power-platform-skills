@@ -29,7 +29,8 @@ O que é verde de verdade: `KIT/skills/power-platform/references/portao-final.md
 2. **Reabra os achados mais fortes** antes de acreditar: rode de novo os validadores que o agente
    citou e confira 2 ou 3 achados com o comando que ele deu
    (`KIT/skills/power-platform/references/subagentes.md`). O que não se reproduz entra como "não
-   verificado".
+   verificado". Relatório sem a evidência pedida: revisão. Registre com
+   `estado.py veredito testar --agente agente-qa --resultado <...> --motivo "..."`.
 3. **Escreva** `docs/qa/QA-<AAAA-MM-DD>.md`: tabela `Critério | Comando | Saída | Passa? | Data`, os
    achados confirmados e o roteiro de testes no ambiente.
 4. **Testes no ambiente** (checkpoint `Ação no ambiente`, 🔴). Passe o roteiro do agente, curto e

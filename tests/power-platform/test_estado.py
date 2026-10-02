@@ -169,3 +169,37 @@ def test_help_e_etapa_invalida_pela_linha_de_comando(tmp_path):
     ruim = subprocess.run([sys.executable, str(SCRIPT), "checar", "xyz"], capture_output=True, text=True,
                           encoding="utf-8", cwd=tmp_path)
     assert ruim.returncode == 2
+
+
+def test_veredito_conta_na_tabela_e_no_historico(projeto, capsys):
+    capsys.readouterr()
+    assert mod.main(["veredito", "construir", "--agente", "agente-canvas", "--resultado", "revisao",
+                     "--motivo", "faltou o toast de erro"]) == 0
+    assert mod.main(["veredito", "construir", "--agente", "agente-canvas", "--resultado", "aceito"]) == 0
+    assert mod.main(["veredito", "construir", "--agente", "agente-automate", "--resultado", "aceito"]) == 0
+    saida = capsys.readouterr().out
+    assert "↻ agente-canvas: revisão — faltou o toast de erro" in saida
+    dados = mod.ler_estado(projeto / "ESTADO.md")
+    assert dados["etapas"]["construir"]["vereditos"] == {"agente-canvas": {"revisao": 1, "aceito": 1},
+                                                         "agente-automate": {"aceito": 1}}
+    texto = (projeto / "ESTADO.md").read_text(encoding="utf-8")
+    assert "| 2✓ 1↻ |" in texto
+    assert "construir · agente-canvas: ↻ revisão — faltou o toast de erro" in texto
+
+
+def test_veredito_sobrevive_a_reabrir_e_rejeita_resultado_invalido(projeto, capsys):
+    mod.main(["veredito", "brainstorm", "--agente", "agente-pesquisa", "--resultado", "escalado"])
+    mod.main(["concluir", "brainstorm"])
+    mod.main(["reabrir", "brainstorm", "--motivo", "x"])
+    assert mod.ler_estado(projeto / "ESTADO.md")["etapas"]["brainstorm"]["vereditos"] == {
+        "agente-pesquisa": {"escalado": 1}}
+    with pytest.raises(SystemExit):
+        mod.main(["veredito", "brainstorm", "--agente", "x", "--resultado", "talvez"])
+    assert mod.main(["veredito", "brainstorm", "--agente", "  ", "--resultado", "aceito"]) == 2
+
+
+def test_vereditos_corrompidos_dao_exit_2(projeto, capsys):
+    caminho = projeto / "ESTADO.md"
+    texto = caminho.read_text(encoding="utf-8").replace('"argumento": ""', '"argumento": "", "vereditos": {"x": {"talvez": 1}}', 1)
+    caminho.write_text(texto, encoding="utf-8")
+    assert mod.main(["mostrar"]) == 2

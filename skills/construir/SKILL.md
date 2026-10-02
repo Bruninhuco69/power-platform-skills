@@ -42,7 +42,8 @@ Fila e evidência: `KIT/skills/power-platform/references/modo-goal-fila.md`.
    - `pp:agente-canvas` com `RAIZ`, `KIT` (o valor de `${CLAUDE_PLUGIN_ROOT}`), `ONDA` (tarefas de
      tela) ou `CORRECOES` (itens `app`);
    - `pp:agente-automate` com `RAIZ`, `KIT`, `ONDA` (tarefas de fluxo) ou `CORRECOES` (itens `flows`).
-2. **Integração app ↔ automações** (você mesmo, não um agente):
+2. **Julgue as entregas e a integração app ↔ automações** (você mesmo, não um agente;
+   `KIT/skills/power-platform/references/subagentes.md`, "Julgar a entrega"):
    - `python "${CLAUDE_PLUGIN_ROOT}/skills/powerapps-canvas/scripts/validar-telas.py"` e
      `python "${CLAUDE_PLUGIN_ROOT}/skills/power-automate/scripts/verificar-fluxo.py"`, da raiz:
      `0 erro(s)` e arquivos lidos > 0;
@@ -51,7 +52,9 @@ Fila e evidência: `KIT/skills/power-platform/references/modo-goal-fila.md`.
    - cada tela trata o retorno: `.Run()` dentro de `IfError`, sucesso = `status <> "error"`, toast
      com `description`, `Refresh` depois de gravar;
    - nomes de tabela e coluna das telas e dos fluxos existem no `NOMES-AS-BUILT`
-     (`grep -n "<nome>" <NOMES-AS-BUILT>`); o que não existe volta ao agente.
+     (`grep -n "<nome>" <NOMES-AS-BUILT>`).
+   O que falhar volta ao agente da camada como revisão (o item, o arquivo, a saída). Um veredito
+   por agente: `estado.py veredito construir --agente <agente-canvas|agente-automate> --resultado <...>`.
 3. **Colar no ambiente** (checkpoint `Ação no ambiente`, 🔴). Junte as instruções dos dois agentes
    num passo a passo só, nesta ordem:
    1. fluxos primeiro: criar o gatilho à mão com os parâmetros na ordem, colar o escopo, religar as
@@ -59,8 +62,10 @@ Fila e evidência: `KIT/skills/power-platform/references/modo-goal-fila.md`.
    2. tokens `fx*` no `App.Formulas` (só na primeira onda);
    3. telas: selecionar a tela, **Colar código**, adicionar o fluxo ao app, rodar.
    "Digite 'feito' ou cole a mensagem de erro."
-4. **Erro na colagem:** diagnostique com a skill da camada (`powerapps-canvas` ou `power-automate`),
-   corrija o arquivo e repita o passo 3. Duas falhas pela mesma causa: pare e registre no `GOAL.md`.
+4. **Erro na colagem:** diagnostique com a skill da camada (`powerapps-canvas` ou `power-automate`) e
+   devolva ao agente da camada como revisão, com a mensagem exata do Studio ou do designer e a
+   linha do arquivo; você não edita a tela nem o fluxo. Depois repita o passo 3. Duas falhas pela
+   mesma causa: escalado (pare, registre no `GOAL.md` e diga ao usuário o que foi tentado).
 5. **Atualize a fila:** cada tarefa da onda vira ✅ com evidência (comando + última linha do
    validador + "colado em <data>"). Correção: marque o item como `feito` em `docs/qa/correcoes.md`.
 

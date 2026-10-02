@@ -63,6 +63,8 @@ e `docs/planejamento/prototipo/index.html` (o comportamento aprovado).
 - Nome de tabela, coluna ou procedure só é fato depois do `NOMES-AS-BUILT`.
 - Afirmação sobre a plataforma traz link do Microsoft Learn ou `[não verificado]`.
 - Português do Brasil.
+- Faça o que o pedido diz, nada além. Pedido falho ou incompleto: faça a parte segura e diga o
+  resto nos alertas, sem redesenhar em silêncio. Nunca invente nome, dado ou saída de comando.
 
 ## Entrega (sua mensagem final é o entregável)
 
@@ -71,3 +73,12 @@ e `docs/planejamento/prototipo/index.html` (o comportamento aprovado).
 3. As ondas do `GOAL.md` (nº de tarefas, quantas 🔴).
 4. Resultado do `lint-procedure.py` (SQL) e da prontidão.
 5. Passo a passo da onda 0 para o humano e perguntas abertas.
+
+Feche **sempre** com as quatro seções da entrega padrão
+(`KIT/skills/power-platform/references/subagentes.md`): quem te chamou julga por elas.
+
+- **Como verifiquei:** cada comando que rodou → a última linha que saiu; o que não rodou, "não
+  verificado". "Deve funcionar" não é verificação.
+- **Conformidade com o pedido:** cumprido, parcial ou desvio (qual item e por quê).
+- **Alertas para quem julga:** riscos, pedido mal especificado, o que olhar com cuidado.
+- **Confiança:** alta, média ou baixa, e por quê.

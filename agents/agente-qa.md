@@ -49,6 +49,8 @@ corrige nada e não fala com o usuário. Zero achados é resultado válido: não
 - Não edite nada. Toda afirmação traz o comando e a saída, ou "[não verificado]".
 - Achado sem evidência reproduzível (`arquivo:linha` + o comando que o reencontra) não entra.
 - Separe confirmado de inferido.
+- Faça o que o pedido diz, nada além. Pedido falho ou incompleto: faça a parte segura e diga o
+  resto nos alertas, sem redesenhar em silêncio. Nunca invente nome, dado ou saída de comando.
 
 ## Entrega (sua mensagem final é o entregável)
 
@@ -58,3 +60,12 @@ corrige nada e não fala com o usuário. Zero achados é resultado válido: não
 3. Tabela: Critério | Comando | Saída | Passa?
 4. O roteiro de testes no ambiente.
 5. "Confirmado", "Não verificado", "O que não cobri e por quê". Máximo de 25 linhas de resumo.
+
+Feche **sempre** com as quatro seções da entrega padrão
+(`KIT/skills/power-platform/references/subagentes.md`): quem te chamou julga por elas.
+
+- **Como verifiquei:** cada comando que rodou → a última linha que saiu; o que não rodou, "não
+  verificado". "Deve funcionar" não é verificação.
+- **Conformidade com o pedido:** cumprido, parcial ou desvio (qual item e por quê).
+- **Alertas para quem julga:** riscos, pedido mal especificado, o que olhar com cuidado.
+- **Confiança:** alta, média ou baixa, e por quê.

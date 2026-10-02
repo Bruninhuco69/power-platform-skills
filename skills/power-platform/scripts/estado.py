@@ -17,6 +17,8 @@ Comandos:
                                            reabre a etapa e as seguintes (ajuste do protótipo,
                                            falha de teste); --argumento entra no comando sugerido
   proximo                                  só o bloco "Próximo passo"
+  veredito  ETAPA --agente NOME --resultado aceito|revisao|escalado [--motivo "..."]
+                                           julgamento da entrega de um agente (conta na tabela)
 
 Exit: 0 ok · 1 etapa anterior não concluída (checar, comecar, concluir) · 2 uso incorreto,
 ESTADO.md ausente ou corrompido.
@@ -82,6 +84,7 @@ FEITAS = {"concluida", "dispensada"}
 SITUACOES = {"pendente", "andamento", "concluida", "dispensada", "reaberta"}
 SIMBOLO = {"concluida": "✓ concluída", "dispensada": "⊘ dispensada", "andamento": "◆ em andamento",
            "reaberta": "↺ reaberta", "pendente": "○ pendente"}
+VEREDITOS = {"aceito": ("✓", "aceito"), "revisao": ("↻", "revisão"), "escalado": ("⚠", "escalado")}
 
 ALTERNATIVAS = {
     "construir": [("/pp:construir app", "só as telas (Agente Power Apps Canvas)"),
@@ -143,10 +146,20 @@ def validar_estado(dados: object) -> dict:
             raise ErroEstado(f"etapa `{etapa_id}` ausente ou com situação inválida no bloco de dados")
         for campo in ("data", "nota", "argumento"):
             registro.setdefault(campo, "")
+        if not _vereditos_validos(registro.get("vereditos", {})):
+            raise ErroEstado(f"etapa `{etapa_id}`: `vereditos` inválido no bloco de dados")
     dados.setdefault("historico", [])
     dados.setdefault("projeto", "projeto")
     dados.setdefault("ideia", "")
     return dados
+
+
+def _vereditos_validos(vereditos: object) -> bool:
+    """`{agente: {aceito|revisao|escalado: n}}`; ausente em projeto antigo."""
+    return isinstance(vereditos, dict) and all(
+        isinstance(contagem, dict) and all(r in VEREDITOS and isinstance(n, int) and n >= 0
+                                           for r, n in contagem.items())
+        for contagem in vereditos.values())
 
 
 def ler_estado(caminho: Path) -> dict:
@@ -192,6 +205,19 @@ def marcar(dados: dict, etapa_id: str, situacao: str, nota: str = "") -> None:
         registro["nota"] = _texto_limpo(nota)
     if situacao in FEITAS:
         registro["argumento"] = ""
+
+
+def julgar(dados: dict, etapa_id: str, agente: str, resultado: str) -> int:
+    """Conta o veredito do agente na etapa; devolve quantos desse resultado ele já tem."""
+    contagem = dados["etapas"][etapa_id].setdefault("vereditos", {}).setdefault(agente, {})
+    contagem[resultado] = contagem.get(resultado, 0) + 1
+    return contagem[resultado]
+
+
+def resumo_vereditos(registro: dict) -> str:
+    """`3✓ 1↻` somando os agentes da etapa; vazio se ninguém foi julgado."""
+    totais = {r: sum(c.get(r, 0) for c in registro.get("vereditos", {}).values()) for r in VEREDITOS}
+    return " ".join(f"{n}{VEREDITOS[r][0]}" for r, n in totais.items() if n)
 
 
 def reabrir(dados: dict, etapa_id: str, motivo: str, argumento: str = "") -> list[str]:
@@ -242,12 +268,13 @@ def bloco_proximo(dados: dict) -> str:
 
 
 def tabela(dados: dict) -> str:
-    linhas = ["| # | Bloco | Etapa | Comando | Quem executa | Situação | Data | Observação |",
-              "|---|---|---|---|---|---|---|---|"]
+    linhas = ["| # | Bloco | Etapa | Comando | Quem executa | Situação | Data | Julgamento | Observação |",
+              "|---|---|---|---|---|---|---|---|---|"]
     for numero, etapa in enumerate(ETAPAS, start=1):
         registro = dados["etapas"][etapa.id]
         linhas.append(f"| {numero} | {etapa.bloco} | {etapa.titulo} | `{_comando(etapa.id)}` | {etapa.agente} | "
-                      f"{SIMBOLO[registro['situacao']]} | {registro['data']} | {registro['nota']} |")
+                      f"{SIMBOLO[registro['situacao']]} | {registro['data']} | {resumo_vereditos(registro)} | "
+                      f"{registro['nota']} |")
     return "\n".join(linhas)
 
 
@@ -386,13 +413,27 @@ def cmd_reabrir(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_veredito(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
+    agente = _texto_limpo(args.agente)
+    if not agente:
+        raise ErroEstado("--agente vazio")
+    simbolo, rotulo = VEREDITOS[args.resultado]
+    vezes = julgar(dados, args.etapa, agente, args.resultado)
+    motivo = f" — {_texto_limpo(args.motivo)}" if args.motivo.strip() else ""
+    _registrar(dados, f"{args.etapa} · {agente}: {simbolo} {rotulo}{motivo}")
+    gravar(caminho, dados)
+    print(f"{simbolo} {agente}: {rotulo}{motivo} ({vezes} {rotulo} na etapa {POR_ID[args.etapa].titulo})")
+    return 0
+
+
 def cmd_proximo(caminho: Path, dados: dict, _: argparse.Namespace) -> int:
     print(bloco_proximo(dados))
     return 0
 
 
 COMANDOS = {"mostrar": cmd_mostrar, "checar": cmd_checar, "comecar": cmd_comecar, "concluir": cmd_concluir,
-            "dispensar": cmd_dispensar, "reabrir": cmd_reabrir, "proximo": cmd_proximo}
+            "dispensar": cmd_dispensar, "reabrir": cmd_reabrir, "proximo": cmd_proximo,
+            "veredito": cmd_veredito}
 
 
 def _argumentos(argv: list[str] | None) -> argparse.Namespace:
@@ -420,6 +461,11 @@ def _argumentos(argv: list[str] | None) -> argparse.Namespace:
     p.add_argument("etapa", choices=IDS)
     p.add_argument("--motivo", required=True)
     p.add_argument("--argumento", default="", help="argumento do comando sugerido (ex.: app, flows)")
+    p = sub.add_parser("veredito", help="registra o julgamento da entrega de um agente")
+    p.add_argument("etapa", choices=IDS)
+    p.add_argument("--agente", required=True, help="nome do agente (ex.: agente-canvas)")
+    p.add_argument("--resultado", required=True, choices=list(VEREDITOS))
+    p.add_argument("--motivo", default="", help="o que faltou ou o que foi escalado (uma frase)")
     return ap.parse_args(argv)
 
 

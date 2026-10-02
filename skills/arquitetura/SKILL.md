@@ -35,12 +35,14 @@ Script de estado: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/e
    arquivo), quem cria tabela, se há ambientes DEV/HML/PRD.
 3. **Agente.** Mostre `◆ Chamando o Agente de Arquitetura...` e chame `pp:agente-arquitetura` com
    `RAIZ`, `KIT` (o valor de `${CLAUDE_PLUGIN_ROOT}`), `TRILHA` e os fatos do passo 2.
-4. **Confira você mesmo** o que o agente entregou:
+4. **Julgue a entrega** (`KIT/skills/power-platform/references/subagentes.md`, "Julgar a entrega"):
    - `power-platform.config.json` com `trilha_dados` (e `prefixo_publisher` no Dataverse);
    - `GOAL.md` com onda 0 (ambiente, 🔴) e as ondas de construção, cada tarefa com "pronto quando";
    - trilha SQL: `python "${CLAUDE_PLUGIN_ROOT}/skills/sql-procedures/scripts/lint-procedure.py"`
      sobre a pasta de procedures, `0 erro(s)`;
    - todo `RF-xx` P0 aparece em pelo menos uma tarefa do `GOAL.md` (rastreabilidade).
+   Falta ou erro: revisão. Pergunta aberta que só o usuário responde: escalado. Registre com
+   `estado.py veredito arquitetura --agente agente-arquitetura --resultado <...> --motivo "..."`.
 5. **Preparar o ambiente** (checkpoint `Ação no ambiente`, 🔴). Mostre a onda 0 do `GOAL.md` como
    passo a passo:
    - SQL: entregar o pacote ao DBA ou rodar os scripts no banco de DEV, na ordem do pacote;

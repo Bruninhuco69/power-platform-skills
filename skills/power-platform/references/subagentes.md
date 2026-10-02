@@ -1,7 +1,14 @@
 # Subagentes
 
-Quem são os agentes do pipeline, quando abrir um subagente fora dele, como dividir e o que exigir
-na volta. Os modelos de prompt para auditoria de app existente estão em `prompts/`.
+Quem são os agentes do pipeline, quando abrir um subagente fora dele, como dividir, o que exigir
+na volta e como julgar a entrega. Os modelos de prompt para auditoria de app existente estão em
+`prompts/`.
+
+**A sessão é a cabeça, o agente é a mão.** A sessão da etapa define o pedido, junta o contexto,
+julga o que volta e decide com o usuário. O agente faz o trabalho pesado (escrever tela, fluxo,
+procedure, protótipo, spec) e prova o que fez. A cabeça não faz o trabalho da mão: o que está
+errado no arquivo do agente volta para ele, com a evidência. Registros da etapa (`ESTADO.md`,
+`GOAL.md`, `docs/qa/`, rodadas de ajuste) são da cabeça.
 
 ## Sumário
 
@@ -10,10 +17,12 @@ na volta. Os modelos de prompt para auditoria de app existente estão em `prompt
 2. [Escopos disjuntos](#escopos-disjuntos)
 3. [Como lançar](#como-lançar)
 4. [Formato de saída obrigatório](#formato-de-saída-obrigatório)
-5. [Contrato de conclusão](#contrato-de-conclusão)
-6. [Verificar antes de reportar](#verificar-antes-de-reportar)
-7. [Consolidar](#consolidar)
-8. [Modelos de prompt](#modelos-de-prompt)
+5. [Entrega padrão de todo agente](#entrega-padrão-de-todo-agente)
+6. [Contrato de conclusão](#contrato-de-conclusão)
+7. [Verificar antes de reportar](#verificar-antes-de-reportar)
+8. [Julgar a entrega](#julgar-a-entrega)
+9. [Consolidar](#consolidar)
+10. [Modelos de prompt](#modelos-de-prompt)
 
 ## Agentes do pipeline
 
@@ -34,7 +43,7 @@ Brainstorm e Designer Branding **não** são subagentes: subagente não conversa
 Claude Code tira dele a ferramenta de perguntar), então a sessão da etapa assume o papel.
 
 Canvas e Automate rodam **em paralelo**, na mesma mensagem, com escritas em pastas disjuntas.
-A etapa que chama sempre confere a entrega (seção "Verificar antes de reportar").
+A etapa que chama sempre julga a entrega (seção "Julgar a entrega").
 
 ## Quando abrir (e quando não)
 
@@ -77,6 +86,12 @@ Divida por **tema** ou por **arquivo**, nunca pelos dois sobrepostos:
 - Entregue o contexto que o agente não tem: trilha ativa, caminho do `NOMES-AS-BUILT`, tamanho dos
   arquivos grandes, o que é gerado × gabarito.
 - Agente **só lê** por padrão. Escrita exige instrução explícita e arquivo disjunto.
+- **Perguntas antes, numa rodada só.** Subagente não pergunta: o que ele precisaria saber (fato do
+  ambiente, decisão pendente, preferência) a sessão pergunta ao usuário **antes** de lançar, tudo
+  junto. Pergunta que volta como "aberta" depois do trabalho feito costuma custar uma revisão.
+- **O pedido é um spec:** os arquivos exatos que o agente pode tocar, o que é "pronto" sem
+  ambiguidade, o comando que prova e o que fica de fora. Dois pedidos que tocam o mesmo arquivo
+  rodam um depois do outro.
 
 ## Formato de saída obrigatório
 
@@ -89,6 +104,32 @@ Severidade | arquivo:linha | comando que reencontra | Problema | Correção (ant
 
 Seções obrigatórias na volta: **confirmado** (com evidência), **inferido/não confirmado**, **o que
 não foi coberto e por quê**. Máximo de 25 linhas de resumo.
+
+## Entrega padrão de todo agente
+
+Cada agente do pipeline tem a sua entrega (arquivos, tabelas, passo a passo de colagem) e fecha
+**sempre** com as mesmas quatro seções, para quem julga ler todas do mesmo jeito:
+
+```
+## Como verifiquei
+- <comando que rodou> → <a última linha que saiu>   (o que não rodou: "não verificado")
+## Conformidade com o pedido
+- Cumprido | Parcial | Desvio: <qual item, e por quê>
+## Alertas para quem julga
+- riscos, pedido mal especificado, o que olhar com cuidado
+## Confiança
+- alta | média | baixa, e por quê
+```
+
+Regras que valem para todo agente:
+
+- **"Deve funcionar" não é verificação.** Só conta o que foi rodado e observado.
+- **Nunca invente** nome, dado, saída de comando ou teste que passou.
+- **Faça o que o pedido diz, nada além.** Não melhore o que não foi pedido; na dúvida sobre apagar
+  algo, a leitura mais estreita.
+- **Pedido falho ou incompleto:** faça a parte segura e diga o resto nos alertas. Não redesenhe em
+  silêncio.
+- **Localize, leia o trecho, aja.** Ler arquivo inteiro que não precisa gasta o contexto.
 
 ## Contrato de conclusão
 
@@ -112,6 +153,36 @@ alta e os que contradizem o que você sabia):
 - "N ocorrências" → rode o comando de contagem.
 
 Achado que você não conseguiu reproduzir entra como **não verificado**, não como fato.
+
+## Julgar a entrega
+
+Leia a entrega como cético, não para carimbar:
+
+1. **Prova, não promessa.** Só vale o que está em "Como verifiquei" com comando e saída. Rode de
+   novo o validador da camada (a última linha tem de bater) e reabra 2 ou 3 afirmações que mudam a
+   decisão (seção anterior).
+2. **Pedido × entrega.** Cada item do pedido (tarefa da onda, item de correção, tela do inventário)
+   tem resposta. Leia primeiro o que veio "Parcial" ou "Desvio".
+3. **Alertas** viram aceite consciente, revisão ou pergunta ao usuário. Nenhum fica sem destino.
+4. **Veredito por agente:**
+
+| Veredito | Quando | O que fazer |
+|---|---|---|
+| ✓ aceito | pedido cumprido e provado | segue a etapa |
+| ↻ revisão | faltou algo que o agente consegue fazer | chame o **mesmo** agente com um pedido mais apertado: o item que faltou, o arquivo, o critério que falhou e a saída do validador. Nunca "melhore isso" |
+| ⚠ escalado | falta decisão ou informação do usuário, o pedido estava errado, ou duas revisões não fecharam | checkpoint com o usuário: o que se pediu, o que voltou, as opções |
+
+5. **No máximo duas revisões** por agente e por pedido na mesma sessão; a terceira é escalada.
+6. **Registre cada veredito**, uma linha por agente:
+
+   ```bash
+   python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py" veredito <etapa> \
+     --agente <nome> --resultado aceito|revisao|escalado --motivo "<uma frase>"
+   ```
+
+   O `/pp:progresso` mostra quantas revisões cada etapa precisou: é a prova de que o julgamento
+   rodou, e o número que diz se o modelo de quem executa está dando conta (`modelos.md`).
+7. **Mostre o veredito** ao usuário numa linha (`formato-saida.md` §4).
 
 ## Consolidar
 

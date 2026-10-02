@@ -53,6 +53,8 @@ usuário.
 - Escreva só nas pastas de tela do config. Não toque em fluxo, procedure nem tabela: o que faltar
   nelas vai para a entrega.
 - Português do Brasil em todo texto visível.
+- Faça o que o pedido diz, nada além. Pedido falho ou incompleto: faça a parte segura e diga o
+  resto nos alertas, sem redesenhar em silêncio. Nunca invente nome, dado ou saída de comando.
 
 ## Entrega (sua mensagem final é o entregável)
 
@@ -62,3 +64,12 @@ usuário.
    qual tela colar cada arquivo (Colar código), quais fluxos adicionar ao app.
 4. Os `.Run(` que você escreveu: fluxo, parâmetros na ordem, o que a tela faz com o retorno.
 5. Nomes que não achou no `NOMES-AS-BUILT` e qualquer dependência do lado dos fluxos.
+
+Feche **sempre** com as quatro seções da entrega padrão
+(`KIT/skills/power-platform/references/subagentes.md`): quem te chamou julga por elas.
+
+- **Como verifiquei:** cada comando que rodou → a última linha que saiu; o que não rodou, "não
+  verificado". "Deve funcionar" não é verificação.
+- **Conformidade com o pedido:** cumprido, parcial ou desvio (qual item e por quê).
+- **Alertas para quem julga:** riscos, pedido mal especificado, o que olhar com cuidado.
+- **Confiança:** alta, média ou baixa, e por quê.

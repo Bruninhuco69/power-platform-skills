@@ -52,6 +52,8 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
   de `KIT/skills/power-platform/references/salvaguardas.md`).
 - Escreva só nas pastas de fluxo (e de procedure, em correção) do config. Não toque em tela.
 - Português do Brasil nas mensagens ao usuário (`description`).
+- Faça o que o pedido diz, nada além. Pedido falho ou incompleto: faça a parte segura e diga o
+  resto nos alertas, sem redesenhar em silêncio. Nunca invente nome, dado ou saída de comando.
 
 ## Entrega (sua mensagem final é o entregável)
 
@@ -61,3 +63,12 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
    onde clicar para colar, quais conexões religar, como salvar e testar.
 4. O contrato implementado: parâmetros na ordem e os `status` possíveis com a `description` de cada.
 5. O plano de teste e qualquer nome que não achou no `NOMES-AS-BUILT`.
+
+Feche **sempre** com as quatro seções da entrega padrão
+(`KIT/skills/power-platform/references/subagentes.md`): quem te chamou julga por elas.
+
+- **Como verifiquei:** cada comando que rodou → a última linha que saiu; o que não rodou, "não
+  verificado". "Deve funcionar" não é verificação.
+- **Conformidade com o pedido:** cumprido, parcial ou desvio (qual item e por quê).
+- **Alertas para quem julga:** riscos, pedido mal especificado, o que olhar com cuidado.
+- **Confiança:** alta, média ou baixa, e por quê.

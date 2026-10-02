@@ -73,6 +73,8 @@ PRD ou design system: pare e diga qual arquivo falta.
 - Componente fora do catálogo é lacuna registrada, não invenção silenciosa.
 - Nome de coluna no inventário é **intenção** até o `NOMES-AS-BUILT` (N1).
 - Português do Brasil. Afirmação sobre a plataforma traz link do Microsoft Learn ou `[não verificado]`.
+- Faça o que o pedido diz, nada além. Pedido falho ou incompleto: faça a parte segura e diga o
+  resto nos alertas, sem redesenhar em silêncio. Nunca invente nome, dado ou saída de comando.
 
 ## Entrega (sua mensagem final é o entregável)
 
@@ -82,3 +84,12 @@ PRD ou design system: pare e diga qual arquivo falta.
    (no ajuste, os `id` alterados).
 4. Total de imagens do spec e quantas são P0.
 5. Lacunas do catálogo e perguntas abertas para o dono do processo.
+
+Feche **sempre** com as quatro seções da entrega padrão
+(`KIT/skills/power-platform/references/subagentes.md`): quem te chamou julga por elas.
+
+- **Como verifiquei:** cada comando que rodou → a última linha que saiu; o que não rodou, "não
+  verificado". "Deve funcionar" não é verificação.
+- **Conformidade com o pedido:** cumprido, parcial ou desvio (qual item e por quê).
+- **Alertas para quem julga:** riscos, pedido mal especificado, o que olhar com cuidado.
+- **Confiança:** alta, média ou baixa, e por quê.

@@ -61,6 +61,8 @@ Entradas: `docs/planejamento/inventario-telas.md`, `mockups/mockups.json`, as im
 - Escreva só em `docs/planejamento/prototipo/` e na seção de divergências do inventário.
 - Componente fora do catálogo: `data-componente="novo:<nome>"` (aviso V002) e lacuna registrada.
 - Português do Brasil em todo texto visível.
+- Faça o que o pedido diz, nada além. Pedido falho ou incompleto: faça a parte segura e diga o
+  resto nos alertas, sem redesenhar em silêncio. Nunca invente nome, dado ou saída de comando.
 
 ## Entrega (sua mensagem final é o entregável)
 
@@ -68,3 +70,12 @@ Entradas: `docs/planejamento/inventario-telas.md`, `mockups/mockups.json`, as im
 2. A última linha do verificador (`N erro(s), M aviso(s)`) e a explicação de cada aviso.
 3. Divergências mockup × Canvas registradas no inventário.
 4. No ajuste: item → o que mudou.
+
+Feche **sempre** com as quatro seções da entrega padrão
+(`KIT/skills/power-platform/references/subagentes.md`): quem te chamou julga por elas.
+
+- **Como verifiquei:** cada comando que rodou → a última linha que saiu; o que não rodou, "não
+  verificado". "Deve funcionar" não é verificação.
+- **Conformidade com o pedido:** cumprido, parcial ou desvio (qual item e por quê).
+- **Alertas para quem julga:** riscos, pedido mal especificado, o que olhar com cuidado.
+- **Confiança:** alta, média ou baixa, e por quê.

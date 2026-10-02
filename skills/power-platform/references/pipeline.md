@@ -115,8 +115,12 @@ Subagente **não conversa com o usuário** (o Claude Code tira dele a ferramenta
 | Brainstorm, Designer Branding | a própria sessão da etapa assume o papel (skill `/pp:brainstorm`, `/pp:design`); no brainstorm, na pele da persona do modo escolhido, ou de várias na mesa redonda (`brainstorm-modos.md`) | o trabalho é perguntar e decidir junto |
 | Mockups em Imagem, Gerador de Mockup HTML, Arquitetura, Power Apps Canvas, Power Automate, Testes e Qualidade | subagentes do plugin (`pp:agente-*`), chamados pela etapa | leitura ampla e escrita de arquivos, sem conversa; o contexto da sessão fica limpo |
 
-A etapa que chama um agente **confere** o que ele entregou (roda o validador, abre o arquivo) antes
-de seguir: `references/subagentes.md`.
+A sessão da etapa é a **cabeça** e o agente é a **mão**: a sessão define o pedido, julga a entrega
+(roda o validador, abre o arquivo, lê "Como verifiquei" como cético) e dá um veredito por agente:
+✓ aceito, ↻ revisão (o mesmo agente, com o pedido mais apertado; no máximo duas) ou ⚠ escalado
+(vai para o usuário). Erro no arquivo do agente volta para ele: a sessão não edita tela, fluxo nem
+procedure. Os vereditos ficam no `ESTADO.md` e o `/pp:progresso` mostra quantas revisões cada
+etapa precisou. Detalhe: `references/subagentes.md`.
 
 ## 5. Onde fica cada arquivo
 

@@ -35,9 +35,13 @@ Detalhe de chave, modelo e erros: `KIT/skills/power-platform/references/mockups.
    - `RAIZ`: a raiz do projeto;
    - `KIT`: o valor de `${CLAUDE_PLUGIN_ROOT}`;
    - `MODO`: novo ou ajuste, e no ajuste os itens `tela` da rodada.
-2. **Confira o spec** (o agente não roda scripts):
-   `desenhar-mockups.py docs/planejamento/mockups/mockups.json --simular` precisa terminar em
-   `0 erro(s)`. Erro: corrija o JSON (é pequeno) e rode de novo.
+2. **Julgue a entrega** (`KIT/skills/power-platform/references/subagentes.md`, "Julgar a entrega"):
+   - `desenhar-mockups.py docs/planejamento/mockups/mockups.json --simular` precisa terminar em
+     `0 erro(s)` (o agente não roda scripts: a prova é sua);
+   - todo `RF-xx` P0 do `prd.md` aparece em pelo menos uma tela da tabela;
+   - a moldura segue a navegação da seção 2.1 do `ux-design-system.md`.
+   Erro ou falta: revisão, com a saída do `--simular` ou o requisito sem tela. Registre com
+   `estado.py veredito mockups --agente agente-mockups --resultado <...> --motivo "..."`.
 3. **Conferência das telas** (checkpoint): mostre a tabela de telas que o agente devolveu (id, tela,
    perfis, prioridade) e a moldura em até 8 linhas. "Falta alguma tela ou estado? Digite 'aprovado'
    ou diga o que mudar." Mudança: chame o agente de novo com o pedido. Aprovado: grave

@@ -12,8 +12,20 @@ qualquer tela, **onde está, o que fazer agora e qual é o próximo comando**. E
 4. Checkpoints sempre que o usuário precisa decidir, conferir ou agir no ambiente (seção 3).
 5. Portão de saída da etapa: o que prova que ela terminou (cada skill de etapa diz qual).
 6. `estado.py concluir <etapa> --nota "<o que ficou pronto>"` (ou `dispensar`/`reabrir`).
-7. **Encerramento:** resumo de até 5 linhas (arquivos criados) + o bloco "Próximo passo" **exatamente
-   como o script imprimiu**. Não invente outro comando: o script é a fonte do próximo passo.
+7. **Encerramento:** o resumo da etapa (abaixo) + o bloco "Próximo passo" **exatamente como o
+   script imprimiu**. Não invente outro comando: o script é a fonte do próximo passo.
+
+Resumo da etapa, curto e sem comemoração. Linha sem conteúdo não aparece:
+
+```
+**Entregue:** <arquivos e o que ficou pronto>
+**Verificado:** <comando → última linha>, <o que o usuário conferiu>
+**Revisado:** <agente: o que voltou e por quê>
+**Com você:** <o que foi escalado ou ficou para decidir>
+**Não verificado:** <o que só o ambiente prova, ou o que não deu para rodar>
+```
+
+Se nada foi verificado, a linha diz isso com todas as letras.
 
 Comando do script (Bash, da raiz do projeto):
 
@@ -68,7 +80,14 @@ Antes de abrir um agente, diga quem vai trabalhar e o que ele entrega:
 ```
 
 Dois agentes em paralelo vão na **mesma mensagem**. Achado ou arquivo de agente é hipótese até você
-conferir (rodar o validador, abrir o arquivo): `references/subagentes.md`.
+julgar (rodar o validador, abrir o arquivo): `references/subagentes.md`, seção "Julgar a entrega".
+O veredito sai numa linha por agente:
+
+```
+✓ Agente Power Apps Canvas: aceito (validar-telas.py → 0 erro(s), 4 arquivos)
+↻ Agente Power Automate: revisão 1 — o fluxo de exclusão não devolve `id` no Response
+⚠ Agente de Arquitetura: escalado — o PRD não diz quem aprova a devolução
+```
 
 ## 5. Símbolos
 
