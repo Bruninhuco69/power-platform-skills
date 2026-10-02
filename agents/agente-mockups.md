@@ -38,8 +38,11 @@ PRD ou design system: pare e diga qual arquivo falta.
    administráveis; exportação, se alguém precisa do conjunto completo do filtro.
 2. **Moldura do app**, igual em todas as telas:
    - header: o que mostra e de onde vem cada dado (usuário pelo contexto, nunca digitado);
-   - navegação: menu lateral com 3 ou mais telas de primeiro nível, abas para até 4 conjuntos da
-     mesma entidade; o item ativo;
+   - navegação: o padrão da seção 2.1 do `ux-design-system.md` (menu lateral fixo, recolhível ou
+     gaveta, barra no topo ou tela inicial com cartões), escolhido pelo usuário: não troque. Sem a
+     seção (projeto antigo), use menu lateral fixo e registre como pergunta aberta. Abas servem
+     para até 4 conjuntos da mesma entidade dentro de uma tela, não para navegar entre telas;
+     o item ativo;
    - seletor de unidade, se o usuário vê mais de uma;
    - notificações: toast por `status` (sucesso, aviso, erro), posição e duração;
    - pop-ups: confirmação, formulário, destrutivo com motivo, informativo;
@@ -48,7 +51,8 @@ PRD ou design system: pare e diga qual arquivo falta.
    - rodapé: "Exibindo N de M", versão.
 3. **Ficha por tela** no molde, mais os pop-ups que ela abre e o toast de cada ação. Toda escrita
    leva loading e toast; toda ação irreversível, modal destrutivo.
-4. **Mapa de navegação** em Mermaid no inventário.
+4. **Mapa de navegação** em Mermaid no inventário, no padrão escolhido (com cartões, toda tela
+   volta ao início).
 5. **Spec** em `docs/planejamento/mockups/mockups.json`, a partir do molde:
    - `paleta`: o **hex exato** da seção 3 do `ux-design-system.md`, com o nome do token. Cor que
      não está no design system é pergunta aberta, nunca invenção;

@@ -37,11 +37,17 @@ Entradas: `docs/planejamento/inventario-telas.md`, `mockups/mockups.json`, as im
    (cabeçalho, menu, filtros, galeria, modal, toast) para um `data-componente` do catálogo e
    reproduza textos, hierarquia e estado. O que a imagem mostra e o Canvas não faz vira divergência
    registrada no inventário, não HTML.
-4. **Entidade e dados:** troque `Pedido` pela entidade do projeto; dados só fictícios (unidades
+4. **Navegação:** `NAVEGACAO` recebe o id da seção 2.1 do `ux-design-system.md`
+   (`lateral-fixo`, `lateral-recolhivel`, `gaveta`, `topo` ou `inicio-cartoes`). Os itens moram
+   só no menu lateral (um `.menu-item` por tela de primeiro nível, com `data-descricao` para o
+   cartão); a barra no topo e os cartões nascem dele. Com `inicio-cartoes`, ponha o botão
+   "‹ Início" (`btn-inicio`) no cabeçalho de toda tela que não é a inicial. Não apague os outros
+   padrões do molde: o seletor "Navegação" da barra deixa o usuário comparar.
+5. **Entidade e dados:** troque `Pedido` pela entidade do projeto; dados só fictícios (unidades
    `AAA`/`BBB`, e-mail `@contoso.com`).
-5. **Perfis e roteiro:** `PERFIS` com as flags do PRD (a tela decide pela flag, nunca pelo nome do
+6. **Perfis e roteiro:** `PERFIS` com as flags do PRD (a tela decide pela flag, nunca pelo nome do
    perfil); `ROTEIRO` com passos curtos por perfil, cobrindo o ciclo P0.
-6. **Fidelidade:** nada só no hover, sem arrastar, sem reflow; animação só no spinner e no fade;
+7. **Fidelidade:** nada só no hover, sem arrastar, sem reflow; animação só no spinner e no fade;
    nenhum recurso externo (abre por duplo clique, offline).
 7. **Confira:** da `RAIZ`,
    `python KIT/skills/power-platform/scripts/verificar-prototipo.py docs/planejamento/prototipo --mockups docs/planejamento/mockups/mockups.json`

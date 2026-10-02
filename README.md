@@ -173,7 +173,7 @@ Depois é só seguir o bloco **Próximo passo** no fim de cada etapa. Em resumo:
 |---|---|---|---|---|
 | 1 | `/pp:novo` | Orquestrador | conta a ideia e o nome; escolhe se cada etapa vira um commit | repositório git, `power-platform.config.json`, `00-LEIA-PRIMEIRO.md`, `ESTADO.md` |
 | 2 | `/pp:brainstorm` | Agente Brainstorm (conversa com você) | escolhe o modo do brainstorm; responde às perguntas; decide o que entra no MVP | `docs/planejamento/brainstorm.md`, `prd.md` |
-| 3 | `/pp:design` | Agente Designer Branding (conversa com você) | escolhe cores, estilo e fonte; aprova uma amostra visual | `ux-design-system.md`, `identidade.html` |
+| 3 | `/pp:design` | Agente Designer Branding (conversa com você) | escolhe cores, estilo, fonte e o jeito de navegar; aprova uma amostra visual | `ux-design-system.md`, `identidade.html` |
 | 4 | `/pp:mockups` | Agente de Mockups em Imagem + script | confere a lista de telas; autoriza as imagens | `inventario-telas.md`, `mockups/*.png` |
 | 5 | `/pp:prototipo` | Agente Gerador de Mockup HTML | navega pelo protótipo; aprova ou pede ajustes | `prototipo/index.html` |
 | 6 | `/pp:arquitetura` | Agente de Arquitetura | escolhe SQL Server ou Dataverse; cria as tabelas 🔴 | `arquitetura.md`, ADR, scripts de dados, `GOAL.md` |
@@ -201,6 +201,22 @@ bloqueadores e `prd.md`. Por isso as etapas seguintes não dependem do modo esco
 Dá para trocar de modo no meio ("trocar de modo") sem perder nada do log. As personas perguntam e
 propõem; quem decide é você. Elas foram inspiradas no módulo criativo e no *party mode* do BMAD
 Method.
+
+### Cinco jeitos de navegar
+
+Na etapa 3 o designer pergunta como o app leva de uma área para outra, mostrando um desenho de
+cada opção. A escolha vale para os mockups, o protótipo e a construção.
+
+| Padrão | Bom para |
+|---|---|
+| Menu lateral sempre aberto | uso diário no desktop, 3 ou mais áreas |
+| Menu lateral recolhível (☰ alterna) | telas com tabela larga |
+| Gaveta que abre por cima (hambúrguer) | tablet, tela estreita, uso eventual |
+| Barra no topo | 2 a 6 áreas com nome curto |
+| Tela inicial com cartões | uso eventual, uma tarefa por visita |
+
+No protótipo, o seletor "Navegação" troca o padrão ao vivo para comparar; se preferir outro, é
+um item de ajuste e o pipeline volta ao `/pp:design`.
 
 ### As voltas
 
@@ -264,11 +280,11 @@ validador, abre o arquivo) antes de seguir.
 ## Catálogos de componentes
 
 **Canvas — [`powerapps-canvas/assets/componentes/`](skills/powerapps-canvas/assets/componentes/INDICE.md)**
-(23 componentes em YAML pronto para colar)
+(25 componentes em YAML pronto para colar)
 
 | Grupo | Componentes |
 |---|---|
-| Layout e navegação | cabeçalho de tela, menu lateral, abas, seletor de unidade |
+| Layout e navegação | cabeçalho de tela, menu lateral (fixo, recolhível ou gaveta), menu no topo, tela inicial com cartões, abas, seletor de unidade |
 | Dados | galeria em tabela, linha expansível, ordenação por coluna, paginação por cursor, rodapé com contagem, seleção em lote, badge de status, card de KPI |
 | Filtros e ações | barra de filtros, botões, exportação |
 | Modais | confirmação, formulário, informativo, destrutivo com motivo |

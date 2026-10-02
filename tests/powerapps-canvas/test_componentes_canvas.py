@@ -94,7 +94,9 @@ def test_estrutura_do_componente(arquivo):
     texto = arquivo.read_text(encoding="utf-8")
     titulos = re.findall(r"^## (.+)$", texto, re.M)
     assert titulos == SECOES, f"{arquivo.name}: seções {titulos}"
-    assert re.search(r"^Maturidade: \*\*(estável|único)\*\* · Frequência: \*\*(muito comum|comum|ocasional|rara)\*\*", texto, re.M)
+    assert re.search(r"^Maturidade: \*\*(estável|único|novo)\*\* · Frequência: \*\*(muito comum|comum|ocasional|rara|a medir)\*\*", texto, re.M)
+    if "**novo**" in texto:
+        assert "**a medir**" in texto, f"{arquivo.name}: componente novo ainda não tem frequência medida"
     linha = re.search(r"^Maturidade: .*$", texto, re.M).group(0)
     assert not re.search(r"\d+ (telas?|projetos?)\b", linha), f"{arquivo.name}: contagem de projeto na linha de maturidade"
     assert "Destino: YAML colado no Studio" in texto

@@ -42,6 +42,14 @@ estilo do GSD. O plugin passa a se chamar `pp` (comandos `/pp:*`).
 - README, site (`docs/index.html`, GitHub Pages) e descrições do plugin em **pt-BR**, como as
   skills; a versão em inglês fica para depois.
 - Licença MIT (`LICENSE`), também declarada no `plugin.json`.
+- **Escolha da navegação no `/pp:design`** (`references/navegacao.md`): menu lateral fixo,
+  recolhível ou gaveta (hambúrguer), barra no topo ou tela inicial com cartões, perguntados em
+  duas partes com prévia ASCII de cada opção. A decisão vai para o `ux-design-system.md` §2.1 e
+  segue para mockups, protótipo (seletor "Navegação" para comparar ao vivo), construção e testes.
+- Catálogo Canvas: variação **gaveta** no `menu-lateral` e dois componentes novos, `menu-topo` e
+  `inicio-cartoes` (25 no total), com os tokens `fxTopNavHeight`, `fxTopNavItemWidth`,
+  `fxHubCardWidth`, `fxHubCardHeight` e `fxFontSizeCardTitle`. Nível de maturidade novo,
+  `novo` (ainda não visto em produção: confirme na colagem).
 
 ### Removido
 - Agente `arquiteto-telas` (virou `agente-mockups`).

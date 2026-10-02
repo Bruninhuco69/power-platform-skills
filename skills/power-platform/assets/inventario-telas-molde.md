@@ -14,7 +14,7 @@
 | Peça | Decisão | Componente do catálogo |
 |---|---|---|
 | Header | <o que mostra; usuário pelo contexto, nunca digitado> | `cabecalho-tela` |
-| Navegação | <menu lateral (3 ou mais telas de 1º nível) ou abas> | `menu-lateral`, `abas` |
+| Navegação | <o padrão do `ux-design-system.md` §2.1: lateral fixo, recolhível, gaveta, topo ou cartões> | `menu-lateral`, `menu-topo` ou `inicio-cartoes` |
 | Seletor de unidade | <só se o usuário vê mais de uma unidade> | `seletor-unidade` |
 | Notificações | <toast por `status`: sucesso, aviso, erro; posição e duração> | `toast` |
 | Pop-ups | <confirmação, formulário, destrutivo com motivo, informativo> | `modal-*` |

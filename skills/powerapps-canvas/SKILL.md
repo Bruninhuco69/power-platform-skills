@@ -57,7 +57,7 @@ nomes) estão em
 
 | Tarefa | Carregue |
 |---|---|
-| tela ou componente novo | **catálogo primeiro**: [assets/componentes/INDICE.md](assets/componentes/INDICE.md) (23 componentes coláveis); depois `assets/tela-molde.md`, [ux-componentes.md](references/ux-componentes.md), [yaml-pa-formato.md](references/yaml-pa-formato.md), [nomenclatura.md](references/nomenclatura.md) |
+| tela ou componente novo | **catálogo primeiro**: [assets/componentes/INDICE.md](assets/componentes/INDICE.md) (25 componentes coláveis); depois `assets/tela-molde.md`, [ux-componentes.md](references/ux-componentes.md), [yaml-pa-formato.md](references/yaml-pa-formato.md), [nomenclatura.md](references/nomenclatura.md) |
 | modal, toast, loading | [ux-feedback.md](references/ux-feedback.md), [chamada-flow.md](references/chamada-flow.md) |
 | fórmula Power Fx | [powerfx-essencial.md](references/powerfx-essencial.md) |
 | dado, filtro, contador, data, "vem vazio" | [delegacao.md](references/delegacao.md) |
@@ -132,7 +132,7 @@ o Studio vai recusar.
 | [estilo.md](references/estilo.md) | anatomia de arquivo, golden files, gate, decisão Classic |
 | [anti-padroes.md](references/anti-padroes.md) | os mais caros, com porquê, correção e código do validador |
 | [licoes-de-campo.md](references/licoes-de-campo.md) | o que já deu errado em apps reais e qual regra previne |
-| [assets/componentes/INDICE.md](assets/componentes/INDICE.md) | catálogo de componentes coláveis (cabeçalho, menu, filtros, galeria-tabela, modais, toast, loading…): um `.md` por componente, validado |
+| [assets/componentes/INDICE.md](assets/componentes/INDICE.md) | catálogo de componentes coláveis (cabeçalho, menu lateral, menu no topo, tela inicial com cartões, filtros, galeria-tabela, modais, toast, loading…): um `.md` por componente, validado |
 | [assets/tela-molde.md](assets/tela-molde.md) | tela YAML completa e colável |
 | [assets/app-formulas-tokens.md](assets/app-formulas-tokens.md) | bloco `App.Formulas` com os tokens |
 | [assets/app-onstart-molde.md](assets/app-onstart-molde.md) | `App.OnStart` em ordem de dependência |

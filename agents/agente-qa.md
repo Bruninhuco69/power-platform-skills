@@ -40,7 +40,9 @@ corrige nada e não fala com o usuário. Zero achados é resultado válido: não
    - negação por ação de escrita: sem a flag, de outra unidade, com a flag (status esperado);
    - ciclo completo por requisito P0: o dado percorre tela → fluxo → banco → tela;
    - volume acima de 2.000 linhas, se o PRD prevê;
-   - mensagens de erro: a `description` aparece no toast.
+   - mensagens de erro: a `description` aparece no toast;
+   - navegação no padrão do `ux-design-system.md` §2.1, com cada perfil: item oculto sem a flag,
+     item ativo certo, gaveta fechando ao trocar de tela, "‹ Início" em toda tela (com cartões).
 
 ## Regras
 

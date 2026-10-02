@@ -33,6 +33,9 @@ usuário.
    O destino é a barra de fórmulas pt-BR (`;` e `;;`): diga isso no arquivo.
 2. **Cada tela** a partir do molde `KIT/skills/powerapps-canvas/assets/tela-molde.md`, montada com
    os componentes do catálogo (renomeie o prefixo `xx`), na ordem e com os estados do protótipo:
+   - navegação no padrão da seção 2.1 do `ux-design-system.md`: `menu-lateral` (base fixa ou
+     variação recolhível ou gaveta), `menu-topo` ou `inicio-cartoes` (com o botão "‹ Início" em
+     toda tela que não é a inicial); o `X` de cada item conta só os itens visíveis antes dele;
    - nomes de fonte e coluna **só** do `NOMES-AS-BUILT`; o que não está lá vira pergunta, não chute;
    - cabeçalho da tela com a delegação declarada (o que delega, o que não, o teto);
    - toda escrita por fluxo: `.Run()` dentro de `IfError`, parâmetros na ordem do contrato, id

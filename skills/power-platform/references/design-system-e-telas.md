@@ -66,7 +66,8 @@ PRD e soma as telas transversais (inicial, sem acesso, detalhe, gestão de acess
 Antes das telas, ele fecha a **moldura do app**, igual em todas:
 
 - header;
-- navegação;
+- navegação, no padrão que o usuário escolheu no `/pp:design` (`ux-design-system.md`
+  §2.1, `references/navegacao.md`);
 - seletor de unidade;
 - notificações (toast);
 - pop-ups (confirmação, formulário, destrutivo, informativo);

@@ -50,14 +50,16 @@ python -m pytest tests/powerapps-canvas -q -p no:cacheprovider
 
 Destino de todo bloco YAML: YAML colado no Studio (`,` entre argumentos, `;` encadeia, `.` decimal). Os tokens da seção abaixo vão para a barra de fórmulas do objeto App (pt-BR: `;` e `;;`), nunca para o YAML. O validador não substitui o Studio: cole num app de teste e confira `PA2108` (propriedade recusada). Três propriedades usadas aqui não constam da tabela de atestadas de `references/yaml-pa-formato.md` §8.3 (existem no Learn; confirme na colagem): `Align` e `BorderStyle` em `Classic/Button@2.2.0` e `MaxLength` em `Classic/TextInput@2.3.2`.
 
-**Maturidade.** `estável` = visto em produção em mais de um projeto real; `único` = visto em um só. **Frequência**: quanto o componente se repetiu nas telas de referência: `muito comum` (quase toda tela), `comum`, `ocasional` (poucas telas) ou `rara` (uma tela).
+**Maturidade.** `estável` = visto em produção em mais de um projeto real; `único` = visto em um só; `novo` = ainda não visto em produção (validado só pelo `validar-telas.py`: confirme na colagem, num app de teste). **Frequência**: quanto o componente se repetiu nas telas de referência: `muito comum` (quase toda tela), `comum`, `ocasional` (poucas telas), `rara` (uma tela) ou `a medir` (componente `novo`).
 
 ## Componentes
 
 | Componente | Arquivo | Quando usar | Dependências | Frequência | Maturidade |
 |---|---|---|---|---|---|
 | [Cabeçalho de tela](cabecalho-tela.md) | `cabecalho-tela.md` | toda tela de conteúdo, sem exceção. | tokens do bloco `COMPONENTES`: `fxHeaderHeight`; variáveis: `varAgora`, `varTelaAtiva`; tokens `fx*` existentes: 11 | muito comum | estável |
-| [Menu lateral](menu-lateral.md) | `menu-lateral.md` | o app tem 3 ou mais telas de primeiro nível. | tokens do bloco `COMPONENTES`: `fxColorMenuBg`, `fxMenuWidth`, `fxColorMenuItemActive`, `fxMenuItemHeight`, `fxNavWidthExpandida`, `fxNavWidthRecolhida`; variáveis: `varSemAcesso`, `varTelaAtiva`, `varPerfil`, `varUsuario`, `varUnidadeFiltro`, `varNavExpandida`; tokens `fx*` existentes: 11 | muito comum | estável |
+| [Menu lateral](menu-lateral.md) | `menu-lateral.md` | o app tem 3 ou mais telas de primeiro nível; fixo, recolhível ou gaveta (hambúrguer). | tokens do bloco `COMPONENTES`: `fxColorMenuBg`, `fxMenuWidth`, `fxColorMenuItemActive`, `fxMenuItemHeight`, `fxNavWidthExpandida`, `fxNavWidthRecolhida`; variáveis: `varSemAcesso`, `varTelaAtiva`, `varPerfil`, `varUsuario`, `varUnidadeFiltro`, `varNavExpandida`; tokens `fx*` existentes: 11 | muito comum | estável |
+| [Menu no topo](menu-topo.md) | `menu-topo.md` | de 2 a 6 telas de primeiro nível com rótulo curto; tabela larga. | tokens do bloco `COMPONENTES`: `fxColorMenuBg`, `fxColorMenuItemActive`, `fxTopNavHeight`, `fxTopNavItemWidth`; variáveis: `varSemAcesso`, `varTelaAtiva`, `varPerfil`, `varUsuario`; tokens `fx*` existentes: 6 | a medir | novo |
+| [Tela inicial com cartões](inicio-cartoes.md) | `inicio-cartoes.md` | app de uso eventual, uma tarefa por visita, tela estreita. | tokens do bloco `COMPONENTES`: `fxHeaderHeight`, `fxHubCardWidth`, `fxHubCardHeight`, `fxFontSizeCardTitle`; variáveis: `varSemAcesso`, `varTelaAtiva`, `varPerfil`; tokens `fx*` existentes: 15 | a medir | novo |
 | [Card de KPI (contador com teto)](card-kpi.md) | `card-kpi.md` | resumir a lista que está logo abaixo em até 5 ou 6 números. | tokens do bloco `COMPONENTES`: `fxHeaderHeight`; variáveis: `varPedidoTotal`, `varPedidoAbertos`, `varPedidoAndamento`, `varPedidoEncerrados`; tokens `fx*` existentes: 24 | comum | estável |
 | [Abas (botão e traço)](abas.md) | `abas.md` | até 4 conjuntos da mesma entidade na mesma tela. | tokens do bloco `COMPONENTES`: `fxHeaderHeight`; variáveis: `varXXTab`, `varPedidoAbertos`, `varPedidoEncerrados`, `varPedidoTotal`; tokens `fx*` existentes: 12 | comum | estável |
 | [Barra de filtros (combo, texto, datas e limpar)](barra-filtros.md) | `barra-filtros.md` | galeria com mais de uns 50 registros. | tokens do bloco `COMPONENTES`: `fxHeaderHeight`; variáveis: `varPedidoDe`, `varPedidoAte`, `varPedidoFiltroAplicado`, `varPedidoStatusAplicado`, `varPedidoBuscaAplicada`; tokens `fx*` existentes: 22 | comum | estável |
@@ -139,7 +141,6 @@ Diferenças em relação às referências: todo `Font` é `fxFont`, como nas ref
 
 - **Auto-refresh, debounce de busca e polling**: já completos em `references/timers-async.md`.
 - **Rodapé de versão e direitos da tela**: rótulo estático sem lógica, não vale arquivo.
-- **Card de atalho da tela inicial** (raro): é composição de cards com `Navigate`, coberto por `card-kpi.md` mais `botoes.md`.
 - **Toggle de "todas"** (raro): uma linha de `Classic/Toggle@2.1.0` com `OnChange`; sem padrão a extrair.
 - **Relógio do cabeçalho**: virou variação de `cabecalho-tela.md`.
 - **Campo de busca**: virou parte de `barra-filtros.md` (`DelayOutput`).

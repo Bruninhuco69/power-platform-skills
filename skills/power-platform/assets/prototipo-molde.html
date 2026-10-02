@@ -28,6 +28,10 @@
   5. Roteiro: ROTEIRO, passos curtos por perfil.
   6. Cor e medida: só em :root, com o nome do token de powerapps-canvas/assets/app-formulas-tokens.md.
   7. Vínculo: data-mockups de toda tela com os ids do spec; "Comparar com o mockup" abre a imagem.
+  8. Navegação: NAVEGACAO = o padrão do ux-design-system.md §2.1 (lateral-fixo, lateral-recolhivel,
+     gaveta, topo, inicio-cartoes). O menu lateral é a fonte dos itens: a barra no topo e os cartões
+     da tela inicial são gerados dele (data-descricao vira a frase do cartão). O seletor "Navegação"
+     da barra deixa o usuário comparar os cinco; trocar de padrão é ajuste de identidade (/pp:design).
   Cada data-componente aponta para powerapps-canvas/assets/componentes/<nome>.md: mesmo papel,
   posição, textos e estados. Fidelidade: nada só no hover, sem arrastar, sem reflow; animação só
   no spinner e no fade. Abre por duplo clique (file://), sem recurso externo.
@@ -60,7 +64,8 @@
   /* medidas: canvas de 1920, logo fxIsCompact = false */
   --fxLayoutMargin: 100px; --fxLayoutGutter: 16px; --fxRowHeight: 50px; --fxTableHeaderHeight: 50px; --fxFilterHeight: 50px;
   --fxKPIWidth: 150px; --fxKPIHeight: 85px; --fxKPITitleHeight: 35px; --fxKPIValueHeight: 50px; --fxHeaderHeight: 100px;
-  --fxMenuWidth: 260px; --fxMenuItemHeight: 52px; --fxBtnHeight: 45px; --fxBtnRadius: 8px; --fxBtnWidth: 210px; --fxBtnWidthFilter: 128px;
+  --fxMenuWidth: 260px; --fxMenuItemHeight: 52px; --fxNavWidthRecolhida: 70px; --fxNavWidthExpandida: 284px;
+  --fxTopNavHeight: 56px; --fxTopNavItemWidth: 168px; --fxHubCardWidth: 360px; --fxHubCardHeight: 168px; --fxFontSizeCardTitle: 18pt; --fxBtnHeight: 45px; --fxBtnRadius: 8px; --fxBtnWidth: 210px; --fxBtnWidthFilter: 128px;
   --fxModalRadius: 12px; --fxModalPadding: 20px; --fxModalWidthS: 450px; --fxModalWidthM: 520px; --fxModalWidthL: 620px;
   --fxPillHeight: 26px; --fxToastWidth: 420px; --fxLoadingCardWidth: 250px; --fxLoadingCardHeight: 140px; --fxLoadingSpinnerSize: 60px;
   /* tipografia: uma família; o Size do Power Apps é em pt */
@@ -132,9 +137,56 @@ main[data-canvas] { position: absolute; left: 0; top: 0; width: 1920px; height: 
 .menu-usuario { font-weight: 600; font-size: var(--fxFontSizeFilter); }
 .menu-perfil { color: var(--fxColorToastText); font-size: var(--fxFontSizeTableSmall); line-height: 1.35; }
 
+/* ---------- NAVEGAÇÃO: data-navegacao no canvas, decidido no /pp:design (ux-design-system.md §2.1) ----------
+   lateral-fixo | lateral-recolhivel | gaveta (menu-lateral) · topo (menu-topo) · inicio-cartoes (inicio-cartoes) */
+.menu-alternar, .menu-fechar, .nav-abrir, .nav-veu, .topo, .cartoes, .btn-inicio { display: none; }
+.menu-alternar, .menu-fechar { position: absolute; top: 20px; width: 40px; height: 40px; border: 1px solid var(--fxColorMenuItemActive); border-radius: var(--fxBtnRadius); background: var(--fxColorMenuItemActive); color: var(--fxColorTextOnPrimary); font-weight: 600; font-size: var(--fxBtnFontSize); }
+.menu-alternar:hover, .menu-fechar:hover { border-color: var(--fxColorButtonCancelHover); background: var(--fxColorButtonCancelHover); }
+.menu-alternar { left: 15px; }
+.menu-fechar { right: 16px; }
+[data-navegacao="lateral-recolhivel"] .menu-alternar { display: block; }
+[data-navegacao="lateral-recolhivel"] .menu, [data-navegacao="lateral-recolhivel"] .tela { --nav-largura: var(--fxNavWidthRecolhida); }
+[data-navegacao="lateral-recolhivel"].nav-aberta .menu, [data-navegacao="lateral-recolhivel"].nav-aberta .tela { --nav-largura: var(--fxNavWidthExpandida); }
+[data-navegacao="lateral-recolhivel"] .menu { width: var(--nav-largura); }
+[data-navegacao="lateral-recolhivel"] .tela { left: var(--nav-largura); }
+[data-navegacao="lateral-recolhivel"] .menu-logo, [data-navegacao="lateral-recolhivel"] .menu-sub { display: none; }
+[data-navegacao="lateral-recolhivel"] .menu-titulo { left: 70px; top: 28px; }
+[data-navegacao="lateral-recolhivel"] .menu-lista { top: 100px; }
+[data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-titulo, [data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-rodape, [data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-rot { display: none; }
+[data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-item { padding: 0; text-align: center; }
+[data-navegacao="lateral-recolhivel"]:not(.nav-aberta) .menu-item::before { content: attr(data-inicial); font-weight: 700; }
+[data-navegacao="gaveta"] .tela, [data-navegacao="topo"] .tela, [data-navegacao="inicio-cartoes"] .tela { left: 0; }
+[data-navegacao="gaveta"] .menu { z-index: 12; width: var(--fxNavWidthExpandida); visibility: hidden; box-shadow: 10px 0 30px -12px var(--fxColorOverlayDark); }
+[data-navegacao="gaveta"].nav-aberta .menu { visibility: visible; }
+[data-navegacao="gaveta"] .menu-logo, [data-navegacao="gaveta"] .menu-sub { display: none; }
+[data-navegacao="gaveta"] .menu-titulo { top: 26px; }
+[data-navegacao="gaveta"] .menu-lista { top: 80px; }
+[data-navegacao="gaveta"] .menu-fechar { display: block; }
+[data-navegacao="gaveta"] .nav-abrir { position: absolute; left: 16px; top: calc((var(--fxHeaderHeight) - 48px) / 2); z-index: 4; display: block; width: 48px; height: 48px; border: 0; border-radius: var(--fxBtnRadius); background: var(--fxColorTransparent); color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxBtnFontSize); }
+[data-navegacao="gaveta"] .nav-abrir:hover { background: var(--fxColorPrimaryLight); color: var(--fxColorPrimaryDark); }
+[data-navegacao="gaveta"].nav-aberta .nav-veu { position: absolute; inset: 0; z-index: 11; display: block; background: var(--fxColorOverlay); }
+[data-navegacao="topo"] .menu, [data-navegacao="inicio-cartoes"] .menu { display: none; }
+[data-navegacao="topo"] .topo { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; height: var(--fxTopNavHeight); background: var(--fxColorMenuBg); color: var(--fxColorTextOnPrimary); }
+[data-navegacao="topo"] .tela { top: var(--fxTopNavHeight); }
+.topo-titulo { display: flex; align-items: center; width: 260px; padding-left: 24px; font-weight: 700; font-size: var(--fxFontSizeBody); white-space: nowrap; }
+.topo-lista { display: flex; margin: 0; padding: 0; list-style: none; }
+.topo-item { display: flex; align-items: center; justify-content: center; width: var(--fxTopNavItemWidth); height: var(--fxTopNavHeight); color: var(--fxColorTextOnPrimary); font-size: var(--fxFontSizeBody); text-decoration: none; }
+.topo-item:hover, .topo-item[aria-current="page"] { background: var(--fxColorMenuItemActive); }
+.topo-item[aria-current="page"] { font-weight: 700; }
+.topo-usuario { display: flex; align-items: center; margin-left: auto; padding-right: 24px; color: var(--fxColorPrimaryLight); font-size: var(--fxFontSizeFilter); white-space: nowrap; }
+.topo :focus-visible { outline-color: var(--fxColorTextOnPrimary); }
+[data-navegacao="inicio-cartoes"] .cartoes { display: flex; flex-wrap: wrap; gap: 24px calc(var(--fxLayoutGutter) * 2); margin: 16px 0 8px; }
+.cartao { position: relative; width: var(--fxHubCardWidth); height: var(--fxHubCardHeight); padding: 18px 20px; border: 1px solid var(--fxColorBorder); border-radius: var(--fxModalRadius); background: var(--fxColorSurface); box-shadow: 0 3px 8px -4px var(--fxColorOverlay); }
+.cartao h3 { color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeCardTitle); line-height: 32px; }
+.cartao p { margin-top: 4px; color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeBody); line-height: 1.4; }
+.cartao .btn { position: absolute; left: 20px; bottom: 18px; min-width: 160px; height: 40px; }
+[data-navegacao="inicio-cartoes"] .btn-inicio { display: inline-block; min-width: 104px; height: 40px; margin-right: 16px; border-color: var(--fxColorPrimary); background: var(--fxColorTransparent); color: var(--fxColorPrimary); }
+[data-navegacao="inicio-cartoes"] .btn-inicio:hover { background: var(--fxColorPrimaryLight); }
+.cab h1 { margin-right: auto; }
+
 /* telas e cabecalho-tela */
 .tela { position: absolute; top: 0; bottom: 0; left: var(--fxMenuWidth); right: 0; background: var(--fxColorBackground); }
-.tela.tela-cheia { left: 0; }
+.tela.tela-cheia { left: 0; top: 0; }
 .cab { display: flex; align-items: center; justify-content: space-between; height: var(--fxHeaderHeight); padding: 0 var(--fxLayoutMargin); background: var(--fxColorSurface); border-bottom: 1px solid var(--fxColorDivider); }
 .cab h1 { color: var(--fxColorPrimary); font-weight: 600; font-size: var(--fxFontSizeTitle); line-height: 60px; }
 .cab-usuario { color: var(--fxColorTextSecondary); font-size: var(--fxFontSizeBody); }
@@ -327,6 +379,7 @@ input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var
   <label class="pt-campo">Unidade <select id="ctl-unidade" aria-label="Unidade do usuário"></select></label>
   <label class="pt-campo">Resposta do flow <select id="ctl-resposta"></select></label>
   <label class="pt-campo">Latência <select id="ctl-latencia"></select></label>
+  <label class="pt-campo">Navegação <select id="ctl-nav"></select></label>
   <div class="pt-dir">
     <button type="button" class="pt-btn" data-acao="restaurar">Restaurar dados</button>
     <span class="pt-versao" id="pt-versao"></span>
@@ -355,16 +408,28 @@ input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var
 </div>
 
 <div class="palco" id="palco">
-<main id="canvas" data-canvas="1920x1080">
+<main id="canvas" data-canvas="1920x1080" data-navegacao="lateral-fixo">
+
+  <!-- menu-topo: barra horizontal; os itens são gerados a partir do menu lateral -->
+  <nav class="topo" id="menu-topo" data-componente="menu-topo" aria-label="Menu principal">
+    <div class="topo-titulo" id="topo-titulo"></div>
+    <ul class="topo-lista" id="topo-lista"></ul>
+    <div class="topo-usuario" id="topo-usuario"></div>
+  </nav>
+  <!-- menu-lateral, variação gaveta: ☰ no canto do cabeçalho e véu que fecha ao toque -->
+  <button type="button" class="nav-abrir" id="nav-abrir" data-componente="menu-lateral" data-acao="nav-alternar" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu" title="Abrir menu">☰</button>
+  <div class="nav-veu" data-componente="menu-lateral" data-acao="nav-fechar"></div>
 
   <!-- menu-lateral: some com varSemAcesso; item oculto sem permissão -->
   <nav class="menu" id="menu" data-componente="menu-lateral" aria-label="Menu principal">
+    <button type="button" class="menu-alternar" id="menu-alternar" data-acao="nav-alternar" aria-controls="menu" aria-expanded="false" aria-label="Expandir menu" title="Expandir menu">☰</button>
+    <button type="button" class="menu-fechar" data-acao="nav-fechar" aria-label="Fechar menu" title="Fechar menu">✕</button>
     <svg class="menu-logo" viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="2" width="36" height="36" rx="9" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 29V11h7a5.5 5.5 0 0 1 0 11h-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>
     <div class="menu-titulo" id="menu-titulo"></div>
     <div class="menu-sub" id="menu-sub"></div>
     <ul class="menu-lista">
       <li><a class="menu-item" href="#/tela-inicio" data-alvo="tela-inicio">Início</a></li>
-      <li><a class="menu-item" href="#/tela-pedidos" data-alvo="tela-pedidos">Pedidos</a></li>
+      <li><a class="menu-item" href="#/tela-pedidos" data-alvo="tela-pedidos" data-descricao="Cadastre, filtre e acompanhe os pedidos da sua unidade.">Pedidos</a></li>
     </ul>
     <div class="menu-rodape"><div class="menu-usuario" id="menu-usuario"></div><div class="menu-perfil" id="menu-perfil"></div></div>
   </nav>
@@ -373,6 +438,8 @@ input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var
   <section class="tela" id="tela-inicio" data-tela="tela-inicio" data-titulo="Início" data-perfis="administrador,gestor,operador" data-mockups="tl-03-inicio">
     <header class="cab" data-componente="cabecalho-tela"><h1 tabindex="-1">Início</h1><span class="cab-usuario" data-usuario></span></header>
     <div class="conteudo">
+      <!-- inicio-cartoes: só com data-navegacao="inicio-cartoes"; um cartão por item do menu, exceto Início -->
+      <div class="cartoes" id="cartoes" data-componente="inicio-cartoes" role="list" aria-label="Áreas do app"></div>
       <div class="inicio-topo">
         <div class="kpis" data-componente="card-kpi" role="group" aria-label="Resumo do escopo">
           <div class="kpi"><div class="kpi-titulo t-neutral">Total</div><div class="kpi-valor" data-kpi="total">0</div></div>
@@ -405,7 +472,7 @@ input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var
 
   <!-- ===== TELA: Pedidos ===== -->
   <section class="tela" id="tela-pedidos" data-tela="tela-pedidos" data-titulo="Pedidos" data-perfis="administrador,gestor,operador" data-mockups="tl-01-lista-pedidos,tl-01-lista-confirmar-encerrar,tl-01-lista-toast-sucesso,tl-02-novo-pedido" hidden>
-    <header class="cab" data-componente="cabecalho-tela"><h1 tabindex="-1">Pedidos</h1><span class="cab-usuario" data-usuario></span></header>
+    <header class="cab" data-componente="cabecalho-tela"><button type="button" class="btn btn-inicio" data-componente="inicio-cartoes" data-acao="ir-inicio">‹ Início</button><h1 tabindex="-1">Pedidos</h1><span class="cab-usuario" data-usuario></span></header>
     <div class="conteudo">
       <div class="linha-abas">
         <div class="abas" data-componente="abas" role="tablist" aria-label="Situação dos pedidos">
@@ -596,6 +663,15 @@ input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var
 'use strict';
 /* ===== 1. CONSTANTES DO PROJETO (troque aqui ao adaptar) ===== */
 const PROJETO = { nome: 'Gestão de Pedidos', modulo: 'Protótipo navegável', versao: 'v1', chave: 'prototipo-pedidos' };
+// padrão de navegação decidido no /pp:design (ux-design-system.md §2.1)
+const NAVEGACAO = 'lateral-fixo';
+const PADROES_NAV = [
+  { id: 'lateral-fixo', rotulo: 'Menu lateral fixo' },
+  { id: 'lateral-recolhivel', rotulo: 'Menu lateral recolhível' },
+  { id: 'gaveta', rotulo: 'Gaveta (hambúrguer)' },
+  { id: 'topo', rotulo: 'Barra no topo' },
+  { id: 'inicio-cartoes', rotulo: 'Tela inicial com cartões' }
+];
 const PASTA_MOCKUPS = "../mockups/"; // relativa ao protótipo: docs/planejamento/prototipo/ -> docs/planejamento/mockups/
 const UNIDADES = ['AAA', 'BBB', 'CCC'];
 // a tela lê a flag, nunca o nome do perfil; null = sem perfil (fail-closed)
@@ -753,7 +829,8 @@ const estado = {
   perfil: 'administrador', lotacao: 'AAA', resposta: 'success', latencia: 1500,
   unidadeFiltro: '', aba: 0, filtros: { status: '', busca: '', de: '', ate: '' }, ordem: { coluna: 'dtInclusao', asc: false },
   pagina: 1, selecionados: new Set(), expandida: null, pedidoSel: null, confirmarIds: [], formModo: 'criar',
-  tentouSalvar: false, modal: null, abridor: null, focoAntes: null, carregando: false, tela: 'tela-inicio'
+  tentouSalvar: false, modal: null, abridor: null, focoAntes: null, carregando: false, tela: 'tela-inicio',
+  nav: NAVEGACAO, navAberta: false // navAberta = varNavExpandida: recolhível expandido ou gaveta aberta
 };
 const criterioAtual = () => ({ unidade: estado.unidadeFiltro, aba: ABAS[estado.aba].status, ...estado.filtros });
 function filtrar(lista, c) {
@@ -830,6 +907,53 @@ function renderMenu() {
   });
   porId('menu-usuario').textContent = usuario();
   porId('menu-perfil').textContent = `${perfilAtual() ? perfilAtual().rotulo : 'Sem perfil'} · ${estado.unidadeFiltro || 'Todas as unidades'}`;
+  renderNav();
+}
+function renderNav() {
+  const canvas = porId('canvas'), semPerfil = !perfilAtual(), aberta = estado.navAberta;
+  canvas.dataset.navegacao = estado.nav;
+  canvas.classList.toggle('nav-aberta', aberta);
+  porId('menu-topo').hidden = semPerfil;
+  porId('nav-abrir').hidden = semPerfil;
+  porId('nav-abrir').setAttribute('aria-expanded', String(estado.nav === 'gaveta' && aberta));
+  const alternar = porId('menu-alternar'), rotulo = aberta ? 'Recolher menu' : 'Expandir menu';
+  alternar.textContent = aberta ? '‹' : '☰';
+  alternar.setAttribute('aria-expanded', String(aberta));
+  alternar.setAttribute('aria-label', rotulo);
+  alternar.title = rotulo;
+  $$('.topo-item').forEach(a => {
+    a.parentElement.hidden = !podeVer(porId(a.dataset.alvo));
+    if (a.dataset.alvo === estado.tela) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  porId('topo-usuario').textContent = `${usuario()} · ${perfilAtual() ? perfilAtual().rotulo : 'Sem perfil'}`;
+  $$('.cartao').forEach(c => { c.hidden = !podeVer(porId(c.dataset.alvo)); });
+}
+function montarNavegacao() { // a barra no topo e os cartões nascem do menu lateral (uma fonte só)
+  const itens = $$('.menu-item').map(a => ({ a, rotulo: a.textContent.trim(), alvo: a.dataset.alvo, href: a.getAttribute('href') }));
+  porId('topo-titulo').textContent = PROJETO.nome;
+  porId('topo-lista').replaceChildren(...itens.map(i => {
+    const li = document.createElement('li');
+    const link = Object.assign(document.createElement('a'), { className: 'topo-item', href: i.href, textContent: i.rotulo });
+    link.dataset.alvo = i.alvo;
+    li.append(link);
+    return li;
+  }));
+  porId('cartoes').replaceChildren(...itens.filter(i => i.alvo !== 'tela-inicio').map(i => {
+    const cartao = Object.assign(document.createElement('div'), { className: 'cartao' });
+    cartao.setAttribute('role', 'listitem');
+    cartao.dataset.alvo = i.alvo;
+    const abrir = Object.assign(document.createElement('button'), { type: 'button', className: 'btn btn-primario', textContent: 'Abrir ' + i.rotulo });
+    abrir.dataset.acao = 'ir-tela';
+    abrir.dataset.alvo = i.alvo;
+    cartao.append(Object.assign(document.createElement('h3'), { textContent: i.rotulo }),
+      Object.assign(document.createElement('p'), { textContent: i.a.dataset.descricao || '' }), abrir);
+    return cartao;
+  }));
+  itens.forEach(i => { // recolhido: só a inicial (Left(rótulo, 1) no Canvas)
+    i.a.dataset.inicial = i.rotulo.charAt(0);
+    i.a.title = i.rotulo;
+    i.a.replaceChildren(Object.assign(document.createElement('span'), { className: 'menu-rot', textContent: i.rotulo }));
+  });
 }
 function pintarBadge(el, status) {
   el.textContent = rotuloStatus(status);
@@ -946,7 +1070,8 @@ function renderRoteiro() {
 
 /* ===== 8. MODAIS, LOADING E TOAST ===== */
 function atualizarInert() { // véu do Canvas: nada atrás do modal ou do loading responde
-  $$('.menu, .tela').forEach(e => { e.inert = Boolean(estado.modal) || estado.carregando; });
+  $$('.menu, .topo, .nav-abrir, .tela').forEach(e => { e.inert = Boolean(estado.modal) || estado.carregando; });
+  if (estado.nav === 'gaveta' && estado.navAberta) $$('.tela, .nav-abrir').forEach(e => { e.inert = true; }); // véu da gaveta
   $$('.veu').forEach(e => { e.inert = estado.carregando; });
 }
 function focarChave(chave, reserva) {
@@ -1254,6 +1379,14 @@ const ACOES = {
   'toast-fechar': esconderToast,
   aba: b => { estado.aba = Number(b.dataset.aba); reiniciarLista(); },
   'ir-pedidos': b => { estado.aba = Number(b.dataset.aba); reiniciarLista(); irPara('tela-pedidos'); },
+  'ir-tela': b => irPara(b.dataset.alvo),
+  'ir-inicio': () => irPara('tela-inicio'),
+  'nav-alternar': () => {
+    estado.navAberta = !estado.navAberta;
+    renderTudo();
+    if (estado.nav === 'gaveta') { const item = $('.menu-item[aria-current]') || $('.menu-item'); if (item) item.focus(); }
+  },
+  'nav-fechar': () => { estado.navAberta = false; renderTudo(); if (estado.nav === 'gaveta') porId('nav-abrir').focus(); },
   ordenar: b => {
     const coluna = b.dataset.coluna;
     estado.ordem = estado.ordem.coluna === coluna ? { coluna, asc: !estado.ordem.asc } : { coluna, asc: true };
@@ -1310,6 +1443,11 @@ function iniciar() {
   porId('f-status').replaceChildren(opcao('', 'Todos'), ...Object.keys(STATUS).map(s => opcao(s, rotuloStatus(s))));
   porId('ff-solicitante').replaceChildren(opcao('', 'Selecione o solicitante'), ...SOLICITANTES.map(s => opcao(s, s)));
   $$('[data-fx]').forEach(e => { e.textContent = fx[e.dataset.fx]; });
+  montarNavegacao();
+  const selNav = porId('ctl-nav');
+  selNav.replaceChildren(...PADROES_NAV.map(n => opcao(n.id, n.rotulo + (n.id === NAVEGACAO ? ' (design)' : ''))));
+  selNav.value = estado.nav;
+  selNav.addEventListener('change', () => { estado.nav = selNav.value; estado.navAberta = false; renderTudo(); });
   porId('menu-titulo').textContent = PROJETO.nome;
   porId('menu-sub').textContent = PROJETO.modulo;
   porId('pt-versao').textContent = PROJETO.versao;
@@ -1346,9 +1484,16 @@ function iniciar() {
   porId('pt-mockup-sel').addEventListener('change', mostrarMockup);
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape' || estado.carregando) return;
-    if (estado.modal) { e.preventDefault(); fecharModal(); } else if (painelAberto()) alternarPainel(painelAberto());
+    if (estado.modal) { e.preventDefault(); fecharModal(); }
+    else if (estado.nav === 'gaveta' && estado.navAberta) ACOES['nav-fechar']();
+    else if (painelAberto()) alternarPainel(painelAberto());
   });
-  window.addEventListener('hashchange', () => { if (estado.modal) fecharModal(); renderTudo(); focarTitulo(); });
+  window.addEventListener('hashchange', () => {
+    if (estado.modal) fecharModal();
+    if (estado.nav === 'gaveta') estado.navAberta = false;
+    renderTudo();
+    focarTitulo();
+  });
   window.addEventListener('resize', escalar);
   if (!location.hash) history.replaceState(null, '', '#/tela-inicio');
   escalar();

@@ -173,14 +173,24 @@ fxHeaderHeight = 100;;
 fxMenuWidth = If(fxIsCompact; 220; 260);;
 // altura de cada item do menu lateral (usado em: menu-lateral)
 fxMenuItemHeight = 52;;
-// fundo do menu lateral (usado em: menu-lateral)
+// fundo do menu lateral e da barra no topo (usado em: menu-lateral, menu-topo)
 fxColorMenuBg = fxColorPrimaryDark;;
-// fundo do item ativo e do hover do menu (usado em: menu-lateral)
+// fundo do item ativo e do hover do menu (usado em: menu-lateral, menu-topo)
 fxColorMenuItemActive = fxColorPrimary;;
 // largura do menu recolhido (variação recolhível) (usado em: menu-lateral)
 fxNavWidthRecolhida = 70;;
-// largura do menu expandido (variação recolhível) (usado em: menu-lateral)
+// largura do menu expandido (variações recolhível e gaveta) (usado em: menu-lateral)
 fxNavWidthExpandida = 284;;
+// altura da barra de navegação no topo (usado em: menu-topo)
+fxTopNavHeight = 56;;
+// largura de cada item da barra no topo (usado em: menu-topo)
+fxTopNavItemWidth = If(fxIsCompact; 140; 168);;
+// largura do cartão da tela inicial (usado em: inicio-cartoes)
+fxHubCardWidth = If(fxIsCompact; 300; 360);;
+// altura do cartão da tela inicial (usado em: inicio-cartoes)
+fxHubCardHeight = 168;;
+// título do cartão da tela inicial (usado em: inicio-cartoes)
+fxFontSizeCardTitle = If(fxIsCompact; 16; 18);;
 // card de modal pequeno: confirmação simples (usado em: modal-confirmacao)
 fxModalWidthS = 450;;
 // card de modal médio: confirmação com campo (usado em: modal-destrutivo-motivo)

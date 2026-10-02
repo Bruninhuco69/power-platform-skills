@@ -135,6 +135,7 @@ Tela ou flow alterado: a prova final é colar no Studio/designer, ou registrar �
 | `references/decisoes-padrao.md` | passo 1, sempre: padrões decididos (A/C/T/F/B/N/P) |
 | `references/brainstorm-modos.md` | `/pp:brainstorm`: os 4 modos (entrevista, pessoas, problema, mesa redonda) e as personas |
 | `references/brainstorm.md` | `/pp:brainstorm`: condução e roteiro de perguntas (blocos 0 a 11) |
+| `references/navegacao.md` | `/pp:design`: os 5 padrões de navegação, prévias e qual recomendar |
 | `references/design-system-e-telas.md` | `/pp:design`, `/pp:mockups`: design system, inventário, moldura |
 | `references/mockups.md` | `/pp:mockups`: chave OpenAI, modelo variável, spec, erros |
 | `references/matriz-tecnologia.md` | `/pp:arquitetura`: Dataverse × SQL Server, Power BI, SharePoint |

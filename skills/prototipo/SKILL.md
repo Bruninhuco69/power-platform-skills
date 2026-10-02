@@ -34,7 +34,9 @@ Verificador: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/verifi
    no Windows, `open` no macOS, `xdg-open` no Linux) ou o duplo clique. Explique em 3 linhas:
    - o seletor de perfil no topo mostra o app como cada perfil vê;
    - o roteiro guia o passeio pelas telas;
-   - "Comparar com o mockup" abre a imagem de origem.
+   - "Comparar com o mockup" abre a imagem de origem;
+   - o seletor "Navegação" troca o menu ao vivo (o marcado "(design)" é o escolhido); preferir
+     outro padrão é um item de ajuste.
 4. **Protótipo aprovado?** (checkpoint `Conferência`, `AskUserQuestion`):
    - "Aprovado: seguir para a arquitetura";
    - "Precisa de ajustes".

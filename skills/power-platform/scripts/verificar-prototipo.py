@@ -38,7 +38,7 @@ PASTA_PADRAO = "docs/planejamento/prototipo"
 
 CATALOGO_CANVAS = (
     "abas", "badge-status", "barra-filtros", "botoes", "cabecalho-tela", "card-kpi", "estado-vazio",
-    "exportar", "galeria-tabela", "linha-expansivel", "menu-lateral", "modal-confirmacao",
+    "exportar", "galeria-tabela", "inicio-cartoes", "linha-expansivel", "menu-lateral", "menu-topo", "modal-confirmacao",
     "modal-destrutivo-motivo", "modal-formulario", "modal-informativo", "ordenacao-coluna",
     "overlay-loading", "paginacao-cursor", "painel-sem-acesso", "rodape-contagem", "selecao-em-lote",
     "seletor-unidade", "toast",

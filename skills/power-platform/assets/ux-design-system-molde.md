@@ -11,6 +11,18 @@
 Resolução fixa: <largura×altura> · layout manual com controles Classic (T1) · margens <n> ·
 espaçamento base <n> · colunas <n>.
 
+## 2.1 Navegação
+Escolhida pelo usuário no `/pp:design`, com prévia (`power-platform/references/navegacao.md`).
+
+| Item | Decisão |
+|---|---|
+| Padrão | <`lateral-fixo` · `lateral-recolhivel` · `gaveta` · `topo` · `inicio-cartoes`> |
+| Por quê | <dispositivo, frequência de uso, número de áreas> |
+| Componente do catálogo | <`menu-lateral` (variação) · `menu-topo` · `inicio-cartoes`> |
+| Áreas de 1º nível previstas | <do PRD; o inventário de telas confirma na etapa 4> |
+| Estado inicial | <recolhível: fechado ou aberto; gaveta: fechada> |
+| Frase do usuário | <"…", data> |
+
 ## 3. Tokens
 | Família | Token | Valor | Uso |
 |---|---|---|---|
@@ -31,7 +43,7 @@ Tema: único ou claro/escuro. Contraste (texto × fundo efetivo, mínimo 4,5:1):
 ## 4. Componentes escolhidos (catálogo `powerapps-canvas/assets/componentes/`)
 | Padrão de interface | Componente do catálogo | Variações permitidas | Lacuna? |
 |---|---|---|---|
-| menu | | | |
+| navegação (seção 2.1) | | | |
 | galeria com filtros | | | |
 | formulário | | | |
 | modal de confirmação | | | |
