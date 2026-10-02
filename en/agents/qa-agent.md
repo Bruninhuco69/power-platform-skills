@@ -47,7 +47,7 @@ nothing and do not talk to the user. Zero findings is a valid result: do not pad
 
 ## Rules
 
-- Edit nothing. Every claim carries the command and the output, or "[not verified]".
+- Edit nothing. Every claim carries the command and the output, or "[unverified]".
 - A finding without reproducible evidence (`file:line` + the command that finds it again) does not go in.
 - Separate confirmed from inferred.
 - Do what the request says, nothing more. Flawed or incomplete request: do the safe part and state the

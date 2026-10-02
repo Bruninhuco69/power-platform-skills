@@ -683,187 +683,187 @@
     },
     "skills/powerapps-canvas/SKILL.md": {
       "en": "en/skills/powerapps-canvas/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/app-formulas-tokens.md": {
       "en": "en/skills/powerapps-canvas/assets/app-formulas-tokens.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/app-onstart-molde.md": {
       "en": "en/skills/powerapps-canvas/assets/app-onstart-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/INDICE.md": {
       "en": "en/skills/powerapps-canvas/assets/components/INDEX.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/abas.md": {
       "en": "en/skills/powerapps-canvas/assets/components/tabs.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/badge-status.md": {
       "en": "en/skills/powerapps-canvas/assets/components/status-badge.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/barra-filtros.md": {
       "en": "en/skills/powerapps-canvas/assets/components/filter-bar.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/botoes.md": {
       "en": "en/skills/powerapps-canvas/assets/components/buttons.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/cabecalho-tela.md": {
       "en": "en/skills/powerapps-canvas/assets/components/screen-header.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/card-kpi.md": {
       "en": "en/skills/powerapps-canvas/assets/components/kpi-card.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/estado-vazio.md": {
       "en": "en/skills/powerapps-canvas/assets/components/empty-state.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/exportar.md": {
       "en": "en/skills/powerapps-canvas/assets/components/export.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/galeria-tabela.md": {
       "en": "en/skills/powerapps-canvas/assets/components/table-gallery.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/inicio-cartoes.md": {
       "en": "en/skills/powerapps-canvas/assets/components/home-cards.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/linha-expansivel.md": {
       "en": "en/skills/powerapps-canvas/assets/components/expandable-row.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/menu-lateral.md": {
       "en": "en/skills/powerapps-canvas/assets/components/side-menu.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/menu-topo.md": {
       "en": "en/skills/powerapps-canvas/assets/components/top-menu.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/modal-confirmacao.md": {
       "en": "en/skills/powerapps-canvas/assets/components/confirm-modal.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/modal-destrutivo-motivo.md": {
       "en": "en/skills/powerapps-canvas/assets/components/destructive-reason-modal.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/modal-formulario.md": {
       "en": "en/skills/powerapps-canvas/assets/components/form-modal.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/modal-informativo.md": {
       "en": "en/skills/powerapps-canvas/assets/components/info-modal.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/ordenacao-coluna.md": {
       "en": "en/skills/powerapps-canvas/assets/components/column-sort.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/overlay-loading.md": {
       "en": "en/skills/powerapps-canvas/assets/components/loading-overlay.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/paginacao-cursor.md": {
       "en": "en/skills/powerapps-canvas/assets/components/cursor-pagination.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/painel-sem-acesso.md": {
       "en": "en/skills/powerapps-canvas/assets/components/no-access-panel.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/rodape-contagem.md": {
       "en": "en/skills/powerapps-canvas/assets/components/count-footer.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/selecao-em-lote.md": {
       "en": "en/skills/powerapps-canvas/assets/components/bulk-selection.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/seletor-unidade.md": {
       "en": "en/skills/powerapps-canvas/assets/components/unit-selector.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/componentes/toast.md": {
       "en": "en/skills/powerapps-canvas/assets/components/toast.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/assets/tela-molde.md": {
       "en": "en/skills/powerapps-canvas/assets/screen-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/acessibilidade.md": {
       "en": "en/skills/powerapps-canvas/references/accessibility.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/anti-padroes.md": {
       "en": "en/skills/powerapps-canvas/references/anti-patterns.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/chamada-flow.md": {
       "en": "en/skills/powerapps-canvas/references/flow-call.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/delegacao.md": {
       "en": "en/skills/powerapps-canvas/references/delegation.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/design-tokens.md": {
       "en": "en/skills/powerapps-canvas/references/design-tokens.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/escopo-e-permissao.md": {
       "en": "en/skills/powerapps-canvas/references/scope-and-permission.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/estilo.md": {
       "en": "en/skills/powerapps-canvas/references/style.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/licoes-de-campo.md": {
       "en": "en/skills/powerapps-canvas/references/field-lessons.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/nomenclatura.md": {
       "en": "en/skills/powerapps-canvas/references/naming.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/performance.md": {
       "en": "en/skills/powerapps-canvas/references/performance.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/powerfx-essencial.md": {
       "en": "en/skills/powerapps-canvas/references/powerfx-essentials.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/propriedades-inexistentes.md": {
       "en": "en/skills/powerapps-canvas/references/nonexistent-properties.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/timers-async.md": {
       "en": "en/skills/powerapps-canvas/references/timers-async.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/ux-componentes.md": {
       "en": "en/skills/powerapps-canvas/references/ux-components.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/ux-feedback.md": {
       "en": "en/skills/powerapps-canvas/references/ux-feedback.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/references/yaml-pa-formato.md": {
       "en": "en/skills/powerapps-canvas/references/pa-yaml-format.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/powerapps-canvas/scripts/_idioma.py": {
       "en": "en/skills/powerapps-canvas/scripts/_idioma.py",

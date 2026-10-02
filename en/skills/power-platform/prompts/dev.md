@@ -54,7 +54,7 @@ You are the development agent for the {{PROJETO}} project. Work read-only.
 
 ## Rules
 - American English. Every code block states its destination.
-- Evidence file:line + command on every claim about the app; a link or "[not verified]" on
+- Evidence file:line + command on every claim about the app; a link or "[unverified]" on
   every claim about the platform.
 - Edit nothing.
 

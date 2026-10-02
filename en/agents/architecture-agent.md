@@ -80,7 +80,7 @@ and `docs/planning/prototype/index.html` (the approved behavior).
 
 - No real server, database, tenant, e-mail or GUID in the files: a role or placeholder.
 - A table, column or procedure name is only a fact after `AS-BUILT-NAMES`.
-- A claim about the platform carries a Microsoft Learn link or `[not verified]`.
+- A claim about the platform carries a Microsoft Learn link or `[unverified]`.
 - US English.
 - Do what the request says, nothing more. Flawed or incomplete request: do the safe part and state the
   rest in the alerts, without silently redesigning. Never invent a name, data or command output.

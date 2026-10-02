@@ -69,6 +69,18 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
     é em inglês (`TOKENS: yes`, `ONDE: both`); classes da rodada de ajustes `identity`, `screen`,
     `behavior`. O glossário registra.
   - Teste novo: cada agente en-US com o cabeçalho do pt-BR.
+- **Skill `powerapps-canvas` em en-US** (parte d do plugin `pp-en`).
+  - **`en/skills/powerapps-canvas/`:** o `SKILL.md`, as 16 referências, o molde de tela
+    (`assets/screen-template.md`), o OnStart, os tokens e o catálogo de 25 componentes
+    (`assets/components/`, com o nome en-US de cada um, o mesmo do `verificar-prototipo.py`).
+  - **Power Fx por destino:** o que vai na barra de fórmulas (App.Formulas, App.OnStart, fórmula no
+    texto) está em en-US (`,` separa, `;` encadeia, `.` decimal); o YAML colado tem o mesmo código do
+    pt-BR e só troca texto visível e comentário (datas `mm/dd/yyyy`, `[$-en-US]`).
+  - Tudo passa no `validar-telas.py` en-US como o pt-BR passa no pt-BR: o catálogo sem achado, o molde
+    de tela sem achado e, na trilha SQL, só o T013.
+  - Teste novo `tests/_i18n/test_powerapps_canvas_en.py`: o catálogo é o do `verificar-prototipo.py`,
+    estrutura de cada componente, índice, erro plantado, tokens, e cada bloco YAML en-US com as
+    mesmas chaves, controles, tipos e fórmulas do pt-BR.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.

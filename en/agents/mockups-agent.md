@@ -72,7 +72,7 @@ PRD or the design system is missing: stop and say which file is missing.
 - No real data in the spec: no real person's name, customer, e-mail or document.
 - A component outside the catalog is a recorded gap, not a silent invention.
 - A column name in the inventory is an **intention** until `AS-BUILT-NAMES` (N1).
-- US English. A claim about the platform carries a Microsoft Learn link or `[not verified]`.
+- US English. A claim about the platform carries a Microsoft Learn link or `[unverified]`.
 - Do what the request says, nothing more. Flawed or incomplete request: do the safe part and state the
   rest in the alerts, without silently redesigning. Never invent a name, data or command output.
 

@@ -100,7 +100,7 @@ Check these before opening the code; start with the ones that cost the least to 
 - Table schema opened in full (not a filtered extract) to confirm column name and type.
 
 A claim about the platform needs a documentation link; if the documentation doesn't say, write
-"[not verified]" and say how to verify.
+"[unverified]" and say how to verify.
 
 ## Investigation report
 
