@@ -43,9 +43,10 @@ Depois é só seguir o bloco **Próximo passo** que fecha cada etapa. Requisitos
 instalar estão em [Instalação](#instalação).
 
 > **Idioma.** O kit é mantido em **português do Brasil (pt-BR)** e **inglês (en-US)**, e toda
-> alteração entra nas duas línguas. Hoje as etapas, as regras, os moldes, este README e o site estão
-> em pt-BR; a versão en-US está em construção. O Power Fx segue a barra de fórmulas de cada idioma:
-> no pt-BR, `;` separa argumentos e `;;` encadeia; no en-US, `,` e `;`.
+> alteração entra nas duas línguas. As duas edições estão completas: `pp` (pt-BR, `/pp:novo` …) e
+> `pp-en` (en-US, `/pp-en:new` …), com as mesmas etapas, regras, moldes e validadores; o README, o
+> site, o diagrama 3D e o PDF existem nas duas línguas. O Power Fx segue a barra de fórmulas de cada
+> idioma: no pt-BR, `;` separa argumentos e `;;` encadeia; no en-US, `,` e `;`.
 
 ## Por que existe
 
@@ -505,8 +506,6 @@ Para barrar também os nomes internos da sua organização, crie `tools/sanitiza
 ## Próximos passos
 
 - **Skill `power-bi` completa**, no mesmo nível desta: modelo estrela, Power Query M e DAX. É a próxima.
-- **Versão en-US completa**, em construção: README, site, diagrama, PDF e o plugin `pp-en` no mesmo
-  marketplace. Daqui em diante, toda alteração entra em pt-BR e en-US.
 - Um `gate.py` único que roda todos os validadores das camadas que uma onda tocou.
 - Um conferidor de nomes que compara telas e fluxos com o `NOMES-AS-BUILT`.
 - Avaliações de gatilho para a descrição de cada skill.

@@ -39,18 +39,14 @@ agents that build and prove what they did, and you only where a person is needed
 /pp-en:new an app to track orders across units
 ```
 
-> **Coming soon:** the `pp-en` plugin (English commands, `/pp-en:*`) is being translated and has no
-> skills yet. Until it ships, install `pp`, the pt-BR edition of the same pipeline (`/pp:novo` and so
-> on): see [Installation](#installation).
-
 Then just follow the **Next step** block that closes each stage. Requirements and other ways to
 install are in [Installation](#installation).
 
 > **Language.** The kit is maintained in **Brazilian Portuguese (pt-BR)** and **English (en-US)**,
-> and every change lands in both languages. This README, the site, the 3D diagram and the PDF are
-> already in en-US; the stages, rules and templates (the `pp-en` plugin) are being translated. Power
-> Fx follows each language's formula bar: in en-US, `,` separates arguments and `;` chains; in
-> pt-BR, `;` and `;;`.
+> and every change lands in both languages. Both editions are complete: `pp-en` (en-US, `/pp-en:new`
+> …) and `pp` (pt-BR, `/pp:novo` …) carry the same stages, rules, templates and validators, and the
+> README, the site, the 3D diagram and the PDF exist in both. Power Fx follows each language's
+> formula bar: in en-US, `,` separates arguments and `;` chains; in pt-BR, `;` and `;;`.
 
 ## Why it exists
 
@@ -216,9 +212,8 @@ Inside Claude Code:
 /plugin install pp-en@power-platform-kit
 ```
 
-> **`pp-en` is coming soon.** The English plugin is already listed in the marketplace, but its
-> skills are still being translated. Until then, install the pt-BR edition, which works today:
-> `/plugin install pp@power-platform-kit` (commands `/pp:novo` … `/pp:publicar`).
+> **pt-BR edition.** The same pipeline in Brazilian Portuguese is the `pp` plugin, in the same
+> marketplace: `/plugin install pp@power-platform-kit` (commands `/pp:novo` … `/pp:publicar`).
 
 Or from the terminal:
 
@@ -517,8 +512,6 @@ git) with one regex per line.
 
 - **A full `power-bi` skill**, at the same level as this one: star schema, Power Query M and DAX.
   It's next.
-- **The complete en-US version**: README, site, diagram and PDF are done; the `pp-en` plugin, in the
-  same marketplace, is being translated. From now on, every change lands in pt-BR and en-US.
 - A single `gate.py` that runs every validator for the layers a wave touched.
 - A name checker that compares screens and flows against `AS-BUILT-NAMES`.
 - Trigger evaluations for each skill's description.

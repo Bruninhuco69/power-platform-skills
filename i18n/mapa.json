@@ -63,39 +63,39 @@
     },
     "skills/dataverse/SKILL.md": {
       "en": "en/skills/dataverse/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/assets/nomes-as-built-molde.md": {
       "en": "en/skills/dataverse/assets/as-built-names-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/references/delegacao-dataverse.md": {
       "en": "en/skills/dataverse/references/dataverse-delegation.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/references/importacao-dados.md": {
       "en": "en/skills/dataverse/references/data-import.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/references/licoes-de-campo.md": {
       "en": "en/skills/dataverse/references/field-lessons.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/references/modelagem.md": {
       "en": "en/skills/dataverse/references/modeling.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/references/nomes-as-built.md": {
       "en": "en/skills/dataverse/references/as-built-names.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/references/nomes-e-tipos.md": {
       "en": "en/skills/dataverse/references/names-and-types.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/references/seguranca.md": {
       "en": "en/skills/dataverse/references/security.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/dataverse/scripts/_idioma.py": {
       "en": "en/skills/dataverse/scripts/_idioma.py",
@@ -887,59 +887,59 @@
     },
     "skills/sql-procedures/SKILL.md": {
       "en": "en/skills/sql-procedures/SKILL.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/assets/contrato-procedure-molde.md": {
       "en": "en/skills/sql-procedures/assets/procedure-contract-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/assets/funcao-leitura-molde.sql": {
       "en": "en/skills/sql-procedures/assets/read-function-template.sql",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/assets/pedido-ddl-dba-molde.md": {
       "en": "en/skills/sql-procedures/assets/dba-ddl-request-template.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/assets/procedure-escrita-molde.sql": {
       "en": "en/skills/sql-procedures/assets/write-procedure-template.sql",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/colunas-calculadas-delegacao.md": {
       "en": "en/skills/sql-procedures/references/computed-columns-delegation.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/contrato-proc-flow.md": {
       "en": "en/skills/sql-procedures/references/proc-flow-contract.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/deploy-e-dba.md": {
       "en": "en/skills/sql-procedures/references/deploy-and-dba.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/escopo-por-unidade.md": {
       "en": "en/skills/sql-procedures/references/unit-scope.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/licoes-de-campo.md": {
       "en": "en/skills/sql-procedures/references/field-lessons.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/migracao-dados.md": {
       "en": "en/skills/sql-procedures/references/data-migration.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/modelo-de-dados.md": {
       "en": "en/skills/sql-procedures/references/data-model.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/padrao-procedure.md": {
       "en": "en/skills/sql-procedures/references/procedure-standard.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/references/seguranca-e-permissoes.md": {
       "en": "en/skills/sql-procedures/references/security-and-permissions.md",
-      "situacao": "pendente"
+      "situacao": "feito"
     },
     "skills/sql-procedures/scripts/_idioma.py": {
       "en": "en/skills/sql-procedures/scripts/_idioma.py",

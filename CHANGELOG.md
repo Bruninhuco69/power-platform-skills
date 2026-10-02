@@ -94,6 +94,20 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
   - Teste novo `tests/_i18n/test_power_automate_en.py` (com `tests/_i18n/_fluxo.py`): mesmos
     componentes do pt-BR, cada um limpo no verificador en-US, `.md` com o mesmo JSON e as seções,
     índice completo, e cada JSON en-US com as mesmas chaves, tipos, expressões e GUIDs do pt-BR.
+- **Skills `sql-procedures` e `dataverse` em en-US** (parte f; o plugin `pp-en` fica completo).
+  - **`en/skills/sql-procedures/`:** o `SKILL.md`, as 9 referências e os 4 moldes (procedure de
+    gravação, função de leitura, contrato e pedido de DDL ao DBA). O SQL é o mesmo do pt-BR: muda
+    só comentário e texto; nomes, marcadores e códigos (`N'NAO_APLICADO'`) ficam. Tudo passa no
+    `lint-procedure.py` en-US com `0 error(s), 0 warning(s)` e os mesmos objetos do pt-BR.
+  - **`en/skills/dataverse/`:** o `SKILL.md`, as 7 referências e o molde `AS-BUILT-NAMES`, com o
+    cabeçalho que o `extrair-nomes-as-built.py` en-US gera. A fórmula da barra está em en-US (`,`
+    separa, `;` encadeia).
+  - Teste novo `tests/_i18n/test_sql_dataverse_en.py` (com `tests/_i18n/_sql.py`): lint en-US limpo,
+    cada arquivo com o mesmo SQL do pt-BR, fórmula do Dataverse sem `;` de argumento nem `;;`, e o
+    molde as-built com o cabeçalho do script nos dois idiomas.
+  - **`i18n/glossario.md`:** a regra do código colado (marcador e nome de exemplo ficam).
+  - **READMEs e site:** sai o "em breve" do `pp-en`; o `README.en.md` instala com
+    `/plugin install pp-en@power-platform-kit` e aponta o `pp` como a edição pt-BR.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.

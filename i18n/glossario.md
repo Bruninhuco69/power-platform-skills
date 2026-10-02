@@ -61,6 +61,11 @@ kit está em `i18n/mapa.json`; aqui ficam os nomes que não são arquivo do kit.
 - Power Fx en-US: `,` separa argumento, `;` encadeia, `.` decimal. YAML colado (`.pa.yaml`) é igual
   nos dois idiomas.
 - Nome de coluna, tabela, variável, chave de JSON e código fica igual; traduzem comentário e texto.
+- Código colado (JSON de flow, YAML de tela, SQL) é o mesmo do pt-BR: dentro dele, o marcador
+  (`<prefixo>_`, `<SIGLA>_<Entidade>`, `<conta_do_conector>`) e o nome de exemplo (`Pedidos`,
+  `situacao`, `dbo.Unidade`) ficam; muda só comentário e texto ao usuário. Literal que é código
+  (`'GRAVADO'`, `N'aberto'`, `'TokenInvalido'`) fica. Na prosa, marcador descritivo vai para o inglês
+  (`<YYYY-MM-DD>`, `<environment>`). Os testes `tests/_i18n/` conferem JSON, YAML e SQL contra o pt-BR.
 - Componente do catálogo Canvas tem nome en-US, o do arquivo do catálogo (`cabecalho-tela` →
   `screen-header`; a lista é o `_CATALOGO_EN` do `verificar-prototipo.py`). Ficam como no pt-BR, porque
   script lê: id de padrão de navegação (`lateral-fixo`, `gaveta`, `inicio-cartoes`…), chave de perfil
