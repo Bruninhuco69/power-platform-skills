@@ -1,0 +1,481 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": { "defaultValue": {}, "type": "Object" },
+    "$authentication": { "defaultValue": {}, "type": "SecureObject" }
+  },
+  "triggers": {
+    "manual": {
+      "type": "Request",
+      "kind": "Button",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "title": "Plano",
+              "type": "object",
+              "x-ms-dynamically-added": true,
+              "description": "O plano-dataverse.json gerado pelo montar-carga-mockup.py --flow",
+              "x-ms-content-hint": "FILE",
+              "properties": {
+                "name": { "type": "string" },
+                "contentBytes": { "type": "string", "format": "byte" }
+              }
+            },
+            "text": {
+              "title": "Solução",
+              "type": "string",
+              "x-ms-dynamically-added": true,
+              "description": "Nome exclusivo da solução não gerenciada (Soluções, coluna Nome)",
+              "x-ms-content-hint": "TEXT"
+            }
+          },
+          "required": ["file", "text"]
+        }
+      },
+      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0001" }
+    }
+  },
+  "actions": {
+    "Iniciar_Falhou": {
+      "type": "InitializeVariable",
+      "inputs": { "variables": [{ "name": "Falhou", "type": "boolean", "value": false }] },
+      "runAfter": {},
+      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0002" }
+    },
+    "Iniciar_Ja_existe": {
+      "type": "InitializeVariable",
+      "inputs": { "variables": [{ "name": "Ja_existe", "type": "boolean", "value": false }] },
+      "runAfter": { "Iniciar_Falhou": ["Succeeded"] },
+      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0003" }
+    },
+    "Iniciar_Relatorio": {
+      "type": "InitializeVariable",
+      "inputs": { "variables": [{ "name": "Relatorio", "type": "array", "value": [] }] },
+      "runAfter": { "Iniciar_Ja_existe": ["Succeeded"] },
+      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0004" }
+    },
+    "Construtor": {
+      "type": "Scope",
+      "description": "Lê o plano, confere a solução e roda os passos um a um. Um passo que já existe é pulado; o primeiro erro para o resto.",
+      "actions": {
+        "Ler_plano": {
+          "type": "Compose",
+          "inputs": "@base64ToString(triggerBody()?['file']?['contentBytes'])",
+          "runAfter": {},
+          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0010" }
+        },
+        "Plano_bruto": {
+          "type": "Compose",
+          "inputs": "@json(outputs('Ler_plano'))",
+          "runAfter": { "Ler_plano": ["Succeeded"] },
+          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0011" }
+        },
+        "Consultar_solucao": {
+          "type": "OpenApiConnection",
+          "description": "A solução dá o prefixo do publisher e o prefixo de valor de opção que o plano deixou em aberto.",
+          "inputs": {
+            "parameters": {
+              "request/method": "GET",
+              "request/url": "@concat('/api/data/v9.2/solutions?$select=uniquename,ismanaged&$expand=publisherid($select=customizationprefix,customizationoptionvalueprefix)&$filter=uniquename%20eq%20''', trim(triggerBody()?['text']), '''')",
+              "request/headers": { "Accept": "application/json", "OData-MaxVersion": "4.0", "OData-Version": "4.0" }
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_webcontents",
+              "connection": "shared_webcontents",
+              "operationId": "InvokeHttp"
+            }
+          },
+          "runAfter": { "Plano_bruto": ["Succeeded"] },
+          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0012" }
+        },
+        "Consultar_idioma": {
+          "type": "OpenApiConnection",
+          "description": "O idioma base do ambiente: os rótulos vão nele.",
+          "inputs": {
+            "parameters": {
+              "request/method": "GET",
+              "request/url": "/api/data/v9.2/organizations?$select=languagecode",
+              "request/headers": { "Accept": "application/json", "OData-MaxVersion": "4.0", "OData-Version": "4.0" }
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_webcontents",
+              "connection": "shared_webcontents",
+              "operationId": "InvokeHttp"
+            }
+          },
+          "runAfter": { "Consultar_solucao": ["Succeeded"] },
+          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0013" }
+        },
+        "Lidos": {
+          "type": "Compose",
+          "description": "O conector pode devolver o JSON como objeto ou como texto: string() e json() servem aos dois.",
+          "inputs": {
+            "solucao": "@first(json(string(body('Consultar_solucao')))?['value'])",
+            "idioma": "@first(json(string(body('Consultar_idioma')))?['value'])"
+          },
+          "runAfter": { "Consultar_idioma": ["Succeeded"] },
+          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0015" }
+        },
+        "Ambiente": {
+          "type": "Compose",
+          "inputs": {
+            "solucao": "@outputs('Lidos')?['solucao']?['uniquename']",
+            "gerenciada": "@outputs('Lidos')?['solucao']?['ismanaged']",
+            "prefixo": "@toLower(coalesce(outputs('Lidos')?['solucao']?['publisherid']?['customizationprefix'], ''))",
+            "opcao": "@string(outputs('Lidos')?['solucao']?['publisherid']?['customizationoptionvalueprefix'])",
+            "idioma": "@string(coalesce(outputs('Lidos')?['idioma']?['languagecode'], 1046))",
+            "formato": "@outputs('Plano_bruto')?['formato']"
+          },
+          "runAfter": { "Lidos": ["Succeeded"] },
+          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0014" }
+        },
+        "Conferir_ambiente": {
+          "type": "If",
+          "expression": {
+            "and": [
+              { "equals": ["@outputs('Ambiente')?['formato']", "plano-dataverse/1"] },
+              { "not": { "equals": ["@empty(outputs('Ambiente')?['prefixo'])", true] } },
+              { "equals": ["@outputs('Ambiente')?['gerenciada']", false] }
+            ]
+          },
+          "actions": {
+            "Anotar_solucao": {
+              "type": "AppendToArrayVariable",
+              "description": "A 1ª linha do relatório: confira o prefixo antes de tudo (crNNN costuma ser do publisher padrão).",
+              "inputs": {
+                "name": "Relatorio",
+                "value": {
+                  "n": 0,
+                  "fase": "ambiente",
+                  "rotulo": "Solução e publisher",
+                  "resultado": "conferido",
+                  "detalhe": "@concat('Solução ', outputs('Ambiente')?['solucao'], ', prefixo ', outputs('Ambiente')?['prefixo'], ', prefixo de opção ', outputs('Ambiente')?['opcao'], ', idioma ', outputs('Ambiente')?['idioma'], '.')"
+                }
+              },
+              "runAfter": {},
+              "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0053" }
+            },
+            "Passos": {
+              "type": "Foreach",
+              "description": "Um passo de cada vez: metadado em paralelo esbarra em bloqueio de customização.",
+              "foreach": "@outputs('Plano_bruto')?['passos']",
+              "actions": {
+                "Seguir": {
+                  "type": "If",
+                  "expression": { "and": [{ "equals": ["@equals(variables('Falhou'), false)", "@true"] }] },
+                  "actions": {
+                    "Passo": {
+                      "type": "Compose",
+                      "description": "Troca os marcadores pelos dados da solução e do ambiente, um passo por vez: o plano inteiro passaria do limite de tamanho de expressão.",
+                      "inputs": "@json(replace(replace(replace(string(items('Passos')), '{{prefixo}}', outputs('Ambiente')?['prefixo']), '{{opcao}}', outputs('Ambiente')?['opcao']), '{{idioma}}', outputs('Ambiente')?['idioma']))",
+                      "runAfter": {},
+                      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0020" }
+                    },
+                    "Zerar": {
+                      "type": "SetVariable",
+                      "inputs": { "name": "Ja_existe", "value": false },
+                      "runAfter": { "Passo": ["Succeeded"] },
+                      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0030" }
+                    },
+                    "Tentar": {
+                      "type": "Scope",
+                      "actions": {
+                        "Tem_consulta": {
+                          "type": "If",
+                          "expression": { "and": [{ "equals": ["@not(empty(outputs('Passo')?['existe']))", "@true"] }] },
+                          "actions": {
+                            "Consultar": {
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "request/method": "GET",
+                                  "request/url": "@outputs('Passo')?['existe']",
+                                  "request/headers": {
+                                    "Accept": "application/json",
+                                    "OData-MaxVersion": "4.0",
+                                    "OData-Version": "4.0",
+                                    "Consistency": "Strong"
+                                  }
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_webcontents",
+                                  "connection": "shared_webcontents",
+                                  "operationId": "InvokeHttp"
+                                }
+                              },
+                              "runAfter": {},
+                              "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0031" }
+                            },
+                            "Marcar_existe": {
+                              "type": "SetVariable",
+                              "inputs": {
+                                "name": "Ja_existe",
+                                "value": "@greater(length(coalesce(json(string(body('Consultar')))?['value'], json('[]'))), 0)"
+                              },
+                              "runAfter": { "Consultar": ["Succeeded"] },
+                              "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0032" }
+                            }
+                          },
+                          "else": { "actions": {} },
+                          "runAfter": {},
+                          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0033" }
+                        },
+                        "Precisa_enviar": {
+                          "type": "If",
+                          "expression": { "and": [{ "equals": ["@equals(variables('Ja_existe'), false)", "@true"] }] },
+                          "actions": {
+                            "Enviar": {
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "request/method": "@outputs('Passo')?['metodo']",
+                                  "request/url": "@outputs('Passo')?['url']",
+                                  "request/headers": {
+                                    "Content-Type": "@outputs('Passo')?['tipo']",
+                                    "Accept": "application/json",
+                                    "OData-MaxVersion": "4.0",
+                                    "OData-Version": "4.0",
+                                    "MSCRM.SolutionUniqueName": "@outputs('Ambiente')?['solucao']"
+                                  },
+                                  "request/body": "@outputs('Passo')?['corpo']"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_webcontents",
+                                  "connection": "shared_webcontents",
+                                  "operationId": "InvokeHttp"
+                                }
+                              },
+                              "runAfter": {},
+                              "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0034" }
+                            },
+                            "Eh_lote": {
+                              "type": "If",
+                              "description": "O lote recusado costuma voltar como erro do Enviar (cai no Capturar); se voltar 200, o erro vem dentro da resposta.",
+                              "expression": { "and": [{ "equals": ["@outputs('Passo')?['fase']", "dados"] }] },
+                              "actions": {
+                                "Resposta_lote": {
+                                  "type": "Compose",
+                                  "inputs": "@base64ToString(body('Enviar')?['$content'])",
+                                  "runAfter": {},
+                                  "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0035" }
+                                },
+                                "Lote_com_erro": {
+                                  "type": "If",
+                                  "expression": {
+                                    "or": [
+                                      { "contains": ["@outputs('Resposta_lote')", "HTTP/1.1 4"] },
+                                      { "contains": ["@outputs('Resposta_lote')", "HTTP/1.1 5"] }
+                                    ]
+                                  },
+                                  "actions": {
+                                    "Marcar_lote": {
+                                      "type": "SetVariable",
+                                      "inputs": { "name": "Falhou", "value": true },
+                                      "runAfter": {},
+                                      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0036" }
+                                    },
+                                    "Anotar_lote": {
+                                      "type": "AppendToArrayVariable",
+                                      "inputs": {
+                                        "name": "Relatorio",
+                                        "value": {
+                                          "n": "@outputs('Passo')?['n']",
+                                          "fase": "@outputs('Passo')?['fase']",
+                                          "rotulo": "@outputs('Passo')?['rotulo']",
+                                          "resultado": "falhou",
+                                          "detalhe": "@take(outputs('Resposta_lote'), 1500)"
+                                        }
+                                      },
+                                      "runAfter": { "Marcar_lote": ["Succeeded"] },
+                                      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0037" }
+                                    }
+                                  },
+                                  "else": { "actions": {} },
+                                  "runAfter": { "Resposta_lote": ["Succeeded"] },
+                                  "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0038" }
+                                }
+                              },
+                              "else": { "actions": {} },
+                              "runAfter": { "Enviar": ["Succeeded"] },
+                              "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0039" }
+                            }
+                          },
+                          "else": { "actions": {} },
+                          "runAfter": { "Tem_consulta": ["Succeeded"] },
+                          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c003a" }
+                        }
+                      },
+                      "runAfter": { "Zerar": ["Succeeded"] },
+                      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c003b" }
+                    },
+                    "Anotar": {
+                      "type": "If",
+                      "expression": { "and": [{ "equals": ["@equals(variables('Falhou'), false)", "@true"] }] },
+                      "actions": {
+                        "Anotar_ok": {
+                          "type": "AppendToArrayVariable",
+                          "inputs": {
+                            "name": "Relatorio",
+                            "value": {
+                              "n": "@outputs('Passo')?['n']",
+                              "fase": "@outputs('Passo')?['fase']",
+                              "rotulo": "@outputs('Passo')?['rotulo']",
+                              "resultado": "@if(variables('Ja_existe'), 'já existia', 'feito')"
+                            }
+                          },
+                          "runAfter": {},
+                          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c003c" }
+                        }
+                      },
+                      "else": { "actions": {} },
+                      "runAfter": { "Tentar": ["Succeeded"] },
+                      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c003d" }
+                    },
+                    "Capturar": {
+                      "type": "Scope",
+                      "actions": {
+                        "Marcar_falha": {
+                          "type": "SetVariable",
+                          "inputs": { "name": "Falhou", "value": true },
+                          "runAfter": {},
+                          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c003e" }
+                        },
+                        "Anotar_falha": {
+                          "type": "AppendToArrayVariable",
+                          "inputs": {
+                            "name": "Relatorio",
+                            "value": {
+                              "n": "@outputs('Passo')?['n']",
+                              "fase": "@outputs('Passo')?['fase']",
+                              "rotulo": "@outputs('Passo')?['rotulo']",
+                              "resultado": "falhou",
+                              "detalhe": "@take(concat('Consultar ', string(coalesce(outputs('Consultar')?['statusCode'], '-')), ' / Enviar ', string(coalesce(outputs('Enviar')?['statusCode'], '-')), ': ', base64ToString(coalesce(body('Enviar')?['$content'], base64(string(coalesce(body('Enviar'), body('Consultar'), '')))))), 1500)"
+                            }
+                          },
+                          "runAfter": { "Marcar_falha": ["Succeeded"] },
+                          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c003f" }
+                        }
+                      },
+                      "runAfter": { "Tentar": ["Failed", "TimedOut", "Skipped"] },
+                      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0040" }
+                    },
+                    "Pausa": {
+                      "type": "Wait",
+                      "description": "O conector HTTP com Microsoft Entra ID aceita 100 chamadas por minuto por conexão.",
+                      "inputs": { "interval": { "count": 2, "unit": "Second" } },
+                      "runAfter": {
+                        "Anotar": ["Succeeded", "Skipped"],
+                        "Capturar": ["Succeeded", "Failed", "Skipped"]
+                      },
+                      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0041" }
+                    }
+                  },
+                  "else": {
+                    "actions": {
+                      "Anotar_pulado": {
+                        "type": "AppendToArrayVariable",
+                        "inputs": {
+                          "name": "Relatorio",
+                          "value": {
+                            "n": "@items('Passos')?['n']",
+                            "fase": "@items('Passos')?['fase']",
+                            "rotulo": "@items('Passos')?['rotulo']",
+                            "resultado": "não executado"
+                          }
+                        },
+                        "runAfter": {},
+                        "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0044" }
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0042" }
+                }
+              },
+              "runAfter": { "Anotar_solucao": ["Succeeded"] },
+              "runtimeConfiguration": { "concurrency": { "repetitions": 1 } },
+              "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0043" }
+            }
+          },
+          "else": {
+            "actions": {
+              "Marcar_ambiente": {
+                "type": "SetVariable",
+                "inputs": { "name": "Falhou", "value": true },
+                "runAfter": {},
+                "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0050" }
+              },
+              "Anotar_ambiente": {
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "Relatorio",
+                  "value": {
+                    "n": 0,
+                    "fase": "ambiente",
+                    "rotulo": "Conferência da solução e do plano",
+                    "resultado": "falhou",
+                    "detalhe": "@concat('Solução ', trim(triggerBody()?['text']), ': ', if(empty(outputs('Ambiente')?['prefixo']), 'não encontrada (use o nome exclusivo, coluna Nome em Soluções). ', if(equals(outputs('Ambiente')?['gerenciada'], true), 'é gerenciada; use uma não gerenciada. ', 'encontrada. ')), if(equals(outputs('Ambiente')?['formato'], 'plano-dataverse/1'), '', 'O arquivo não é um plano-dataverse.json do kit.'))"
+                  }
+                },
+                "runAfter": { "Marcar_ambiente": ["Succeeded"] },
+                "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0051" }
+              }
+            }
+          },
+          "runAfter": { "Ambiente": ["Succeeded"] },
+          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0052" }
+        },
+        "Fechar": {
+          "type": "If",
+          "description": "Sem Log nem resposta: o histórico da execução é o relatório, e uma falha encerra a execução como Falha.",
+          "expression": {
+            "or": [
+              { "equals": ["@equals(variables('Falhou'), true)", "@true"] },
+              { "not": { "equals": ["@actions('Conferir_ambiente')?['status']", "Succeeded"] } }
+            ]
+          },
+          "actions": {
+            "Falhas": {
+              "type": "Query",
+              "inputs": {
+                "from": "@skip(variables('Relatorio'), 0)",
+                "where": "@equals(item()?['resultado'], 'falhou')"
+              },
+              "runAfter": {},
+              "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0063" }
+            },
+            "Encerrar_com_erro": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Failed",
+                "runError": {
+                  "code": "ConstrutorFalhou",
+                  "message": "@if(empty(body('Falhas')), 'Nenhuma falha anotada: abra a execução e veja a primeira ação com erro (plano ilegível, conexão ou permissão).', string(first(body('Falhas'))))"
+                }
+              },
+              "runAfter": { "Falhas": ["Succeeded"] },
+              "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0060" }
+            }
+          },
+          "else": {
+            "actions": {
+              "Resumo": {
+                "type": "Compose",
+                "inputs": "@skip(variables('Relatorio'), 0)",
+                "runAfter": {},
+                "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0061" }
+              }
+            }
+          },
+          "runAfter": { "Conferir_ambiente": ["Succeeded", "Failed", "TimedOut", "Skipped"] },
+          "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0062" }
+        }
+      },
+      "runAfter": { "Iniciar_Relatorio": ["Succeeded"] },
+      "metadata": { "operationMetadataId": "00000000-0000-0000-0000-0000000c0070" }
+    }
+  }
+}

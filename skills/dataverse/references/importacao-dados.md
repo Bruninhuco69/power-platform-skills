@@ -28,6 +28,14 @@ Para evitar: **crie Choices, tabelas, colunas, Lookups e alternate keys primeiro
 **para** essa estrutura, mapeando cada coluna do arquivo para a coluna existente. Importar para
 tabela nova gerada pelo assistente só vale quando todas as colunas **devem** ser texto.
 
+Exceção: a **carga mockup** do `/pp:arquitetura` (`skills/power-platform/references/carga-mockup.md`) é feita para isso.
+- Ela cria a estrutura **com dado fictício**, deixa a dedução de tipo errar ali e passa pela
+  conferência (`montar-carga-mockup.py --conferir`) antes de qualquer dado real.
+- Recriar uma coluna que só tem linha mockup é de graça.
+- Ou, sem dedução: o construtor (`skills/power-platform/references/construtor-dataverse.md`) cria
+  as tabelas, as colunas com o tipo do spec, os Lookups e as linhas mockup pela Web API.
+- O dado real continua entrando por esta referência, para tabela que já existe.
+
 ## 2. Escolha do caminho
 
 | Caminho | Quando | Atenção |
@@ -46,7 +54,7 @@ Este documento descreve a prática dos projetos de referência (CSV); detalhes d
 
 ```
 1. Criar as Choices (globais, se compartilhadas)
-2. Criar as tabelas e as colunas (Lookup incluído)
+2. Criar as tabelas e as colunas (Lookup incluído) — à mão, pela carga mockup ou pelo construtor, conferida com --conferir
 3. Criar as alternate keys  →  esperar EntityKeyIndexStatus = Active
 4. Extrair o as-built e conferir contra o plano            (references/nomes-as-built.md)
 5. Importar, em ordem de dependência: catálogos → perfis/usuários → vínculos → transacionais → trilha
@@ -66,7 +74,7 @@ Passo 3 não é detalhe: chave `Pending` **não resolve Lookup na importação e
 |---|---|
 | Encoding | UTF-8 **com BOM** (o assistente do maker lê acento sem quebrar) |
 | Separador | `,` — o import não aceita `;` de forma confiável. O CSV de **saída** para Excel pt-BR usa `;`: são arquivos de propósitos diferentes |
-| Data | ISO: `AAAA-MM-DD` (data) e `AAAA-MM-DDTHH:MM:SSZ` (data e hora) |
+| Data | ISO: `AAAA-MM-DD` (data) e `AAAA-MM-DDTHH:MM:SSZ` (data e hora). A importação da planilha já trocou dia e mês: confira uma data depois de importar (`licoes-de-campo.md` §8) |
 | Yes/No | Rótulo do ambiente (`Sim`/`Não` em pt-BR) |
 | Choice | **Rótulo** da opção (não o valor inteiro) |
 | Lookup | Valor da coluna de nome principal do alvo, ou da chave alternativa escolhida na etapa de mapeamento |

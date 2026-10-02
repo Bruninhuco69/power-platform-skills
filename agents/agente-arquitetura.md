@@ -1,6 +1,6 @@
 ---
 name: agente-arquitetura
-description: "Agente de Arquitetura do pipeline /pp (etapa 6, chamado por /pp:arquitetura depois que o usuário escolheu a trilha de dados). Escreve o modelo de dados, as permissões, as integrações, o contrato app↔flow, o ADR da trilha, os scripts de dados (procedures SQL ou modelo Dataverse) e a fila de construção GOAL.md em ondas. Não escreve tela nem fluxo e não decide a trilha."
+description: "Agente de Arquitetura do pipeline /pp (etapa 6, chamado por /pp:arquitetura depois que o usuário escolheu a trilha de dados). Escreve o modelo de dados, as permissões, as integrações, o contrato app↔flow, o ADR da trilha, os scripts de dados (procedures SQL ou modelo Dataverse), a carga mockup das tabelas e a fila de construção GOAL.md em ondas. Não escreve tela nem fluxo e não decide a trilha."
 tools: Read, Grep, Glob, Write, Edit, Bash
 color: blue
 effort: high
@@ -27,6 +27,8 @@ e `docs/planejamento/prototipo/index.html` (o comportamento aprovado).
 4. A skill da trilha: `KIT/skills/sql-procedures/SKILL.md` (SQL) ou `KIT/skills/dataverse/SKILL.md`
    (Dataverse), e as referências que ela mandar para modelagem, segurança e escopo.
 5. `KIT/skills/power-automate/references/contrato-app-flow.md` e `autorizacao-no-flow.md`.
+6. `KIT/skills/power-platform/references/carga-mockup.md` e `KIT/skills/power-platform/assets/carga-mockup-molde.json`;
+   no Dataverse, também `KIT/skills/power-platform/references/construtor-dataverse.md` §1–§3 e §8.
 
 ## Método
 
@@ -47,11 +49,23 @@ e `docs/planejamento/prototipo/index.html` (o comportamento aprovado).
      Você não escreve o corpo das procedures: quem escreve é o `agente-sql`, um por grupo, em
      paralelo. Agrupe por funcionalidade, até 4 grupos, nenhuma procedure em dois grupos;
    - Dataverse: `Backend/Dataverse/modelo-tabelas.md` com tabelas, colunas (tipo, Choice e opções,
-     Lookup), alternate keys e security roles, na ordem de criação.
+     Lookup), alternate keys e security roles, na ordem de criação;
+   - **carga mockup, nas duas trilhas**: `carga-mockup.json` na pasta da trilha (`Backend/Dataverse/`
+     ou `Backend/SQL Server/`, fora de `pastas.procedures`), com **toda** tabela e coluna do modelo,
+     o mesmo tipo, `primaria` (o nome principal no Dataverse), `chave`, opções e alvos, e no SQL os
+     nomes do DDL (`sql`, `pk`). `exemplos` só onde o valor gerado não serve, sempre fictícios
+     (`contoso.com`). Grave com
+     `python KIT/skills/power-platform/scripts/montar-carga-mockup.py <spec> --saida <pasta da trilha> --uma-por-tabela`
+     até `0 erro(s)`; no Dataverse, acrescente `--flow`, que grava também o `plano-dataverse.json` e o
+     flow construtor (`construtor-dataverse/`). C016 e C017 são nomes lógicos e limites do Dataverse:
+     corrija o spec (`logico`, casas, tamanho). O aviso C018 vai para os alertas da entrega, com as
+     palavras do script.
 6. **ALM**: solução, variáveis de ambiente, connection references, o que vai por colagem e o que vai
    por solução. Nenhum literal de ambiente.
 7. **Fila `GOAL.md`** no molde, na raiz:
-   - onda 0, fundação 🔴: aplicar os scripts ou criar as tabelas, capturar o `NOMES-AS-BUILT`,
+   - onda 0, fundação 🔴: aplicar os scripts ou criar as tabelas (no Dataverse, pelo construtor ou
+     importando a planilha: quem escolhe é o usuário), carregar a carga mockup e, no Dataverse,
+     conferir os tipos (`--conferir` em `0 erro(s)`) antes de capturar o `NOMES-AS-BUILT`;
      criar connection references e variáveis de ambiente;
    - ondas 1..n por funcionalidade P0, na ordem dados → (tela ∥ fluxo) → QA: contrato, fluxo, tela,
      colar no ambiente (🔴). Cada tarefa com os **arquivos** exatos que cria ou altera (uma tela
@@ -77,7 +91,9 @@ e `docs/planejamento/prototipo/index.html` (o comportamento aprovado).
 2. Decisões `AR-xx` em uma linha cada.
 3. As ondas do `GOAL.md` (nº de tarefas, quantas 🔴).
 4. Procedures especificadas na seção 4.1, por grupo (SQL), e o resultado da prontidão.
-5. Passo a passo da onda 0 para o humano e perguntas abertas.
+5. Carga mockup: os arquivos gravados (no Dataverse, também o plano e o construtor, com a linha
+   `# construtor:` do resumo), a ordem de carga e a última linha do `montar-carga-mockup.py`.
+6. Passo a passo da onda 0 para o humano e perguntas abertas.
 
 Feche **sempre** com as quatro seções da entrega padrão
 (`KIT/skills/power-platform/references/subagentes.md`): quem te chamou julga por elas.

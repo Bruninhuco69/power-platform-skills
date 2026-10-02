@@ -140,6 +140,8 @@ Tela ou flow alterado: a prova final é colar no Studio/designer, ou registrar �
 | `references/design-system-e-telas.md` | `/pp:design`, `/pp:mockups`: design system, inventário, moldura |
 | `references/mockups.md` | `/pp:mockups`: chave OpenAI, modelo variável, spec, erros |
 | `references/matriz-tecnologia.md` | `/pp:arquitetura`: Dataverse × SQL Server, Power BI, SharePoint |
+| `references/carga-mockup.md` | `/pp:arquitetura`: carga mockup das tabelas (`.xlsx` para o Dataverse deduzir os tipos, `INSERT` para o SQL de DEV) e a conferência dos tipos que o Dataverse criou |
+| `references/construtor-dataverse.md` | `/pp:arquitetura`, Dataverse: o flow que cria tabelas, colunas tipadas, relacionamentos e a carga mockup pela Web API (`--flow`) |
 | `references/protocolo.md` | app existente: feature multi-camada, critério de saída de fase |
 | `references/modo-goal-fila.md` | fila `GOAL.md`, estados, evidência, portões por onda |
 | `references/modo-investigar.md` | "o número não bate", lentidão, "não atualiza" |
@@ -150,7 +152,7 @@ Tela ou flow alterado: a prova final é colar no Studio/designer, ou registrar �
 | `references/salvaguardas.md` | trilha, ambiente, gerador × gabarito, evidência, doc × disco, Git |
 | `references/portao-final.md` | antes de dizer "pronto"; verdes falsos conhecidos |
 | `prompts/ux.md` `dev.md` `performance.md` `dados.md` `flow.md` `sql.md` | auditoria de app existente (fan-out, cada um como `pp:agente-pesquisa`) |
-| `assets/*-molde.*` | moldes que as etapas copiam: ideia bruta, PRD, design system, inventário, mockups, protótipo, arquitetura, ADR, `GOAL.md`, `00-LEIA-PRIMEIRO.md`, config |
+| `assets/*-molde.*` | moldes que as etapas copiam: ideia bruta, PRD, design system, inventário, mockups, protótipo, carga mockup, arquitetura, ADR, `GOAL.md`, `00-LEIA-PRIMEIRO.md`, config; `assets/construtor-dataverse.json` é o flow construtor |
 
 ## Scripts
 
@@ -161,8 +163,9 @@ Rode da raiz do projeto. Sem `power-platform.config.json`, os validadores avisam
 | `scripts/estado.py <comando> [etapa]` | estado do pipeline no `ESTADO.md`: ordem das etapas e próximo comando | 0 ok, 1 etapa fora de ordem, 2 uso ou arquivo |
 | `scripts/desenhar-mockups.py <spec> --simular` | valida o spec dos mockups (M001–M007) e mostra os prompts, sem rede; sem `--simular` gera os PNGs (`OPENAI_API_KEY`) | 0, 1, 2 |
 | `scripts/verificar-prototipo.py <pasta> --mockups <spec>` | contrato do protótipo HTML (V001–V013): telas, catálogo, offline, tokens, origem nos mockups | 0, 1, 2 |
+| `scripts/montar-carga-mockup.py <spec> --saida <pasta>` | carga mockup (C001–C015): `.xlsx` com uma aba por tabela na ordem de carga e, no SQL, `carga-mockup.sql`; `--flow` grava o plano e o flow construtor do Dataverse (C016–C018); `--conferir <export.json>` compara os tipos criados no Dataverse com o modelo (C101–C105) | 0, 1, 2 |
 | `validar-telas.py` (skill `powerapps-canvas`) | YAML das telas, PA2108, `RGBA(` literal, `;;` em YAML, versão do controle | 0, 1, 2 |
-| `verificar-fluxo.py` (skill `power-automate`) | envelope, referências órfãs, `Catch` com `Skipped`, Response de 4 campos, literal de ambiente (F001–F019) | 0, 1, 2 |
+| `verificar-fluxo.py` (skill `power-automate`) | envelope, referências órfãs, `Catch` com `Skipped`, Response de 4 campos, literal de ambiente, sintomas de colagem (F001–F023) | 0, 1, 2 |
 | `lint-procedure.py` (skill `sql-procedures`) | `NOCOUNT`, `XACT_ABORT`, transação, retorno com as 4 colunas | 0, 1, 2 |
 | `python tools/lint_skills.py` (repositório do plugin) | padrão das skills e sanitização | 0, 1 |
 

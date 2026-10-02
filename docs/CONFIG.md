@@ -38,7 +38,7 @@ na raiz do projeto. Os scripts o procuram do diretório atual para cima, ou rece
 | Chave | Tipo | Default | Usado por |
 |---|---|---|---|
 | `projeto` | texto | nome da pasta | todos (cabeçalho da saída) |
-| `trilha_dados` | `sql-server` \| `dataverse` | — | `validar-telas.py` (liga as regras do conector: T013/T014); lido também pelo orquestrador |
+| `trilha_dados` | `sql-server` \| `dataverse` | — | `validar-telas.py` (liga as regras do conector: T013/T014); `montar-carga-mockup.py` (abaixo de `--trilha`); lido também pelo orquestrador |
 | `prefixo_publisher` | texto | `""` | regras de nome de coluna Dataverse |
 | `pastas.telas` | lista | `["."]` | `validar-telas.py` |
 | `pastas.flows` | lista | `["."]` | `verificar-fluxo.py` |

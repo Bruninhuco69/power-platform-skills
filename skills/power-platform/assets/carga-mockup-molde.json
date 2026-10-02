@@ -1,0 +1,38 @@
+{
+  "linhas": 10,
+  "data_base": "2026-01-13",
+  "tabelas": [
+    {
+      "nome": "Unidade",
+      "sql": "dbo.Unidade",
+      "pk": "Id_Unidade",
+      "linhas": 3,
+      "colunas": [
+        {"nome": "Sigla", "tipo": "codigo", "chave": true, "obrigatoria": true, "tamanho": 3, "sql": "Cod_Unidade",
+         "exemplos": ["AAA", "BBB", "CCC"]},
+        {"nome": "Nome", "tipo": "texto", "primaria": true, "obrigatoria": true, "tamanho": 100, "sql": "Nom_Unidade",
+         "exemplos": ["Unidade AAA", "Unidade BBB", "Unidade CCC"]},
+        {"nome": "Ativa", "tipo": "sim_nao", "obrigatoria": true, "sql": "Flg_Ativa", "exemplos": [true, true, false]}
+      ]
+    },
+    {
+      "nome": "Pedido",
+      "sql": "dbo.Pedido",
+      "pk": "Id_Pedido",
+      "colunas": [
+        {"nome": "Protocolo", "tipo": "codigo", "primaria": true, "chave": true, "obrigatoria": true, "tamanho": 20,
+         "sql": "Cod_Protocolo"},
+        {"nome": "Unidade", "tipo": "lookup", "alvo": "Unidade", "obrigatoria": true, "sql": "Id_Unidade"},
+        {"nome": "Status", "tipo": "choice", "obrigatoria": true, "sql": "Status",
+         "opcoes": ["Aberto", "Em andamento", "Encerrado", "Cancelado"]},
+        {"nome": "Descrição", "tipo": "texto_longo", "sql": "Descricao"},
+        {"nome": "Quantidade de itens", "tipo": "inteiro", "sql": "Qtd_Itens"},
+        {"nome": "Valor estimado", "tipo": "moeda", "sql": "Vlr_Estimado"},
+        {"nome": "Data prevista", "tipo": "data", "sql": "Dt_Prevista"},
+        {"nome": "Incluído em", "tipo": "data_hora", "obrigatoria": true, "sql": "Dt_Inclusao"},
+        {"nome": "Urgente", "tipo": "sim_nao", "obrigatoria": true, "sql": "Flg_Urgente"},
+        {"nome": "E-mail do solicitante", "tipo": "email", "sql": "Email_Solicitante"}
+      ]
+    }
+  ]
+}

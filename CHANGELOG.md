@@ -5,12 +5,58 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
 ## [Não lançado]
 
 ### Adicionado
+- **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
+  `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
+  `/pp:arquitetura`.
+  - **O que gera:** a partir do `carga-mockup.json`, um `.xlsx` com uma aba por tabela, na ordem de
+    carga. Cada aba é uma tabela do Excel com o valor no tipo certo na célula: data como data, código
+    com letra, decimal com fração, todas as opções da Choice.
+  - **Dataverse:** a planilha cria as tabelas de uma vez pelo Power Query. A aba
+    `Conferência de tipos` lista o que escolher e o que costuma vir errado. Toda execução avisa
+    (C013, C014) que o Dataverse erra a tipagem e que Choice e Lookup chegam como texto.
+    `--conferir <export.json>` compara os tipos criados com o modelo (C101–C105) antes do dado real.
+    `--uma-por-tabela` grava um arquivo por tabela, para o assistente que lê só a primeira aba.
+  - **SQL Server:** também o `carga-mockup.sql`, com `INSERT` em transação, guarda de reexecução e
+    chave estrangeira por subconsulta, só para o banco de DEV.
+  - **Onde entra:** o agente de arquitetura escreve o spec; a onda 0 do `GOAL.md` ganha a tarefa
+    T-02a; as skills `dataverse` e `sql-procedures` apontam para a referência.
+- **Construtor Dataverse** (`montar-carga-mockup.py --flow`, `references/construtor-dataverse.md`,
+  `assets/construtor-dataverse.json`): a alternativa à planilha, sem dedução de tipo.
+  - **O plano:** o spec vira o `plano-dataverse.json`, os pedidos à Web API na ordem: tabelas com o
+    nome principal, colunas com o tipo do spec (Choice com as opções, Email, URL, Telefone, Numeração
+    automática, Escolhas, Imagem, Arquivo), relacionamentos com a navegação fixada, publicação, as
+    linhas mockup em `$batch` (lotes de até 100 linhas, um changeset cada, o filho já apontando para o ID fixo do pai) e
+    as chaves alternativas. O plano não leva nada do ambiente: prefixo, valor de opção e idioma o flow
+    lê da solução.
+  - **O flow:** fixo, um por ambiente. Sai como solução não gerenciada (`.zip`, para importar) e como
+    escopo para colar no designer. Roda um passo de cada vez, pula o que já existe (rodar de novo é
+    seguro) e para no primeiro erro com o passo e o detalhe da Web API.
+  - **Achados novos:** C016 (nome lógico), C017 (limite do Dataverse), C018 (prove com `--conferir`
+    depois de rodar). No `/pp:arquitetura`, o usuário escolhe entre o construtor e a planilha.
+  - **Ainda não verificado num ambiente real:** a importação do `.zip` e a execução (lista no §9 da
+    referência).
+  - **Relatório:** abre com o ambiente lido (solução, prefixo, prefixo de opção, idioma), tem uma linha
+    por passo (`não executado` depois da falha), e a mensagem do erro é a primeira falha. O idioma cai
+    para `1046` se a leitura vier vazia.
+- **`verificar-fluxo.py` acusa o que cola em branco no designer novo**:
+  - F020: condição de `If` em texto (ERRO) ou sem `and`/`or` na raiz (AVISO);
+  - F021: `Inicializar variável` fora da raiz (ERRO na definição, AVISO no escopo colado);
+  - F022: `@variables('x')` sozinho num campo colado (ERRO se a variável nasce no trecho);
+  - F023: `Fazer até` com a condição em texto, no escopo colado.
+
+  Os sintomas estão em `formato-clipboard.md` §7. O escopo do construtor passou a colar nessas
+  formas.
+- **Lições de Web API e importação** na skill `dataverse` (`licoes-de-campo.md` §7 e §8): `PUT` de
+  coluna substitui a definição, `MergeLabels`, numeração de Choice pelo publisher, chave em `Failed`,
+  `If-None-Match`, dono e data de criação; a importação da planilha trocou dia e mês.
 - **Diagrama 3D em blocos** (`docs/diagrama/`, three.js, no site em `/diagrama/`): as dez etapas
   numa trilha de tabuleiro, com o orquestrador, os oito agentes, os pinos de onde você age no
   ambiente e as três voltas. O README mostra a cena como imagem, nos temas claro e escuro.
 - **Apresentação em PDF** (`docs/Power-Platform-Kit.pdf`, 4 páginas), com miniaturas no README.
 
 ### Mudado
+- **Datas da carga mockup só com dia 13 ou mais** (`data_base` padrão `2026-01-13`): se a importação
+  trocar dia e mês, a linha é recusada em vez de entrar com a data errada.
 - README com nova capa: diagrama, links rápidos, "Em 30 segundos", por que o kit existe e os
   problemas que ele evita. O Mermaid fica recolhido em "o mesmo diagrama em texto"; a skill de
   Power BI abre os próximos passos; "Como contribuir" convida a mandar pull request.
