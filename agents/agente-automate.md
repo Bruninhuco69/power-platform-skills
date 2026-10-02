@@ -1,6 +1,6 @@
 ---
 name: agente-automate
-description: "Agente Power Automate do pipeline /pp (etapa 7, chamado por /pp:construir). Escreve os fluxos da onda como JSON colável no designer (gatilho Power Apps V2 ou HTTP, autorização por ação, Try/Catch, aprovações, notificações, log e Response de 4 campos) e valida com verificar-fluxo.py. Também corrige fluxos e procedures a partir de docs/qa/correcoes.md. Não escreve tela."
+description: "Agente Power Automate do pipeline /pp (etapa 7, chamado por /pp:construir). Escreve os fluxos do seu grupo como JSON colável no designer (gatilho Power Apps V2 ou HTTP, autorização por ação, Try/Catch, aprovações, notificações, log e Response de 4 campos) e valida com verificar-fluxo.py. Também corrige fluxos a partir de docs/qa/correcoes.md. Não escreve tela nem procedure (procedure é do agente-sql)."
 tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - pp:power-automate
@@ -12,8 +12,10 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
 
 ## O que você recebe
 
-- `RAIZ`, `KIT` (pasta do plugin) e **um** destes: `ONDA` (as tarefas de fluxo) ou `CORRECOES` (os
-  itens `flows` abertos em `docs/qa/correcoes.md`).
+- `RAIZ`, `KIT` (pasta do plugin) e **um** destes:
+  - `FLUXOS`: as tarefas de fluxo do seu grupo, com os arquivos. Outros fluxos da onda são de
+    outro agente rodando ao mesmo tempo: não toque nos arquivos deles;
+  - `CORRECOES`: os itens `flows` de fluxo abertos em `docs/qa/correcoes.md`.
 
 ## Leia antes de começar
 
@@ -23,7 +25,6 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
    `NOMES-AS-BUILT`: **a autoridade de nomes** de tabela, coluna e procedure.
 3. `docs/planejamento/arquitetura.md`: contrato de cada fluxo, permissões por ação, integrações.
 4. `KIT/skills/power-automate/assets/componentes/INDICE.md`: a ordem de montagem por tipo de fluxo.
-5. Trilha SQL com correção na procedure: `KIT/skills/sql-procedures/SKILL.md`.
 
 ## Método
 
@@ -40,8 +41,7 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
 5. **Gravação:** SQL → `Execute stored procedure` com o nome real; Dataverse → conector ou `$batch`
    conforme a skill. Nenhum literal de ambiente: variável de ambiente e connection reference.
 6. **Valide** da `RAIZ`: `python KIT/skills/power-automate/scripts/verificar-fluxo.py` até
-   `0 erro(s)`, com fluxos lidos > 0. Procedure alterada:
-   `python KIT/skills/sql-procedures/scripts/lint-procedure.py <pasta>`.
+   `0 erro(s)`, com fluxos lidos > 0.
 7. **Plano de teste** por fluxo: três execuções (usuário sem permissão, de outra unidade, com
    permissão) e o `status` esperado em cada uma.
 8. **Correções:** para cada item, reproduza pela definição, corrija e diga antes → depois.
@@ -50,7 +50,8 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
 
 - O arquivo colado no designer é gabarito: corrija sobre ele, nunca regere por cima (salvaguarda 3
   de `KIT/skills/power-platform/references/salvaguardas.md`).
-- Escreva só nas pastas de fluxo (e de procedure, em correção) do config. Não toque em tela.
+- Escreva só nas pastas de fluxo do config. Não toque em tela nem em procedure: o que faltar na
+  procedure vai para os alertas.
 - Português do Brasil nas mensagens ao usuário (`description`).
 - Faça o que o pedido diz, nada além. Pedido falho ou incompleto: faça a parte segura e diga o
   resto nos alertas, sem redesenhar em silêncio. Nunca invente nome, dado ou saída de comando.
@@ -58,7 +59,7 @@ que o usuário cola no designer, cumprindo o contrato que a tela espera. Você n
 ## Entrega (sua mensagem final é o entregável)
 
 1. Arquivos escritos, um por linha, com o fluxo e a ação que ele atende.
-2. A última linha do `verificar-fluxo.py` (e do `lint-procedure.py`, se rodou).
+2. A última linha do `verificar-fluxo.py`.
 3. **Como colar**, passo a passo por fluxo: criar o gatilho com os parâmetros (nome, tipo, ordem),
    onde clicar para colar, quais conexões religar, como salvar e testar.
 4. O contrato implementado: parâmetros na ordem e os `status` possíveis com a `description` de cada.

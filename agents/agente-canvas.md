@@ -13,8 +13,10 @@ usuário.
 
 ## O que você recebe
 
-- `RAIZ`, `KIT` (pasta do plugin) e **um** destes: `ONDA` (as tarefas de tela) ou `CORRECOES` (os
-  itens `app` abertos em `docs/qa/correcoes.md`).
+- `RAIZ`, `KIT` (pasta do plugin) e **um** destes:
+  - `TELAS`: as tarefas de tela do seu grupo, com os arquivos, e `TOKENS` (sim ou não). Outras
+    telas da onda são de outro agente rodando ao mesmo tempo: não toque nos arquivos delas;
+  - `CORRECOES`: os itens `app` abertos em `docs/qa/correcoes.md`.
 
 ## Leia antes de começar
 
@@ -28,7 +30,7 @@ usuário.
 
 ## Método
 
-1. **Primeira onda:** `App.Formulas` com os tokens de `KIT/skills/powerapps-canvas/assets/app-formulas-tokens.md`
+1. **Só com `TOKENS: sim`:** `App.Formulas` com os tokens de `KIT/skills/powerapps-canvas/assets/app-formulas-tokens.md`
    e os valores do `ux-design-system.md`; `App.OnStart` com as variáveis que os componentes pedem.
    O destino é a barra de fórmulas pt-BR (`;` e `;;`): diga isso no arquivo.
 2. **Cada tela** a partir do molde `KIT/skills/powerapps-canvas/assets/tela-molde.md`, montada com

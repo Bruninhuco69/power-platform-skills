@@ -41,9 +41,11 @@ e `docs/planejamento/prototipo/index.html` (o comportamento aprovado).
    novo sempre no fim; retorno `{status, description, id, url}`; autorização por ação (F2);
    integrações externas com gatilho HTTP próprio (C6); aprovações e notificações que o PRD pede.
 5. **Scripts de dados** (os arquivos que o humano aplica):
-   - SQL: DDL e procedures na pasta `pastas.procedures` do config, no padrão da skill, com o pacote
-     para o DBA (ordem de execução, o que conferir antes); rode
-     `python KIT/skills/sql-procedures/scripts/lint-procedure.py <pasta>` até `0 erro(s)`;
+   - SQL: o DDL na pasta `pastas.procedures` do config, no padrão da skill, com o pacote para o DBA
+     (ordem de execução, o que conferir antes), e o **spec de cada procedure** na seção 4.1 do
+     `arquitetura.md` (parâmetros na ordem, regra, códigos de `description`, escopo, transação).
+     Você não escreve o corpo das procedures: quem escreve é o `agente-sql`, um por grupo, em
+     paralelo. Agrupe por funcionalidade, até 4 grupos, nenhuma procedure em dois grupos;
    - Dataverse: `Backend/Dataverse/modelo-tabelas.md` com tabelas, colunas (tipo, Choice e opções,
      Lookup), alternate keys e security roles, na ordem de criação.
 6. **ALM**: solução, variáveis de ambiente, connection references, o que vai por colagem e o que vai
@@ -52,7 +54,9 @@ e `docs/planejamento/prototipo/index.html` (o comportamento aprovado).
    - onda 0, fundação 🔴: aplicar os scripts ou criar as tabelas, capturar o `NOMES-AS-BUILT`,
      criar connection references e variáveis de ambiente;
    - ondas 1..n por funcionalidade P0, na ordem dados → (tela ∥ fluxo) → QA: contrato, fluxo, tela,
-     colar no ambiente (🔴), cada tarefa com "pronto quando" verificável (validador, teste de negação);
+     colar no ambiente (🔴). Cada tarefa com os **arquivos** exatos que cria ou altera (uma tela
+     ou um fluxo por tarefa: é o que deixa a construção dividir a onda entre agentes) e "pronto
+     quando" com o comando que prova (validador, teste de negação);
    - pendências `D-xx` do PRD na seção 2; a escada de corte sai da prioridade do inventário.
 8. **Prontidão**: confira e diga o resultado de cada item: todo RF P0 tem tarefa; toda tela do
    inventário tem tarefa; nenhuma tarefa depende de decisão sem registro; contrato fechado para
@@ -72,7 +76,7 @@ e `docs/planejamento/prototipo/index.html` (o comportamento aprovado).
 1. Arquivos escritos (caminho e uma linha cada).
 2. Decisões `AR-xx` em uma linha cada.
 3. As ondas do `GOAL.md` (nº de tarefas, quantas 🔴).
-4. Resultado do `lint-procedure.py` (SQL) e da prontidão.
+4. Procedures especificadas na seção 4.1, por grupo (SQL), e o resultado da prontidão.
 5. Passo a passo da onda 0 para o humano e perguntas abertas.
 
 Feche **sempre** com as quatro seções da entrega padrão

@@ -89,7 +89,7 @@ VEREDITOS = {"aceito": ("✓", "aceito"), "revisao": ("↻", "revisão"), "escal
 
 ALTERNATIVAS = {
     "construir": [("/pp:construir app", "só as telas (Agente Power Apps Canvas)"),
-                  ("/pp:construir flows", "só os fluxos (Agente Power Automate)")],
+                  ("/pp:construir flows", "só os fluxos e as procedures (Agentes Power Automate e SQL)")],
     "prototipo": [("/pp:design", "voltar para a identidade visual")],
 }
 

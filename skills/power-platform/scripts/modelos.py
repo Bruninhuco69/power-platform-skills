@@ -40,7 +40,7 @@ MODELOS_AGENTE = ("fable", "opus", "sonnet", "haiku")
 PAPEIS = {
     "sessao": "Sessão de cada etapa: conversa, decide, julga",
     "planejamento": "Arquitetura e QA: planejam e julgam",
-    "execucao": "Mockups, protótipo, telas e fluxos",
+    "execucao": "Mockups, protótipo, telas, fluxos e SQL",
     "pesquisa": "Pesquisa: lê o projeto e a documentação",
 }
 AGENTES = {
@@ -50,6 +50,7 @@ AGENTES = {
     "agente-prototipo": "execucao",
     "agente-canvas": "execucao",
     "agente-automate": "execucao",
+    "agente-sql": "execucao",
     "agente-pesquisa": "pesquisa",
 }
 

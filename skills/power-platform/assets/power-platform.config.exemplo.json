@@ -39,6 +39,7 @@
       "agente-prototipo": "sonnet",
       "agente-canvas": "sonnet",
       "agente-automate": "sonnet",
+      "agente-sql": "sonnet",
       "agente-pesquisa": "sonnet"
     }
   },

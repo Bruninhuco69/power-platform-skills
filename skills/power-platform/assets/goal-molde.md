@@ -37,23 +37,23 @@ pontos 🔴.
 
 ### Onda 0 — Fundação (portão G0)
 
-| ID | Estado | Tarefa | Pronto quando | Evidência (comando → saída, data) |
-|---|---|---|---|---|
-| T-01 | ⬜ | `git init`, `power-platform.config.json`, `00-LEIA-PRIMEIRO.md` | trilha ativa declarada nos três | |
-| T-02 | 🔴 | Levantar `NOMES-AS-BUILT` do ambiente real | tabelas, colunas, tipos, procedures, conexões com captura datada | |
-| T-03 | ⬜ | ADR das decisões já tomadas | um ADR por decisão fora do padrão | |
+| ID | Estado | Tarefa | Arquivos | Pronto quando | Evidência (comando → saída, data) |
+|---|---|---|---|---|---|
+| T-01 | ⬜ | `git init`, `power-platform.config.json`, `00-LEIA-PRIMEIRO.md` | os três, na raiz | trilha ativa declarada nos três | |
+| T-02 | 🔴 | Levantar `NOMES-AS-BUILT` do ambiente real | `AMBIENTE-AS-BUILT/NOMES-AS-BUILT.md` | tabelas, colunas, tipos, procedures, conexões com captura datada | |
+| T-03 | ⬜ | ADR das decisões já tomadas | `docs/decisoes/ADR-*.md` | um ADR por decisão fora do padrão | |
 
 **Portão G0:** <comando/prova de cada item da fundação>. **Não cobre:** <o que fica de fora>.
 
 ### Onda 1 — <funcionalidade ou camada> (portão G1)
 
-| ID | Estado | Tarefa | Pronto quando | Evidência (comando → saída, data) |
-|---|---|---|---|---|
-| T-10 | ⬜ | Contrato do flow: parâmetros do `.Run()` e retorno | parâmetros posicionais listados; retorno `{status, description, id, url}` | |
-| T-11 | ⬜ | Flow `<nome>` | `verificar-fluxo.py` com 0 erro(s) | |
-| T-12 | ⬜ | Tela `<nome>` | `validar-telas.py` com 0 erro(s) | |
-| T-13 | 🔴 | Colar flow no designer e tela no Studio | executa sem erro com dado de teste | |
-| T-14 | ⬜ | QA da funcionalidade | ciclo completo no dado, não só na tela | |
+| ID | Estado | Tarefa | Arquivos | Pronto quando | Evidência (comando → saída, data) |
+|---|---|---|---|---|---|
+| T-10 | ⬜ | Contrato do flow: parâmetros do `.Run()` e retorno | `docs/planejamento/arquitetura.md` §4 | parâmetros posicionais listados; retorno `{status, description, id, url}` | |
+| T-11 | ⬜ | Flow `<nome>` | `<pasta de fluxos>/<nome>.json` | `verificar-fluxo.py` com 0 erro(s) | |
+| T-12 | ⬜ | Tela `<nome>` | `<pasta de telas>/<Tela>.pa.yaml` | `validar-telas.py` com 0 erro(s) | |
+| T-13 | 🔴 | Colar flow no designer e tela no Studio | — | executa sem erro com dado de teste | |
+| T-14 | ⬜ | QA da funcionalidade | — | ciclo completo no dado, não só na tela | |
 
 **Portão G1:** <prova>. **Não cobre:** <...>.
 

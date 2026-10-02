@@ -30,6 +30,12 @@ auditoria. Cada coluna que as telas exigem (`inventario-telas.md`) está aqui.
 Contrato de retorno: `{status, description, id, url}`; sucesso é `status <> "error"`; `.Run()` em
 `IfError` (C1–C5). Entrada externa: trigger HTTP próprio (C6).
 
+### 4.1 Procedures (trilha SQL)
+Spec de cada procedure: é o pedido do `pp:agente-sql` (um agente por grupo, em paralelo).
+
+| Procedure | Chamada pelo flow | Parâmetros (ordem, tipo) | O que faz e regras | `description` possíveis | Escopo e transação | Grupo |
+|---|---|---|---|---|---|---|
+
 ## 5. Segurança e escopo
 - Quem barra o acesso por `Unidade`: flow ou security role; a tela só filtra (A3).
 - Perfis e flags (T8); sem perfil resolvido, sem acesso.

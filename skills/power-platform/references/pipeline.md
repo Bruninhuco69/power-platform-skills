@@ -83,8 +83,8 @@ flowchart TD
 | 3 | `/pp:design` | Agente Designer Branding (conversa) | escolhe cores, fontes, estilo | `ux-design-system.md` | paleta em hex, contraste calculado, componentes do catálogo |
 | 4 | `/pp:mockups` | Agente de Mockups em Imagem | autoriza (ou não) gerar as imagens | `inventario-telas.md`, `mockups/` | spec com `0 erro(s)`; imagens geradas ou dispensa registrada |
 | 5 | `/pp:prototipo` | Agente Gerador de Mockup HTML | abre o protótipo e aprova ou pede ajuste | `prototipo/index.html` | verificador com `0 erro(s)` e aceite do usuário |
-| 6 | `/pp:arquitetura` | Agente de Arquitetura | confirma a trilha de dados; cria as tabelas 🔴 | `arquitetura.md`, ADR, scripts de dados, `GOAL.md` | contrato app ↔ flow fechado; fila de construção em ondas |
-| 7 | `/pp:construir` | Agentes Power Apps Canvas e Power Automate | cola telas e fluxos no ambiente 🔴 | telas `.pa.yaml`, fluxos `.json` | validadores com `0 erro(s)`; contrato conferido; colado sem erro |
+| 6 | `/pp:arquitetura` | Agente de Arquitetura (+ Agentes SQL em paralelo) | confirma a trilha de dados; cria as tabelas 🔴 | `arquitetura.md`, ADR, scripts de dados, `GOAL.md` | contrato app ↔ flow fechado; fila de construção em ondas |
+| 7 | `/pp:construir` | Agentes Power Apps Canvas e Power Automate, um por grupo de arquivos | cola telas e fluxos no ambiente 🔴 | telas `.pa.yaml`, fluxos `.json` | validadores com `0 erro(s)`; contrato conferido; colado sem erro |
 | 8 | `/pp:testar` | Agente de Testes e Qualidade | roda os testes no ambiente 🔴 | `docs/qa/QA-<data>.md` | todos os critérios passam, com evidência |
 | 9 | `/pp:homologar` | Orquestrador, com o usuário | conduz o UAT com usuários reais 🔴 | `docs/qa/UAT-<data>.md` | aceite assinado (quem e quando) |
 | 10 | `/pp:publicar` | Orquestrador | publica em produção 🔴 | `docs/entrega/` | app em produção; manual e guia técnico |
@@ -113,7 +113,7 @@ Subagente **não conversa com o usuário** (o Claude Code tira dele a ferramenta
 | Agente | Como roda | Por quê |
 |---|---|---|
 | Brainstorm, Designer Branding | a própria sessão da etapa assume o papel (skill `/pp:brainstorm`, `/pp:design`); no brainstorm, na pele da persona do modo escolhido, ou de várias na mesa redonda (`brainstorm-modos.md`) | o trabalho é perguntar e decidir junto |
-| Mockups em Imagem, Gerador de Mockup HTML, Arquitetura, Power Apps Canvas, Power Automate, Testes e Qualidade | subagentes do plugin (`pp:agente-*`), chamados pela etapa | leitura ampla e escrita de arquivos, sem conversa; o contexto da sessão fica limpo |
+| Mockups em Imagem, Gerador de Mockup HTML, Arquitetura, SQL Server, Power Apps Canvas, Power Automate, Testes e Qualidade | subagentes do plugin (`pp:agente-*`), chamados pela etapa | leitura ampla e escrita de arquivos, sem conversa; o contexto da sessão fica limpo |
 | Pesquisa | subagente `pp:agente-pesquisa`, chamado quando a etapa precisa de um fato (licença, conector, limite, mensagem de erro, o que já existe no projeto) | só lê; devolve achado com fonte, e a sessão decide |
 
 A sessão da etapa é a **cabeça** e o agente é a **mão**: a sessão define o pedido, julga a entrega

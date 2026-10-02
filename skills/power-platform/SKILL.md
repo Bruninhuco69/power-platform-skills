@@ -91,8 +91,8 @@ próximo passo, igual em todas: `references/formato-saida.md`.
 | 3 | `/pp:design` | Agente Designer Branding (a sessão conversa) | cores, fontes, componentes, identidade (`ux-design-system.md`) |
 | 4 | `/pp:mockups` | subagente `pp:agente-mockups` + script | telas, navegação, loading, erros, vazios; imagens |
 | 5 | `/pp:prototipo` | subagente `pp:agente-prototipo` | protótipo navegável; aprovado ou volta ao design |
-| 6 | `/pp:arquitetura` | subagente `pp:agente-arquitetura` | modelo de dados, permissões, integrações, `GOAL.md` |
-| 7 | `/pp:construir [app\|flows]` | `pp:agente-canvas` ∥ `pp:agente-automate` | telas, fluxos e a integração, uma onda por sessão |
+| 6 | `/pp:arquitetura` | `pp:agente-arquitetura`, depois `pp:agente-sql` ∥ (trilha SQL) | modelo de dados, permissões, integrações, procedures, `GOAL.md` |
+| 7 | `/pp:construir [app\|flows]` | `pp:agente-canvas` ∥ `pp:agente-automate`, um por grupo de arquivos | telas, fluxos e a integração, uma onda por sessão |
 | 8 | `/pp:testar` | subagente `pp:agente-qa` | validadores + roteiro no ambiente; falha volta à construção |
 | 9 | `/pp:homologar` | Orquestrador, com o usuário | UAT e aceite dos usuários reais |
 | 10 | `/pp:publicar` | Orquestrador | produção, manual e guia técnico |

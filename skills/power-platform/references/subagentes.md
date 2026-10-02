@@ -34,9 +34,10 @@ etapa), lê os arquivos do projeto e devolve uma entrega com formato fixo.
 |---|---|---|---|
 | `agente-mockups` | `/pp:mockups` | leitura + escrita, **sem Bash** (não chama a API de imagens) | `inventario-telas.md`, `mockups/mockups.json` |
 | `agente-prototipo` | `/pp:prototipo` | leitura, escrita, Bash (verificador) | `prototipo/index.html` |
-| `agente-arquitetura` | `/pp:arquitetura` | leitura, escrita, Bash (lint de procedure) | `arquitetura.md`, ADR, scripts de dados, `GOAL.md`, config |
-| `agente-canvas` | `/pp:construir` (`app`) | leitura, escrita, Bash (`validar-telas.py`) | pastas de tela |
-| `agente-automate` | `/pp:construir` (`flows`) | leitura, escrita, Bash (`verificar-fluxo.py`) | pastas de fluxo (e procedure em correção) |
+| `agente-arquitetura` | `/pp:arquitetura` | leitura, escrita, Bash | `arquitetura.md` (com o spec das procedures), ADR, DDL ou modelo Dataverse, `GOAL.md`, config |
+| `agente-sql` | `/pp:arquitetura` (um por grupo, em paralelo), `/pp:construir` (correção) | leitura, escrita, Bash (`lint-procedure.py`) | pasta de procedures, só as do seu grupo |
+| `agente-canvas` | `/pp:construir` (`app`; um por grupo de até 3 telas) | leitura, escrita, Bash (`validar-telas.py`) | as telas do seu grupo |
+| `agente-automate` | `/pp:construir` (`flows`; um por grupo de até 3 fluxos) | leitura, escrita, Bash (`verificar-fluxo.py`) | os fluxos do seu grupo |
 | `agente-qa` | `/pp:testar` | só leitura + Bash para validadores | nada: a etapa escreve o relatório |
 | `agente-pesquisa` | `/pp:brainstorm`, `/pp:arquitetura`, `/pp:construir`, `/pp:mudanca`, auditoria | só leitura + busca na web (sem Bash, sem escrita) | nada: devolve achados com fonte |
 
@@ -47,7 +48,9 @@ pergunta ao `agente-pesquisa` em vez de ler tudo ou de chutar. Ele devolve achad
 Brainstorm e Designer Branding **não** são subagentes: subagente não conversa com o usuário (o
 Claude Code tira dele a ferramenta de perguntar), então a sessão da etapa assume o papel.
 
-Canvas e Automate rodam **em paralelo**, na mesma mensagem, com escritas em pastas disjuntas.
+Canvas, Automate e SQL rodam **em paralelo**, na mesma mensagem, com escritas em arquivos
+disjuntos: a coluna Arquivos do `GOAL.md` (e os grupos da seção 4.1 da arquitetura) é o que
+divide. No máximo 5 agentes por mensagem.
 A etapa que chama sempre julga a entrega (seção "Julgar a entrega").
 
 ## Quando abrir (e quando não)

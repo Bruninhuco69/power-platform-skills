@@ -10,7 +10,7 @@ O perfil é escolhido no `/pp:novo` e gravado pelo `scripts/modelos.py`.
 
 ## 1. Perfis
 
-| Perfil | Sessão de cada etapa | Arquitetura e QA | Mockups, protótipo, telas e fluxos | Pesquisa | Quando |
+| Perfil | Sessão de cada etapa | Arquitetura e QA | Mockups, protótipo, telas, fluxos e SQL | Pesquisa | Quando |
 |---|---|---|---|---|---|
 | **Equilibrado** (recomendado) | Opus | Opus | Sonnet | Sonnet | quase sempre: o forte pensa e julga, o rápido executa |
 | **Máximo** | `best` | Opus | Opus | Sonnet | app crítico ou time sem paciência para revisão; custa mais |

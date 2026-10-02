@@ -44,9 +44,12 @@ Cabeçalho do `GOAL.md` (molde pronto: `assets/goal-molde.md`):
 - **Decisões pendentes** `D-xx`: o que bloqueia, quem decide, data-limite e consequência de estourar.
 - **Fila por onda**, em tabela:
 
-| ID | Estado | Tarefa | Pronto quando | Evidência |
-|---|---|---|---|---|
-| T-01 | 🟢 | Especificar o contrato do flow de gravação | Contrato com parâmetros e retorno revisado | `<comando>` → `<saída>` (AAAA-MM-DD) |
+| ID | Estado | Tarefa | Arquivos | Pronto quando | Evidência |
+|---|---|---|---|---|---|
+| T-01 | 🟢 | Especificar o contrato do flow de gravação | `docs/planejamento/arquitetura.md` §4 | Contrato com parâmetros e retorno revisado | `<comando>` → `<saída>` (AAAA-MM-DD) |
+
+**Arquivos** são os que a tarefa cria ou altera, com o caminho: é o que deixa a construção dividir a
+onda entre agentes em paralelo sem dois no mesmo arquivo. **Pronto quando** diz o comando que prova.
 
 Padrão repetido por funcionalidade: spec (🟢) → arquivo da tela/flow (🟢) → colar/ligar no ambiente
 (🔴) → QA (🟢). Onda por camada ou por funcionalidade; cada uma termina em portão.
