@@ -13,6 +13,7 @@ confere e leva ao usuário a pergunta do desenho: **protótipo aprovado?**
 
 `KIT` = `${CLAUDE_PLUGIN_ROOT}`. Formato de saída: `KIT/skills/power-platform/references/formato-saida.md`.
 Script de estado: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
+Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py"`.
 Verificador: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/verificar-prototipo.py"`.
 
 ## Antes de começar
@@ -27,6 +28,7 @@ Verificador: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/verifi
 
 1. **Agente.** Mostre `◆ Chamando o Agente Gerador de Mockup HTML...` e chame `pp:agente-prototipo`
    com `RAIZ`, `KIT` (o valor de `${CLAUDE_PLUGIN_ROOT}`) e `MODO` (no ajuste, os itens da rodada).
+   Modelo: `modelos.py de agente-prototipo` (linha vazia: não passe `model`).
 2. **Julgue a entrega** (`KIT/skills/power-platform/references/subagentes.md`, "Julgar a entrega"):
    `verificar-prototipo.py docs/planejamento/prototipo --mockups docs/planejamento/mockups/mockups.json`
    precisa terminar em `0 erro(s)`, e toda tela do inventário tem a sua `<section data-tela>`.

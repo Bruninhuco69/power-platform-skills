@@ -13,6 +13,7 @@ Gerar imagem custa dinheiro e envia o texto das telas à OpenAI: **só com o "po
 
 `KIT` = `${CLAUDE_PLUGIN_ROOT}`. Formato de saída: `KIT/skills/power-platform/references/formato-saida.md`.
 Script de estado: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
+Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py"`.
 Script de imagens: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/desenhar-mockups.py"`.
 Detalhe de chave, modelo e erros: `KIT/skills/power-platform/references/mockups.md`.
 
@@ -31,7 +32,7 @@ Detalhe de chave, modelo e erros: `KIT/skills/power-platform/references/mockups.
 ## Passos
 
 1. **Agente.** Mostre `◆ Chamando o Agente de Mockups em Imagem...` e chame o subagente
-   `pp:agente-mockups` passando:
+   `pp:agente-mockups` (modelo: `modelos.py de agente-mockups`; linha vazia, não passe `model`) passando:
    - `RAIZ`: a raiz do projeto;
    - `KIT`: o valor de `${CLAUDE_PLUGIN_ROOT}`;
    - `MODO`: novo ou ajuste, e no ajuste os itens `tela` da rodada.

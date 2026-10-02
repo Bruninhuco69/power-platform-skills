@@ -35,6 +35,7 @@ from datetime import date
 from pathlib import Path
 
 NOME_ARQUIVO = "ESTADO.md"
+NOME_CONFIG = "power-platform.config.json"
 PREFIXO_COMANDO = "/pp:"
 MARCA_INICIO = "<!-- pp:estado"
 MARCA_FIM = "-->"
@@ -241,7 +242,20 @@ def barra(dados: dict) -> str:
     return f"{'█' * cheios}{'░' * (LARGURA_BARRA - cheios)} {round(100 * feitas / total)}% ({feitas} de {total} etapas)"
 
 
-def bloco_proximo(dados: dict) -> str:
+def modelo_da_sessao(raiz: Path | None) -> str:
+    """`modelos.sessao` do config do projeto (escolhido no /pp:novo); vazio se não há."""
+    if raiz is None or not (raiz / NOME_CONFIG).is_file():
+        return ""
+    try:
+        config = json.loads((raiz / NOME_CONFIG).read_text(encoding="utf-8-sig"))
+    except (ValueError, OSError):
+        return ""
+    modelos = config.get("modelos") if isinstance(config, dict) else None
+    sessao = modelos.get("sessao", "") if isinstance(modelos, dict) else ""
+    return _texto_limpo(sessao) if isinstance(sessao, str) else ""
+
+
+def bloco_proximo(dados: dict, raiz: Path | None = None) -> str:
     etapa_id = proxima(dados)
     if etapa_id is None:
         return "\n".join([
@@ -259,7 +273,12 @@ def bloco_proximo(dados: dict) -> str:
         linhas.append(f"<sub>◆ Em andamento desde {registro['data']}: rodar de novo retoma de onde parou.</sub>")
     linhas += ["", f"`{_comando(etapa_id, registro['argumento'])}`", "",
                "<sub>Abra uma nova sessão antes: digite `/clear` (ou feche e abra o Claude Code na pasta do "
-               "projeto). Cada etapa começa limpa e lê tudo do disco.</sub>", "", LINHA, "", "**Também disponível:**"]
+               "projeto). Cada etapa começa limpa e lê tudo do disco.</sub>"]
+    sessao = modelo_da_sessao(raiz)
+    if sessao:
+        linhas.append(f"<sub>Modelo desta sessão: **{sessao}** (escolhido no `/pp:novo`). Se o Claude Code abrir "
+                      f"em outro, digite `/model {sessao}`.</sub>")
+    linhas += ["", LINHA, "", "**Também disponível:**"]
     for comando, descricao in ALTERNATIVAS.get(etapa_id, []):
         if comando != _comando(etapa_id, registro["argumento"]):
             linhas.append(f"- `{comando}` — {descricao}")
@@ -278,7 +297,7 @@ def tabela(dados: dict) -> str:
     return "\n".join(linhas)
 
 
-def renderizar(dados: dict) -> str:
+def renderizar(dados: dict, raiz: Path | None = None) -> str:
     historico = [f"- {h['data']} — {h['evento']}" for h in reversed(dados["historico"][-HISTORICO_VISIVEL:])]
     partes = [
         f"# Estado do projeto — {dados['projeto']}", "",
@@ -287,7 +306,7 @@ def renderizar(dados: dict) -> str:
         f"**Ideia:** {dados['ideia'] or '—'}  ",
         f"**Início:** {dados.get('criado', '')} · **Progresso:** {barra(dados)}", "",
         "## Etapas", "", tabela(dados), "",
-        bloco_proximo(dados), "",
+        bloco_proximo(dados, raiz), "",
         f"## Histórico (últimos {HISTORICO_VISIVEL}, mais recente primeiro)", "",
         *(historico or ["- (vazio)"]), "",
         MARCA_INICIO, json.dumps(dados, ensure_ascii=False, indent=1), MARCA_FIM, "",
@@ -297,7 +316,7 @@ def renderizar(dados: dict) -> str:
 
 def gravar(caminho: Path, dados: dict) -> None:
     temporario = caminho.with_name(caminho.name + ".tmp")
-    temporario.write_text(renderizar(dados), encoding="utf-8")
+    temporario.write_text(renderizar(dados, caminho.parent), encoding="utf-8")
     os.replace(temporario, caminho)
 
 
@@ -312,7 +331,7 @@ def banner(titulo: str) -> str:
 
 # ---------------------------------------------------------------- comandos
 
-def _exigir_ordem(dados: dict, etapa_id: str) -> int:
+def _exigir_ordem(dados: dict, etapa_id: str, raiz: Path) -> int:
     anterior = bloqueio(dados, etapa_id)
     if anterior is None:
         return 0
@@ -321,7 +340,7 @@ def _exigir_ordem(dados: dict, etapa_id: str) -> int:
                      f"`{_comando(etapa_id)}` depende de **{POR_ID[anterior].titulo}** ({situacao}).\n"
                      f"**Para seguir:** rode a etapa que falta, numa nova sessão."))
     print()
-    print(bloco_proximo(dados))
+    print(bloco_proximo(dados, raiz))
     return 1
 
 
@@ -338,7 +357,7 @@ def cmd_iniciar(args: argparse.Namespace) -> int:
     gravar(caminho, dados)
     print(f"✓ {NOME_ARQUIVO} criado em {caminho.parent.name}/")
     print()
-    print(bloco_proximo(dados))
+    print(bloco_proximo(dados, caminho.parent))
     return 0
 
 
@@ -349,12 +368,12 @@ def cmd_mostrar(caminho: Path, dados: dict, _: argparse.Namespace) -> int:
     print()
     print(tabela(dados))
     print()
-    print(bloco_proximo(dados))
+    print(bloco_proximo(dados, caminho.parent))
     return 0
 
 
 def cmd_checar(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
-    codigo = _exigir_ordem(dados, args.etapa)
+    codigo = _exigir_ordem(dados, args.etapa, caminho.parent)
     if codigo == 0 and feita(dados, args.etapa):
         print(f"⚠ {POR_ID[args.etapa].titulo} já foi feita em {dados['etapas'][args.etapa]['data']}: "
               "rodar de novo refaz a etapa.")
@@ -377,7 +396,7 @@ def cmd_comecar(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
 
 
 def cmd_concluir(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
-    codigo = _exigir_ordem(dados, args.etapa)
+    codigo = _exigir_ordem(dados, args.etapa, caminho.parent)
     if codigo:
         return codigo
     marcar(dados, args.etapa, "concluida", args.nota or "")
@@ -385,7 +404,7 @@ def cmd_concluir(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
     gravar(caminho, dados)
     print(f"✓ {POR_ID[args.etapa].titulo} concluída · progresso {barra(dados)}")
     print()
-    print(bloco_proximo(dados))
+    print(bloco_proximo(dados, caminho.parent))
     return 0
 
 
@@ -397,7 +416,7 @@ def cmd_dispensar(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
     gravar(caminho, dados)
     print(f"⊘ {POR_ID[args.etapa].titulo} dispensada: {_texto_limpo(args.motivo)}")
     print()
-    print(bloco_proximo(dados))
+    print(bloco_proximo(dados, caminho.parent))
     return 0
 
 
@@ -409,7 +428,7 @@ def cmd_reabrir(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
     gravar(caminho, dados)
     print(f"↺ Reabertas: {', '.join(POR_ID[e].titulo for e in reabertas)}")
     print()
-    print(bloco_proximo(dados))
+    print(bloco_proximo(dados, caminho.parent))
     return 0
 
 
@@ -427,7 +446,7 @@ def cmd_veredito(caminho: Path, dados: dict, args: argparse.Namespace) -> int:
 
 
 def cmd_proximo(caminho: Path, dados: dict, _: argparse.Namespace) -> int:
-    print(bloco_proximo(dados))
+    print(bloco_proximo(dados, caminho.parent))
     return 0
 
 

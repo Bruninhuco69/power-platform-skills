@@ -26,6 +26,11 @@ na raiz do projeto. Os scripts o procuram do diretório atual para cima, ou rece
     "qualidade": "high",
     "pasta": "docs/planejamento/mockups"
   },
+  "modelos": {
+    "perfil": "equilibrado",
+    "sessao": "opus",
+    "agentes": { "agente-arquitetura": "opus", "agente-qa": "opus", "agente-canvas": "sonnet", "...": "..." }
+  },
   "git_commit_por_etapa": true
 }
 ```
@@ -48,6 +53,9 @@ na raiz do projeto. Os scripts o procuram do diretório atual para cima, ou rece
 | `mockups.tamanho` | `LARGURAxALTURA` \| `auto` | `1536x1024` | `desenhar-mockups.py` (abaixo de `--tamanho`) |
 | `mockups.qualidade` | `low` \| `medium` \| `high` \| `auto` | `high` | `desenhar-mockups.py` (abaixo de `--qualidade`) |
 | `mockups.pasta` | caminho | a pasta do spec | `desenhar-mockups.py`: onde gravar os `.png` e a galeria; `verificar-prototipo.py`: onde procurar os PNGs |
+| `modelos.perfil` | texto | — | `modelos.py`: o perfil escolhido no `/pp:novo` (`equilibrado`, `maximo`, `economico`, `herdar`; `(ajustado)` se houve troca avulsa) |
+| `modelos.sessao` | `best` \| `fable` \| `opus` \| `sonnet` \| `haiku` \| vazio | vazio | `modelos.py` grava em `.claude/settings.local.json`; `estado.py` lembra o `/model` no "Próximo passo" |
+| `modelos.agentes.<agente>` | `fable` \| `opus` \| `sonnet` \| `haiku` \| vazio | vazio (herda a sessão) | etapas `/pp:*`: `modelos.py de <agente>` vira o `model` da chamada do agente |
 | `git_commit_por_etapa` | booleano | `false` | etapas `/pp:*`: commit no fim de cada etapa (perguntado no `/pp:novo`) |
 
 No pipeline `/pp:*`, o `/pp:novo` cria este arquivo **sem** `trilha_dados` e `prefixo_publisher`: quem
@@ -66,3 +74,5 @@ em andamento, reabertas) e o próximo comando. Quem escreve é só o
 `skills/power-platform/scripts/estado.py`, chamado pelas etapas; o JSON no fim do arquivo é a
 fonte, a tabela é reescrita a cada mudança. Editar à mão a tabela não muda nada; editar o JSON pode
 corromper o arquivo (o script acusa com exit 2).
+
+Os modelos (quem pensa e quem executa, como trocar e medir): `skills/power-platform/references/modelos.md`.

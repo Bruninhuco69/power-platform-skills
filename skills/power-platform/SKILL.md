@@ -142,7 +142,8 @@ Tela ou flow alterado: a prova final é colar no Studio/designer, ou registrar �
 | `references/protocolo.md` | app existente: feature multi-camada, critério de saída de fase |
 | `references/modo-goal-fila.md` | fila `GOAL.md`, estados, evidência, portões por onda |
 | `references/modo-investigar.md` | "o número não bate", lentidão, "não atualiza" |
-| `references/subagentes.md` | antes de abrir qualquer subagente |
+| `references/subagentes.md` | antes de abrir qualquer subagente; julgar a entrega (aceito, revisão, escalado) |
+| `references/modelos.md` | perfis de modelo (quem pensa, quem executa), como trocar e como medir |
 | `references/alm-ambientes.md` | solução, DEV/HML/PRD, variável de ambiente, `pac`; `/pp:homologar`, `/pp:publicar` |
 | `references/salvaguardas.md` | trilha, ambiente, gerador × gabarito, evidência, doc × disco, Git |
 | `references/portao-final.md` | antes de dizer "pronto"; verdes falsos conhecidos |

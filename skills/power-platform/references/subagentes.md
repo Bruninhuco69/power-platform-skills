@@ -80,6 +80,9 @@ Divida por **tema** ou por **arquivo**, nunca pelos dois sobrepostos:
 ## Como lançar
 
 - **Todos numa só mensagem**, para rodarem em paralelo.
+- **Modelo de cada agente:** `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py" de <agente>`.
+  Saiu um nome (`opus`, `sonnet`...): passe como `model` na chamada. Saiu linha vazia: não passe
+  `model` (o agente herda o da sessão). Perfis e trocas: `modelos.md`.
 - Preencha o modelo: `{{PROJETO}}`, `{{RAIZ}}` (raiz do projeto, relativa ou informada em runtime —
   nunca caminho absoluto de usuário gravado em arquivo), `{{ESCOPO}}`, `{{OBJETIVO}}`,
   `{{ACHADOS_CONHECIDOS}}` (o que já se sabe, com o comando que verifica — evita redescobrir).

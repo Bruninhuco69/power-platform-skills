@@ -3,18 +3,43 @@
   "trilha_dados": "sql-server",
   "prefixo_publisher": "abc_",
   "pastas": {
-    "telas": ["Frontend"],
-    "flows": ["Backend/PowerAutomate/nos"],
-    "procedures": ["Backend/SQL Server/procedures"],
-    "prototipo": ["docs/planejamento/prototipo"]
+    "telas": [
+      "Frontend"
+    ],
+    "flows": [
+      "Backend/PowerAutomate/nos"
+    ],
+    "procedures": [
+      "Backend/SQL Server/procedures"
+    ],
+    "prototipo": [
+      "docs/planejamento/prototipo"
+    ]
   },
   "nomes_as_built": "AMBIENTE-AS-BUILT/NOMES-AS-BUILT.md",
   "telas_formato": "yaml-puro",
-  "ignorar": ["**/old/**", "**/backup-*/**", "**/_antes/**", "**/_arquivo/**"],
+  "ignorar": [
+    "**/old/**",
+    "**/backup-*/**",
+    "**/_antes/**",
+    "**/_arquivo/**"
+  ],
   "mockups": {
     "modelo": "gpt-image-2",
     "tamanho": "1536x1024",
     "qualidade": "high"
+  },
+  "modelos": {
+    "perfil": "equilibrado",
+    "sessao": "opus",
+    "agentes": {
+      "agente-arquitetura": "opus",
+      "agente-qa": "opus",
+      "agente-mockups": "sonnet",
+      "agente-prototipo": "sonnet",
+      "agente-canvas": "sonnet",
+      "agente-automate": "sonnet"
+    }
   },
   "git_commit_por_etapa": true
 }

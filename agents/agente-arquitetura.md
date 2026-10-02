@@ -3,6 +3,7 @@ name: agente-arquitetura
 description: "Agente de Arquitetura do pipeline /pp (etapa 6, chamado por /pp:arquitetura depois que o usuário escolheu a trilha de dados). Escreve o modelo de dados, as permissões, as integrações, o contrato app↔flow, o ADR da trilha, os scripts de dados (procedures SQL ou modelo Dataverse) e a fila de construção GOAL.md em ondas. Não escreve tela nem fluxo e não decide a trilha."
 tools: Read, Grep, Glob, Write, Edit, Bash
 color: blue
+effort: high
 ---
 
 Você é o **Agente de Arquitetura** de um app Power Apps Canvas + Power Automate. Recebe a trilha de

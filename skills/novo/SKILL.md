@@ -30,30 +30,40 @@ python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py" <comando>
    ou duas frases: o que ele resolve e para quem?". Uma pergunta por vez.
 2. **O nome.** Proponha um nome curto, derivado da ideia (ex.: `Pedidos`), e confirme. Sem
    espaço nem acento no nome da pasta.
-3. **A pasta** (`AskUserQuestion`):
-   - "Usar esta pasta" (recomendado quando ela está vazia ou só tem material do projeto);
-   - "Criar a subpasta `<Nome>/` aqui".
+3. **Três escolhas numa rodada só:** uma chamada de `AskUserQuestion` com as três perguntas
+   (são independentes; o usuário responde tudo de uma vez):
+   - header `Pasta`: "Usar esta pasta" (recomendado quando ela está vazia ou só tem material do
+     projeto) ou "Criar a subpasta `<Nome>/` aqui";
+   - header `Commits`: "Cada etapa faz um commit no fim (Recomendado)" ou "Eu cuido dos commits";
+   - header `Modelos`, "Quem pensa e quem executa?": Equilibrado (Recomendado), Máximo, Econômico,
+     Herdar. O `preview` de cada opção é o bloco do perfil que
+     `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py" perfis` imprime;
+     a descrição, a frase "quando" de `KIT/skills/power-platform/references/modelos.md` §1.
+   Resposta livre em Modelos (ex.: "Opus em tudo"): o perfil mais próximo mais as trocas
+   `--sessao`, `--planejamento`, `--execucao` do passo 5.
    Na subpasta, avise já: as próximas sessões precisam ser abertas **dentro dela** (feche e abra o
    Claude Code lá; `/clear` não troca de pasta).
-4. **Commit por etapa** (`AskUserQuestion`): "Cada etapa faz um commit no fim (Recomendado)" ou "Eu
-   cuido dos commits". Grave a resposta em `git_commit_por_etapa` no config.
-5. **Crie a estrutura** na raiz do projeto:
+4. **Crie a estrutura** na raiz do projeto:
    - `git init` se a pasta não está dentro de um repositório;
    - `.gitignore` com: `dist/`, `.env`, `*.msapp`, `*.zip`, `__pycache__/`, `*.tmp`,
-     `AMBIENTE-AS-BUILT/capturas/`;
+     `AMBIENTE-AS-BUILT/capturas/`, `.claude/settings.local.json`;
    - `power-platform.config.json` a partir de `KIT/skills/power-platform/assets/power-platform.config.exemplo.json`:
      `projeto` = nome; **tire** `trilha_dados` e `prefixo_publisher` (a arquitetura decide);
-     `git_commit_por_etapa` do passo 4;
+     `git_commit_por_etapa` da resposta em Commits;
    - `00-LEIA-PRIMEIRO.md` a partir de `KIT/skills/power-platform/assets/leia-primeiro-molde.md`, com a ideia;
    - pastas `docs/planejamento/` e `docs/decisoes/`.
+5. **Modelos:** `modelos.py aplicar <perfil> [trocas]` da raiz do projeto (na subpasta,
+   `--raiz <Nome>` antes de `aplicar`). Mostre a saída e diga em uma linha: as próximas etapas
+   abrem a sessão em `<modelo>` e cada agente recebe o seu; esta sessão continua no modelo atual.
 6. **Estado:** `estado.py iniciar --projeto "<Nome>" --ideia "<ideia em uma frase>"` (na subpasta,
    acrescente `--raiz <Nome>`).
 7. **Commit** (se `git_commit_por_etapa`): `git add -A` e `git commit -m "pp(novo): estrutura do projeto <Nome>"`.
+   O `.claude/settings.local.json` fica fora (é pessoal).
 
 ## Portão de saída
 
-`ESTADO.md`, `power-platform.config.json` e `00-LEIA-PRIMEIRO.md` existem na raiz; `git status`
-funciona. Confira com `ls` antes de encerrar.
+`ESTADO.md`, `power-platform.config.json` (com `modelos`) e `00-LEIA-PRIMEIRO.md` existem na raiz;
+`git status` funciona. Confira com `ls` e `modelos.py mostrar` antes de encerrar.
 
 ## Encerrar
 

@@ -13,6 +13,7 @@ inventário e protótipo em modelo de dados, permissões, integrações e a fila
 
 `KIT` = `${CLAUDE_PLUGIN_ROOT}`. Formato de saída: `KIT/skills/power-platform/references/formato-saida.md`.
 Script de estado: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
+Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py"`.
 
 ## Antes de começar
 
@@ -35,6 +36,7 @@ Script de estado: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/e
    arquivo), quem cria tabela, se há ambientes DEV/HML/PRD.
 3. **Agente.** Mostre `◆ Chamando o Agente de Arquitetura...` e chame `pp:agente-arquitetura` com
    `RAIZ`, `KIT` (o valor de `${CLAUDE_PLUGIN_ROOT}`), `TRILHA` e os fatos do passo 2.
+   Modelo: `modelos.py de agente-arquitetura` (linha vazia: não passe `model`).
 4. **Julgue a entrega** (`KIT/skills/power-platform/references/subagentes.md`, "Julgar a entrega"):
    - `power-platform.config.json` com `trilha_dados` (e `prefixo_publisher` no Dataverse);
    - `GOAL.md` com onda 0 (ambiente, 🔴) e as ondas de construção, cada tarefa com "pronto quando";

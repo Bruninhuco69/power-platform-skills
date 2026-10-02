@@ -66,8 +66,10 @@ Decisão fechada vai por `AskUserQuestion` (opção recomendada primeiro, com "(
 | `CHECKPOINT: Conferência` | o usuário precisa ver algo (protótipo, mockups, relatório) | "aprovado" ou o ajuste |
 | `CHECKPOINT: Ação no ambiente` | 🔴: só o humano faz (criar tabela, colar no Studio, publicar) | "feito" ou o erro |
 
-Regras: uma pergunta por vez; passo a passo com caminho de menu real; nunca peça senha, chave ou
-token na conversa.
+Regras: uma pergunta aberta por vez; escolhas fechadas e independentes entre si podem ir juntas
+numa chamada do `AskUserQuestion` (até 4), e o que um agente vai precisar saber se pergunta antes de
+chamá-lo, numa rodada só; passo a passo com caminho de menu real; nunca peça senha, chave ou token
+na conversa.
 
 ## 4. Agentes
 

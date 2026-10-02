@@ -14,6 +14,7 @@ ambiente. A etapa só fecha quando a última onda fecha.
 
 `KIT` = `${CLAUDE_PLUGIN_ROOT}`. Formato de saída: `KIT/skills/power-platform/references/formato-saida.md`.
 Script de estado: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
+Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py"`.
 Fila e evidência: `KIT/skills/power-platform/references/modo-goal-fila.md`.
 
 ## Antes de começar
@@ -42,6 +43,8 @@ Fila e evidência: `KIT/skills/power-platform/references/modo-goal-fila.md`.
    - `pp:agente-canvas` com `RAIZ`, `KIT` (o valor de `${CLAUDE_PLUGIN_ROOT}`), `ONDA` (tarefas de
      tela) ou `CORRECOES` (itens `app`);
    - `pp:agente-automate` com `RAIZ`, `KIT`, `ONDA` (tarefas de fluxo) ou `CORRECOES` (itens `flows`).
+   O modelo de cada um: `modelos.py de agente-canvas` e `modelos.py de agente-automate` (linha
+   vazia: não passe `model`).
 2. **Julgue as entregas e a integração app ↔ automações** (você mesmo, não um agente;
    `KIT/skills/power-platform/references/subagentes.md`, "Julgar a entrega"):
    - `python "${CLAUDE_PLUGIN_ROOT}/skills/powerapps-canvas/scripts/validar-telas.py"` e

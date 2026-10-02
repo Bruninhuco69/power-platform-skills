@@ -13,6 +13,7 @@ A pergunta do desenho: **testes aprovados?**
 
 `KIT` = `${CLAUDE_PLUGIN_ROOT}`. Formato de saída: `KIT/skills/power-platform/references/formato-saida.md`.
 Script de estado: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
+Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py"`.
 O que é verde de verdade: `KIT/skills/power-platform/references/portao-final.md`.
 
 ## Antes de começar
@@ -25,7 +26,7 @@ O que é verde de verdade: `KIT/skills/power-platform/references/portao-final.md
 
 1. **Agente.** `◆ Chamando o Agente de Testes e Qualidade...` e chame `pp:agente-qa` com `RAIZ`,
    `KIT` (o valor de `${CLAUDE_PLUGIN_ROOT}`) e o escopo (todas as ondas, ou só as correções desde o
-   último `docs/qa/QA-*.md`).
+   último `docs/qa/QA-*.md`). Modelo: `modelos.py de agente-qa` (linha vazia: não passe `model`).
 2. **Reabra os achados mais fortes** antes de acreditar: rode de novo os validadores que o agente
    citou e confira 2 ou 3 achados com o comando que ele deu
    (`KIT/skills/power-platform/references/subagentes.md`). O que não se reproduz entra como "não
