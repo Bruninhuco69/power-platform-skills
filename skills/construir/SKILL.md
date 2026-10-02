@@ -67,7 +67,9 @@ Fila e evidência: `KIT/skills/power-platform/references/modo-goal-fila.md`.
    "Digite 'feito' ou cole a mensagem de erro."
 4. **Erro na colagem:** diagnostique com a skill da camada (`powerapps-canvas` ou `power-automate`) e
    devolva ao agente da camada como revisão, com a mensagem exata do Studio ou do designer e a
-   linha do arquivo; você não edita a tela nem o fluxo. Depois repita o passo 3. Duas falhas pela
+   linha do arquivo; você não edita a tela nem o fluxo. Mensagem que a skill da camada não
+   explica: antes, `pp:agente-pesquisa` com a mensagem exata (`ONDE: os dois`; modelo:
+   `modelos.py de agente-pesquisa`), e os achados vão junto na revisão. Depois repita o passo 3. Duas falhas pela
    mesma causa: escalado (pare, registre no `GOAL.md` e diga ao usuário o que foi tentado).
 5. **Atualize a fila:** cada tarefa da onda vira ✅ com evidência (comando + última linha do
    validador + "colado em <data>"). Correção: marque o item como `feito` em `docs/qa/correcoes.md`.

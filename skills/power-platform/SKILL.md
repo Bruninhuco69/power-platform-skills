@@ -147,7 +147,7 @@ Tela ou flow alterado: a prova final é colar no Studio/designer, ou registrar �
 | `references/alm-ambientes.md` | solução, DEV/HML/PRD, variável de ambiente, `pac`; `/pp:homologar`, `/pp:publicar` |
 | `references/salvaguardas.md` | trilha, ambiente, gerador × gabarito, evidência, doc × disco, Git |
 | `references/portao-final.md` | antes de dizer "pronto"; verdes falsos conhecidos |
-| `prompts/ux.md` `dev.md` `performance.md` `dados.md` `flow.md` `sql.md` | auditoria de app existente (fan-out) |
+| `prompts/ux.md` `dev.md` `performance.md` `dados.md` `flow.md` `sql.md` | auditoria de app existente (fan-out, cada um como `pp:agente-pesquisa`) |
 | `assets/*-molde.*` | moldes que as etapas copiam: PRD, design system, inventário, mockups, protótipo, arquitetura, ADR, `GOAL.md`, `00-LEIA-PRIMEIRO.md`, config |
 
 ## Scripts

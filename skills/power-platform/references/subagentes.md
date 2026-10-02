@@ -38,6 +38,11 @@ etapa), lê os arquivos do projeto e devolve uma entrega com formato fixo.
 | `agente-canvas` | `/pp:construir` (`app`) | leitura, escrita, Bash (`validar-telas.py`) | pastas de tela |
 | `agente-automate` | `/pp:construir` (`flows`) | leitura, escrita, Bash (`verificar-fluxo.py`) | pastas de fluxo (e procedure em correção) |
 | `agente-qa` | `/pp:testar` | só leitura + Bash para validadores | nada: a etapa escreve o relatório |
+| `agente-pesquisa` | `/pp:brainstorm`, `/pp:arquitetura`, `/pp:construir`, `/pp:mudanca`, auditoria | só leitura + busca na web (sem Bash, sem escrita) | nada: devolve achados com fonte |
+
+**Pesquisa** é a mão de quem decide: quando a etapa precisa de um fato (o conector existe? exige
+licença premium? o que significa esta mensagem de erro? o que já existe nesta pasta?), a sessão
+pergunta ao `agente-pesquisa` em vez de ler tudo ou de chutar. Ele devolve achado com fonte.
 
 Brainstorm e Designer Branding **não** são subagentes: subagente não conversa com o usuário (o
 Claude Code tira dele a ferramenta de perguntar), então a sessão da etapa assume o papel.
@@ -193,6 +198,9 @@ Deduplique, ordene por severidade, atribua cada achado ao agente que o trouxe, e
 agente **não** cobriu. Conflito entre agentes: resolva com a evidência, não por votação.
 
 ## Modelos de prompt
+
+Cada prompt roda como `pp:agente-pesquisa` (só lê), com o modelo de
+`modelos.py de agente-pesquisa`; a sessão consolida e julga.
 
 | Arquivo | Quando |
 |---|---|

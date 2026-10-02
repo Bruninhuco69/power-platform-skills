@@ -23,6 +23,10 @@ Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py
 
 ## Passos
 
+0. **Pesquisa, se faltar fato** para a trilha: o PRD cita fonte que já existe (planilha, banco,
+   sistema) com arquivos no projeto, ou há dúvida de licença ou limite. Chame
+   `pp:agente-pesquisa` com `ONDE: os dois`, `PARA QUE: escolher a trilha de dados` (modelo:
+   `modelos.py de agente-pesquisa`). Julgue e use os achados com fonte entre os fatos do passo 1.
 1. **Trilha de dados** (checkpoint `Decisão`). Aplique a matriz às respostas do brainstorm e
    recomende **uma** trilha, com os 3 fatos que pesaram (volume acima de 2.000, banco SQL que já
    existe, compliance, DBA, transação em várias tabelas). `AskUserQuestion`, a recomendada primeiro:

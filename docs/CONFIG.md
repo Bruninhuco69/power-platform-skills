@@ -29,7 +29,7 @@ na raiz do projeto. Os scripts o procuram do diretório atual para cima, ou rece
   "modelos": {
     "perfil": "equilibrado",
     "sessao": "opus",
-    "agentes": { "agente-arquitetura": "opus", "agente-qa": "opus", "agente-canvas": "sonnet", "...": "..." }
+    "agentes": { "agente-arquitetura": "opus", "agente-qa": "opus", "agente-canvas": "sonnet", "agente-pesquisa": "sonnet", "...": "..." }
   },
   "git_commit_por_etapa": true
 }

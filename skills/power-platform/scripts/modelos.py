@@ -41,6 +41,7 @@ PAPEIS = {
     "sessao": "Sessão de cada etapa: conversa, decide, julga",
     "planejamento": "Arquitetura e QA: planejam e julgam",
     "execucao": "Mockups, protótipo, telas e fluxos",
+    "pesquisa": "Pesquisa: lê o projeto e a documentação",
 }
 AGENTES = {
     "agente-arquitetura": "planejamento",
@@ -49,6 +50,7 @@ AGENTES = {
     "agente-prototipo": "execucao",
     "agente-canvas": "execucao",
     "agente-automate": "execucao",
+    "agente-pesquisa": "pesquisa",
 }
 
 
@@ -62,11 +64,11 @@ class Perfil:
 
 PERFIS = (
     Perfil("equilibrado", "Equilibrado", "o modelo forte pensa e julga; o rápido executa",
-           {"sessao": "opus", "planejamento": "opus", "execucao": "sonnet"}),
+           {"sessao": "opus", "planejamento": "opus", "execucao": "sonnet", "pesquisa": "sonnet"}),
     Perfil("maximo", "Máximo", "o mais forte em tudo o que decide; custa mais",
-           {"sessao": "best", "planejamento": "opus", "execucao": "opus"}),
-    Perfil("economico", "Econômico", "Sonnet em tudo; espere mais revisões",
-           {"sessao": "sonnet", "planejamento": "sonnet", "execucao": "sonnet"}),
+           {"sessao": "best", "planejamento": "opus", "execucao": "opus", "pesquisa": "sonnet"}),
+    Perfil("economico", "Econômico", "Sonnet em tudo, Haiku na pesquisa; espere mais revisões",
+           {"sessao": "sonnet", "planejamento": "sonnet", "execucao": "sonnet", "pesquisa": "haiku"}),
     Perfil("herdar", "Herdar", "não força nada: tudo no modelo em que a sessão abrir",
            {papel: "" for papel in PAPEIS}),
 )
@@ -216,7 +218,8 @@ def cmd_aplicar(raiz: Path, args: argparse.Namespace) -> int:
     caminho = raiz / NOME_CONFIG
     config = _ler_json(caminho, NOME_CONFIG)
     anterior = ler_modelos(config)
-    trocas = {"sessao": args.sessao, "planejamento": args.planejamento, "execucao": args.execucao}
+    trocas = {"sessao": args.sessao, "planejamento": args.planejamento, "execucao": args.execucao,
+              "pesquisa": args.pesquisa}
     modelos = montar_modelos(POR_ID[args.perfil], trocas)
     _gravar_json(caminho, {**config, "modelos": modelos})
     print(f"✓ {NOME_CONFIG}: perfil {modelos['perfil']}")
@@ -254,6 +257,7 @@ def _argumentos(argv: list[str] | None) -> argparse.Namespace:
     p.add_argument("--sessao", help=f"troca a sessão ({', '.join(MODELOS_SESSAO)})")
     p.add_argument("--planejamento", help=f"troca arquitetura e QA ({', '.join(MODELOS_AGENTE)})")
     p.add_argument("--execucao", help=f"troca quem executa ({', '.join(MODELOS_AGENTE)})")
+    p.add_argument("--pesquisa", help=f"troca a pesquisa ({', '.join(MODELOS_AGENTE)})")
     sub.add_parser("mostrar", help="o que o projeto usa hoje")
     p = sub.add_parser("de", help="o modelo de um agente (vazio = herda a sessão)")
     p.add_argument("agente")

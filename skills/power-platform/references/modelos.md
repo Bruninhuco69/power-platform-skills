@@ -10,12 +10,12 @@ O perfil é escolhido no `/pp:novo` e gravado pelo `scripts/modelos.py`.
 
 ## 1. Perfis
 
-| Perfil | Sessão de cada etapa | Arquitetura e QA | Mockups, protótipo, telas e fluxos | Quando |
-|---|---|---|---|---|
-| **Equilibrado** (recomendado) | Opus | Opus | Sonnet | quase sempre: o forte pensa e julga, o rápido executa |
-| **Máximo** | `best` | Opus | Opus | app crítico ou time sem paciência para revisão; custa mais |
-| **Econômico** | Sonnet | Sonnet | Sonnet | protótipo descartável, cota apertada; espere mais revisões |
-| **Herdar** | o modelo em que a sessão abrir | idem | idem | quem já controla o modelo por conta própria |
+| Perfil | Sessão de cada etapa | Arquitetura e QA | Mockups, protótipo, telas e fluxos | Pesquisa | Quando |
+|---|---|---|---|---|---|
+| **Equilibrado** (recomendado) | Opus | Opus | Sonnet | Sonnet | quase sempre: o forte pensa e julga, o rápido executa |
+| **Máximo** | `best` | Opus | Opus | Sonnet | app crítico ou time sem paciência para revisão; custa mais |
+| **Econômico** | Sonnet | Sonnet | Sonnet | Haiku | protótipo descartável, cota apertada; espere mais revisões |
+| **Herdar** | o modelo em que a sessão abrir | idem | idem | idem | quem já controla o modelo por conta própria |
 
 `best` usa o Fable se a conta tem acesso, senão o Opus. Só vale para a sessão: agente aceita
 `fable`, `opus`, `sonnet` e `haiku`.
@@ -29,7 +29,7 @@ no formato da prévia do `/pp:novo`.
 |---|---|---|
 | Sessão de cada etapa | `"model"` no `.claude/settings.local.json` do projeto: o Claude Code lê ao abrir a sessão na pasta. Como cada etapa é sessão nova, a escolha vale sozinha | `/model` na sessão, `--model` e a variável `ANTHROPIC_MODEL` |
 | Cada agente | a etapa roda `modelos.py de <agente>` e passa a resposta como `model` na chamada; linha vazia = não passe `model` (herda a sessão) | nada: o `model` da chamada vence o frontmatter do agente |
-| Esforço de raciocínio | `effort: high` no frontmatter de `agente-arquitetura` e `agente-qa` (planejam e julgam); os outros herdam o da sessão | `effort` da sessão não vence o do agente |
+| Esforço de raciocínio | `effort: high` no frontmatter de `agente-arquitetura` e `agente-qa` (planejam e julgam), `medium` no `agente-pesquisa`; os outros herdam o da sessão | `effort` da sessão não vence o do agente |
 
 O plugin **não troca o modelo no meio de uma sessão**: o `model:` de uma skill vale só para o turno.
 Por isso o "Próximo passo" lembra o modelo e o `/model` certo.
@@ -44,8 +44,8 @@ python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py" aplicar 
 python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py" mostrar
 ```
 
-`--sessao`, `--planejamento` e `--execucao` trocam um papel por cima do perfil. Vale a partir da
-próxima sessão (a atual continua no modelo em que abriu; `/model` troca na hora).
+`--sessao`, `--planejamento`, `--execucao` e `--pesquisa` trocam um papel por cima do perfil. Vale
+a partir da próxima sessão (a atual continua no modelo em que abriu; `/model` troca na hora).
 
 ## 4. Medir: o perfil está dando conta?
 

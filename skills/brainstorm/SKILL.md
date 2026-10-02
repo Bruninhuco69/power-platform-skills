@@ -14,6 +14,7 @@ o escopo do MVP.
 
 `KIT` = `${CLAUDE_PLUGIN_ROOT}`. Formato de saída: `KIT/skills/power-platform/references/formato-saida.md`.
 Script: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/estado.py"`.
+Modelos: `python "${CLAUDE_PLUGIN_ROOT}/skills/power-platform/scripts/modelos.py"`.
 
 ## Antes de começar
 
@@ -81,6 +82,12 @@ redonda, com o ícone de quem levantou). O log é o que permite parar e retomar.
 - Persona pergunta e propõe; quem decide é o usuário. Persona não afirma fato sobre o ambiente ou a
   empresa do usuário.
 - "Acho que" vira `[SUPOSIÇÃO: quem confirma, até quando]`, nunca fato.
+- **Dúvida de fato sobre a plataforma** ("dá para fazer isso no Power Apps?", "esse conector
+  existe?", "precisa de licença premium?"): não chute. Chame `pp:agente-pesquisa` com
+  `PERGUNTA`, `ONDE: web` e `PARA QUE` (modelo: `modelos.py de agente-pesquisa`; linha vazia, não
+  passe `model`). Enquanto ele trabalha, siga com a próxima pergunta que não depende da resposta.
+  Quando voltar, julgue (fonte primária? data?), registre como `insight` com a URL no log e o
+  veredito com `estado.py veredito brainstorm --agente agente-pesquisa`.
 - Não escolha tecnologia aqui (Dataverse ou SQL é da arquitetura); só registre os fatos que a
   decidem (volume, banco existente, compliance, DBA).
 - Requisito descreve resultado, não implementação: nada de nome de tabela, controle ou fluxo.

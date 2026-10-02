@@ -38,7 +38,8 @@
       "agente-mockups": "sonnet",
       "agente-prototipo": "sonnet",
       "agente-canvas": "sonnet",
-      "agente-automate": "sonnet"
+      "agente-automate": "sonnet",
+      "agente-pesquisa": "sonnet"
     }
   },
   "git_commit_por_etapa": true

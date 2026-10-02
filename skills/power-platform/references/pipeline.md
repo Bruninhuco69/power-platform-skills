@@ -114,6 +114,7 @@ Subagente **não conversa com o usuário** (o Claude Code tira dele a ferramenta
 |---|---|---|
 | Brainstorm, Designer Branding | a própria sessão da etapa assume o papel (skill `/pp:brainstorm`, `/pp:design`); no brainstorm, na pele da persona do modo escolhido, ou de várias na mesa redonda (`brainstorm-modos.md`) | o trabalho é perguntar e decidir junto |
 | Mockups em Imagem, Gerador de Mockup HTML, Arquitetura, Power Apps Canvas, Power Automate, Testes e Qualidade | subagentes do plugin (`pp:agente-*`), chamados pela etapa | leitura ampla e escrita de arquivos, sem conversa; o contexto da sessão fica limpo |
+| Pesquisa | subagente `pp:agente-pesquisa`, chamado quando a etapa precisa de um fato (licença, conector, limite, mensagem de erro, o que já existe no projeto) | só lê; devolve achado com fonte, e a sessão decide |
 
 A sessão da etapa é a **cabeça** e o agente é a **mão**: a sessão define o pedido, julga a entrega
 (roda o validador, abre o arquivo, lê "Como verifiquei" como cético) e dá um veredito por agente:
