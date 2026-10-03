@@ -1,443 +1,449 @@
 <div align="center">
 
-🇧🇷 Português · [🇺🇸 English](README.en.md)
+🇺🇸 English · [🇧🇷 Português](README.pt-BR.md)
 
 <a href="https://stage2dev.github.io/power-platform-skills/diagrama/">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/img/pipeline-escuro.webp">
-    <img src="docs/img/pipeline-claro.webp" width="100%" alt="O pipeline /pp montado em blocos: dez etapas numeradas em quatro blocos (definição, identidade, construção e entrega), o orquestrador de boné, os oito agentes de gorro colorido, os pinos vermelhos onde você age no ambiente e as três voltas: ajuste do protótipo, correção de teste e mudança com o app no ar">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/img/pipeline-en-escuro.webp">
+    <img src="docs/img/pipeline-en-claro.webp" width="100%" alt="The /pp pipeline built from blocks: ten numbered stages in four blocks (definition, identity, build and delivery), the orchestrator in a cap, the eight agents in colored beanies, the red pins where you act in the environment, and the three loops: prototype adjustment, test fix and change with the app live">
   </picture>
 </a>
 
-# Power Platform Kit para Claude Code
+# Power Platform Kit for Claude Code
 
-**Da ideia em uma linha ao app publicado.**<br>
-Power Apps Canvas + Power Automate, com SQL Server ou Dataverse: um comando guiado por etapa,
-agentes que constroem e provam o que fizeram, e você só onde precisa de gente.
+**From a one-line idea to a published app.**<br>
+Power Apps Canvas + Power Automate, on SQL Server or Dataverse: one guided command per stage,
+agents that build and prove what they did, and you only where a person is needed.
 
-![versão](https://img.shields.io/badge/vers%C3%A3o-0.3.0-2563eb)
-![comandos](https://img.shields.io/badge/comandos-%2Fpp%3A*-2563eb)
+![version](https://img.shields.io/badge/version-0.3.0-2563eb)
+![commands](https://img.shields.io/badge/commands-%2Fpp--en%3A*-2563eb)
 ![claude code](https://img.shields.io/badge/Claude_Code-plugin-d97757)
-![idioma](https://img.shields.io/badge/idioma-pt--BR-6b7280)
-![licença](https://img.shields.io/badge/licen%C3%A7a-MIT-16a34a)
+![language](https://img.shields.io/badge/language-en--US-6b7280)
+![license](https://img.shields.io/badge/license-MIT-16a34a)
 
 [**Site**](https://stage2dev.github.io/power-platform-skills/) ·
-[**Diagrama 3D**](https://stage2dev.github.io/power-platform-skills/diagrama/) ·
-[**Apresentação em PDF**](docs/Power-Platform-Kit.pdf) ·
-[**Instalação**](#instalação) ·
-[**Contribuir**](#como-contribuir)
+[**3D diagram**](https://stage2dev.github.io/power-platform-skills/diagrama/) ·
+[**PDF presentation**](docs/Power-Platform-Kit.en.pdf) ·
+[**Installation**](#installation) ·
+[**Contribute**](#how-to-contribute)
 
 </div>
 
 ---
 
-## Em 30 segundos
+## In 30 seconds
 
 ```text
 /plugin marketplace add stage2dev/power-platform-skills
-/plugin install pp@power-platform-kit
-/pp:novo um app para acompanhar pedidos entre as unidades
+/plugin install pp-en@power-platform-kit
+/pp-en:new an app to track orders across units
 ```
 
-Depois é só seguir o bloco **Próximo passo** que fecha cada etapa. Requisitos e outras formas de
-instalar estão em [Instalação](#instalação).
+Then just follow the **Next step** block that closes each stage. Requirements and other ways to
+install are in [Installation](#installation).
 
-> **Idioma.** O kit é mantido em **português do Brasil (pt-BR)** e **inglês (en-US)**, e toda
-> alteração entra nas duas línguas. As duas edições estão completas: `pp` (pt-BR, `/pp:novo` …) e
-> `pp-en` (en-US, `/pp-en:new` …), com as mesmas etapas, regras, moldes e validadores; o README, o
-> site, o diagrama 3D e o PDF existem nas duas línguas. O Power Fx segue a barra de fórmulas de cada
-> idioma: no pt-BR, `;` separa argumentos e `;;` encadeia; no en-US, `,` e `;`.
+> **Language.** The kit is maintained in **Brazilian Portuguese (pt-BR)** and **English (en-US)**,
+> and every change lands in both languages. Both editions are complete: `pp-en` (en-US, `/pp-en:new`
+> …) and `pp` (pt-BR, `/pp:novo` …) carry the same stages, rules, templates and validators, and the
+> README, the site, the 3D diagram and the PDF exist in both. Power Fx follows each language's
+> formula bar: in en-US, `,` separates arguments and `;` chains; in pt-BR, `;` and `;;`.
 
-## Por que existe
+## Why it exists
 
-Comecei no Power BI e fui para Power Apps, Power Automate, RPA e automação de processos. Em todo
-projeto os mesmos problemas voltavam, e quase sempre se resolviam do mesmo jeito. Transformei esse
-jeito em regra, e as regras num kit que o Claude Code segue do começo ao fim: menos retrabalho, o
-mesmo padrão em todos os apps e cada entrega com prova de que funciona.
+I started in Power BI and moved on to Power Apps, Power Automate, RPA and process automation. On
+every project the same problems came back, and they were almost always solved the same way. I
+turned that way into rules, and the rules into a kit that Claude Code follows from start to finish:
+less rework, the same standard across every app, and every delivery with proof that it works.
 
-| O problema de sempre | O que o kit faz |
+| The usual problem | What the kit does |
 |---|---|
-| Tela construída antes de entender o problema | Brainstorm, requisitos e um protótipo navegável aprovado antes da primeira fórmula |
-| Fórmula que não delega e some com registro | Padrões de delegação na skill de Canvas, e o QA confere antes de você testar |
-| Fluxo sem tratamento de erro | Try/Catch, autorização por ação, log e resposta de 4 campos; a tela chama dentro de `IfError` |
-| Usuário de uma unidade vendo dado de outra | O bloqueio fica no fluxo e na procedure (ou no security role); a tela só filtra, e o teste nega por perfil e por unidade |
+| Screens built before the problem is understood | Brainstorm, requirements and an approved clickable prototype before the first formula |
+| A formula that doesn't delegate and drops records | Delegation patterns in the Canvas skill, and QA checks them before you test |
+| A flow with no error handling | Try/Catch, per-action authorization, logging and a 4-field response; the screen calls it inside `IfError` |
+| A user from one unit seeing another unit's data | The block lives in the flow and the procedure (or in the security role); the screen only filters, and the test denies by role and by unit |
 
-## Apresentação em PDF
+## PDF presentation
 
-Quatro páginas para mandar ao time: o que é, as dez etapas, quem pensa e quem executa, e as
-convenções. [**Baixar o PDF**](docs/Power-Platform-Kit.pdf).
+Four pages to send to your team: what it is, the ten stages, who thinks and who executes, and the
+conventions. [**Download the PDF**](docs/Power-Platform-Kit.en.pdf).
 
 <table>
   <tr>
-    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-1.jpg" alt="Página 1: capa, por que existe e como começar"></a></td>
-    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-2.jpg" alt="Página 2: as dez etapas em quatro blocos e as voltas"></a></td>
-    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-3.jpg" alt="Página 3: quem pensa e quem executa, os agentes e os perfis de modelo"></a></td>
-    <td><a href="docs/Power-Platform-Kit.pdf"><img src="docs/img/pdf-4.jpg" alt="Página 4: app que já existe, convenções, código aberto e requisitos"></a></td>
+    <td><a href="docs/Power-Platform-Kit.en.pdf"><img src="docs/img/pdf-en-1.jpg" alt="Page 1: cover, why it exists and how to start"></a></td>
+    <td><a href="docs/Power-Platform-Kit.en.pdf"><img src="docs/img/pdf-en-2.jpg" alt="Page 2: the ten stages in four blocks and the loops"></a></td>
+    <td><a href="docs/Power-Platform-Kit.en.pdf"><img src="docs/img/pdf-en-3.jpg" alt="Page 3: who thinks and who executes, the agents and the model profiles"></a></td>
+    <td><a href="docs/Power-Platform-Kit.en.pdf"><img src="docs/img/pdf-en-4.jpg" alt="Page 4: existing apps, conventions, open source and requirements"></a></td>
   </tr>
 </table>
 
 <details>
-<summary><strong>Sumário</strong></summary>
+<summary><strong>Contents</strong></summary>
 
-- [Como funciona](#como-funciona)
-- [Requisitos](#requisitos)
-- [Instalação](#instalação)
-- [Seu primeiro app, passo a passo](#seu-primeiro-app-passo-a-passo)
-- [Os agentes](#os-agentes)
-- [Trabalhando num app que já existe](#trabalhando-num-app-que-já-existe)
-- [Catálogos de componentes](#catálogos-de-componentes)
-- [Convenções que o kit garante](#convenções-que-o-kit-garante)
-- [Estrutura do repositório](#estrutura-do-repositório)
-- [Como contribuir](#como-contribuir)
-- [Próximos passos](#próximos-passos)
-- [Créditos e marcas](#créditos-e-marcas)
-- [Licença](#licença)
+- [How it works](#how-it-works)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Your first app, step by step](#your-first-app-step-by-step)
+- [The agents](#the-agents)
+- [Working on an existing app](#working-on-an-existing-app)
+- [Component catalogs](#component-catalogs)
+- [Conventions the kit guarantees](#conventions-the-kit-guarantees)
+- [Repository layout](#repository-layout)
+- [How to contribute](#how-to-contribute)
+- [Next steps](#next-steps)
+- [Credits and trademarks](#credits-and-trademarks)
+- [License](#license)
 
 </details>
 
 ---
 
-## Como funciona
+## How it works
 
-O diagrama do topo é o pipeline inteiro: dez etapas em quatro blocos, da ideia (`1`) ao app
-publicado (`10`). Os gorros coloridos são os agentes, os pinos vermelhos marcam onde você age no
-ambiente, e as mangueiras são as voltas. [Abra a versão em 3D](https://stage2dev.github.io/power-platform-skills/diagrama/)
-para girar e aproximar.
+The diagram at the top is the whole pipeline: ten stages in four blocks, from the idea (`1`) to the
+published app (`10`). The colored beanies are the agents, the red pins mark where you act in the
+environment, and the hoses are the loops. [Open the 3D version](https://stage2dev.github.io/power-platform-skills/diagrama/)
+to rotate and zoom.
 
 <details>
-<summary>O mesmo diagrama em texto (Mermaid)</summary>
+<summary>The same diagram as text (Mermaid)</summary>
 
 ```mermaid
 flowchart TD
-    IDEIA["Ideia inicial do app"] --> O["Orquestrador · /pp:novo"]
+    IDEA["Initial app idea"] --> O["Orchestrator · /pp-en:new"]
 
-    subgraph DEFINICAO["1. Definição do produto"]
-        B["Agente Brainstorm · /pp:brainstorm"]
-        R["Requisitos, funcionalidades e escopo do MVP"]
+    subgraph DEFINITION["1. Product definition"]
+        B["Brainstorm Agent · /pp-en:brainstorm"]
+        R["Requirements, features and MVP scope"]
         B --> R
     end
 
-    subgraph DESIGN["2. Identidade e experiência"]
-        D["Agente Designer Branding · /pp:design"]
-        V["Cores, fontes, componentes e identidade visual"]
-        M["Agente de Mockups em Imagem · /pp:mockups"]
-        T["Telas, navegação, loading, erros e estados vazios"]
-        H["Agente Gerador de Mockup HTML · /pp:prototipo"]
-        PROTO["Protótipo navegável"]
-        AP{"Protótipo aprovado?"}
+    subgraph DESIGN["2. Identity and experience"]
+        D["Branding Designer Agent · /pp-en:design"]
+        V["Colors, fonts, components and visual identity"]
+        M["Image Mockups Agent · /pp-en:mockups"]
+        T["Screens, navigation, loading, errors and empty states"]
+        H["HTML Mockup Generator Agent · /pp-en:prototype"]
+        PROTO["Clickable prototype"]
+        AP{"Prototype approved?"}
         D --> V --> M --> T --> H --> PROTO --> AP
-        AP -->|Ajustar| D
+        AP -->|Adjust| D
     end
 
-    subgraph CONSTRUCAO["3. Construção na Power Platform"]
-        ARQ["Agente de Arquitetura · /pp:arquitetura"]
-        ESP["Modelo de dados, permissões e integrações"]
-        P["Agente Power Apps Canvas · /pp:construir app"]
-        A["Agente Power Automate · /pp:construir flows"]
-        APP["Telas, componentes e fórmulas Power Fx"]
-        FLUXO["Fluxos, aprovações, notificações e tratamento de erros"]
-        INT["App e automações integrados"]
+    subgraph BUILD["3. Build on the Power Platform"]
+        ARQ["Architecture Agent · /pp-en:architecture"]
+        ESP["Data model, permissions and integrations"]
+        P["Power Apps Canvas Agent · /pp-en:build app"]
+        A["Power Automate Agent · /pp-en:build flows"]
+        APP["Screens, components and Power Fx formulas"]
+        FLOW["Flows, approvals, notifications and error handling"]
+        INT["App and automations integrated"]
         ARQ --> ESP
         ESP --> P --> APP --> INT
-        ESP --> A --> FLUXO --> INT
+        ESP --> A --> FLOW --> INT
     end
 
-    subgraph ENTREGA["4. Validação e entrega"]
-        QA["Agente de Testes e Qualidade · /pp:testar"]
-        OK{"Testes aprovados?"}
-        HOM["Homologação com o usuário · /pp:homologar"]
-        PUB["Publicação e documentação · /pp:publicar"]
-        FINAL["App final no Power Apps"]
+    subgraph DELIVERY["4. Validation and delivery"]
+        QA["Testing and Quality Agent · /pp-en:test"]
+        OK{"Tests passed?"}
+        UAT["User acceptance testing · /pp-en:uat"]
+        PUB["Publishing and documentation · /pp-en:publish"]
+        FINAL["Final app in Power Apps"]
         QA --> OK
-        OK -->|Sim| HOM --> PUB --> FINAL
+        OK -->|Yes| UAT --> PUB --> FINAL
     end
 
     O --> B
     R --> D
-    AP -->|Sim| ARQ
+    AP -->|Yes| ARQ
     INT --> QA
-    OK -->|Corrigir app| P
-    OK -->|Corrigir automações| A
-    O -.->|Coordena e acompanha · /pp:progresso| DESIGN
-    O -.->|Coordena e acompanha · /pp:progresso| CONSTRUCAO
-    O -.->|Coordena e acompanha · /pp:progresso| ENTREGA
+    OK -->|Fix app| P
+    OK -->|Fix automations| A
+    O -.->|Coordinates and tracks · /pp-en:progress| DESIGN
+    O -.->|Coordinates and tracks · /pp-en:progress| BUILD
+    O -.->|Coordinates and tracks · /pp-en:progress| DELIVERY
 ```
 
 </details>
 
-Quatro ideias deixam o caminho fácil de seguir:
+Four ideas make the path easy to follow:
 
-1. **Um comando por etapa.** São dez etapas, de `/pp:novo` a `/pp:publicar`. Cada uma confere se a
-   anterior terminou; se você rodar fora de ordem, ela diz qual rodar no lugar.
-2. **Uma sessão nova por etapa.** Tudo o que uma etapa produz fica gravado em disco, então a próxima
-   começa com o contexto limpo. Toda etapa termina com um bloco **Próximo passo** como este:
+1. **One command per stage.** There are ten stages, from `/pp-en:new` to `/pp-en:publish`. Each one
+   checks that the previous one is done; if you run it out of order, it tells you which one to run
+   instead.
+2. **A fresh session per stage.** Everything a stage produces is saved to disk, so the next one
+   starts with a clean context. Every stage ends with a **Next step** block like this one:
 
    ```text
-   ## ▶ Próximo passo
+   ## ▶ Next step
 
-   **Etapa 3 de 10 · Identidade visual** — Agente Designer Branding: cores, fontes, componentes e identidade visual
+   **Stage 3 of 10 · Visual identity** — Branding Designer Agent: colors, fonts, components and visual identity
 
-   `/pp:design`
+   `/pp-en:design`
 
-   Abra uma nova sessão antes: digite `/clear` (ou feche e abra o Claude Code na pasta do projeto).
+   Open a fresh session first: type `/clear` (or close and reopen Claude Code in the project folder).
    ```
 
-3. **Você só para onde precisa de gente:** aprovar o MVP, a identidade visual e o protótipo; criar
-   tabelas, colar telas e fluxos, rodar a homologação e publicar. O resto é produzido e validado
-   para você.
-4. **Quem pensa não é quem executa.** A sessão de cada etapa define o pedido e julga; os agentes
-   escrevem e provam o que fizeram. Cada entrega recebe um veredito (aceito, revisão ou levada a
-   você) antes de chegar até você, e o modelo de cada papel é escolhido no `/pp:novo`.
+3. **You only stop where a person is needed:** approving the MVP, the visual identity and the
+   prototype; creating tables, pasting screens and flows, running user acceptance and publishing.
+   Everything else is produced and validated for you.
+4. **Who thinks is not who executes.** Each stage's session defines the request and judges; the
+   agents write and prove what they did. Every delivery gets a verdict (accepted, revision or
+   escalated to you) before it reaches you, and the model for each role is chosen in `/pp-en:new`.
 
-Perdeu o fio? `/pp:progresso` mostra a qualquer momento onde o projeto está e o próximo comando. O
-estado fica no `ESTADO.md`, na raiz do projeto.
+Lost the thread? `/pp-en:progress` shows at any time where the project stands and the next command.
+The state lives in `STATE.md`, at the project root.
 
-## Requisitos
+## Requirements
 
-| O quê | Para quê |
+| What | What for |
 |---|---|
-| [Claude Code](https://github.com/anthropics/claude-code) com suporte a plugins | tudo |
-| Python 3.10+ | o estado do projeto e os validadores (só biblioteca padrão) |
-| `pip install pyyaml` | o `validar-telas.py` e o lint do repositório |
-| Um ambiente Power Platform (Power Apps Studio, Power Automate) | colar, testar e publicar |
-| *Opcional:* uma [chave da API da OpenAI](https://platform.openai.com/api-keys) em `OPENAI_API_KEY` | os mockups em imagem da etapa 4, a única que chama uma API externa. Sem a chave, a etapa segue sem imagens |
+| [Claude Code](https://github.com/anthropics/claude-code) with plugin support | everything |
+| Python 3.10+ | the project state and the validators (standard library only) |
+| `pip install pyyaml` | `validar-telas.py` and the repository lint |
+| A Power Platform environment (Power Apps Studio, Power Automate) | pasting, testing and publishing |
+| *Optional:* an [OpenAI API key](https://platform.openai.com/api-keys) in `OPENAI_API_KEY` | the image mockups in stage 4, the only one that calls an external API. Without the key, the stage goes on without images |
 
-## Instalação
+## Installation
 
-Dentro do Claude Code:
+Inside Claude Code:
 
 ```text
 /plugin marketplace add stage2dev/power-platform-skills
-/plugin install pp@power-platform-kit
+/plugin install pp-en@power-platform-kit
 ```
 
-Ou pelo terminal:
+> **pt-BR edition.** The same pipeline in Brazilian Portuguese is the `pp` plugin, in the same
+> marketplace: `/plugin install pp@power-platform-kit` (commands `/pp:novo` … `/pp:publicar`).
+
+Or from the terminal:
 
 ```bash
 claude plugin marketplace add stage2dev/power-platform-skills
-claude plugin install pp@power-platform-kit
+claude plugin install pp-en@power-platform-kit
 ```
 
-Digite `/pp:` no Claude Code: os onze comandos de etapa devem aparecer. Se não aparecerem numa
-sessão que já estava aberta, reinicie o Claude Code.
+Type `/pp-en:` in Claude Code: the eleven stage commands should show up. If they don't in a session
+that was already open, restart Claude Code.
 
-**A partir de um clone local** (para testar mudanças antes de publicar):
+**From a local clone** (to test changes before publishing):
 
 ```bash
 git clone https://github.com/stage2dev/power-platform-skills.git
 claude plugin marketplace add ./power-platform-skills
-claude plugin install pp@power-platform-kit
+claude plugin install pp-en@power-platform-kit
 ```
 
-Para atualizar depois: `claude plugin marketplace update power-platform-kit` e, em seguida,
-`claude plugin update pp`.
+To update later: `claude plugin marketplace update power-platform-kit` and then
+`claude plugin update pp-en`.
 
-## Seu primeiro app, passo a passo
+## Your first app, step by step
 
-Abra o Claude Code numa pasta vazia e digite:
+Open Claude Code in an empty folder and type:
 
 ```text
-/pp:novo um app para acompanhar pedidos entre as unidades
+/pp-en:new an app to track orders across units
 ```
 
-Depois é só seguir o bloco **Próximo passo** no fim de cada etapa. Em resumo:
+Then just follow the **Next step** block at the end of each stage. In short:
 
-| # | Comando | Quem trabalha | O que você faz | O que sai |
+| # | Command | Who works | What you do | What comes out |
 |---|---|---|---|---|
-| 1 | `/pp:novo` | Orquestrador | conta a ideia do jeito que tiver (frase, lista, print); escolhe pasta, commits e modelos numa rodada | repositório git, `power-platform.config.json`, `ideia-bruta.md`, `00-LEIA-PRIMEIRO.md`, `ESTADO.md` |
-| 2 | `/pp:brainstorm` | Agente Brainstorm (conversa com você) | confirma o que a ideia já trouxe; escolhe o modo; responde ao que falta; decide o que entra no MVP | `docs/planejamento/brainstorm.md`, `prd.md` |
-| 3 | `/pp:design` | Agente Designer Branding (conversa com você) | escolhe cores, estilo, fonte e o jeito de navegar; aprova uma amostra visual | `ux-design-system.md`, `identidade.html` |
-| 4 | `/pp:mockups` | Agente de Mockups em Imagem + script | confere a lista de telas; autoriza as imagens | `inventario-telas.md`, `mockups/*.png` |
-| 5 | `/pp:prototipo` | Agente Gerador de Mockup HTML | navega pelo protótipo; aprova ou pede ajustes | `prototipo/index.html` |
-| 6 | `/pp:arquitetura` | Agente de Arquitetura, depois Agentes SQL em paralelo | escolhe SQL Server ou Dataverse; cria as tabelas 🔴 (no Dataverse, pelo flow construtor ou importando a carga mockup, e confere os tipos) | `arquitetura.md`, ADR, DDL e procedures (ou modelo Dataverse), carga mockup `.xlsx` (e `.sql` no SQL; no Dataverse, o plano e o flow construtor), `GOAL.md` |
-| 7 | `/pp:construir` | Agentes Canvas ∥ Power Automate, um por grupo de telas ou fluxos | cola telas e fluxos 🔴; uma onda por sessão | telas `.pa.yaml`, JSON dos fluxos |
-| 8 | `/pp:testar` | Agente de Testes e Qualidade | roda o roteiro de teste no ambiente 🔴 | `docs/qa/QA-<data>.md` |
-| 9 | `/pp:homologar` | Orquestrador, com você | faz a homologação com usuários reais 🔴 | `docs/qa/UAT-<data>.md` |
-| 10 | `/pp:publicar` | Orquestrador | publica em produção 🔴 | manual do usuário, guia técnico, checklist de go-live |
+| 1 | `/pp-en:new` | Orchestrator | tell the idea however you have it (a sentence, a list, a screenshot); pick folder, commits and models in one round | git repository, `power-platform.config.json`, `raw-idea.md`, `00-READ-ME-FIRST.md`, `STATE.md` |
+| 2 | `/pp-en:brainstorm` | Brainstorm Agent (talks with you) | confirm what the idea already brought; pick the mode; answer what's missing; decide what goes into the MVP | `docs/planning/brainstorm.md`, `prd.md` |
+| 3 | `/pp-en:design` | Branding Designer Agent (talks with you) | pick colors, style, font and the way to navigate; approve a visual sample | `ux-design-system.md`, `identity.html` |
+| 4 | `/pp-en:mockups` | Image Mockups Agent + script | check the screen list; authorize the images | `screen-inventory.md`, `mockups/*.png` |
+| 5 | `/pp-en:prototype` | HTML Mockup Generator Agent | click through the prototype; approve or ask for adjustments | `prototype/index.html` |
+| 6 | `/pp-en:architecture` | Architecture Agent, then SQL Agents in parallel | choose SQL Server or Dataverse; create the tables 🔴 (on Dataverse, through the builder flow or by importing the mockup load, and check the types) | `architecture.md`, ADR, DDL and procedures (or Dataverse model), mockup load `.xlsx` (plus `.sql` on SQL; on Dataverse, the plan and the builder flow), `GOAL.md` |
+| 7 | `/pp-en:build` | Canvas ∥ Power Automate Agents, one per group of screens or flows | paste screens and flows 🔴; one wave per session | `.pa.yaml` screens, flow JSON |
+| 8 | `/pp-en:test` | Testing and Quality Agent | run the test script in the environment 🔴 | `docs/qa/QA-<date>.md` |
+| 9 | `/pp-en:uat` | Orchestrator, with you | run user acceptance with real users 🔴 | `docs/qa/UAT-<date>.md` |
+| 10 | `/pp-en:publish` | Orchestrator | publish to production 🔴 | user manual, technical guide, go-live checklist |
 
-🔴 marca o que só uma pessoa pode fazer no ambiente. Nesses pontos o Claude mostra um passo a passo
-numerado (onde clicar, o que colar, o que conferir) e espera você digitar "feito" ou colar o erro.
+🔴 marks what only a person can do in the environment. At those points Claude shows a numbered
+walkthrough (where to click, what to paste, what to check) and waits for you to type "done" or paste
+the error.
 
-### Quatro jeitos de fazer o brainstorm
+### Four ways to brainstorm
 
-A etapa 2 começa perguntando como você quer pensar. Cada modo é conduzido por uma persona; eles só
-mudam o começo da conversa. Os quatro terminam do mesmo jeito: corte do MVP, regras de negócio,
-bloqueadores e `prd.md`. Por isso as etapas seguintes não dependem do modo escolhido.
+Stage 2 starts by asking how you want to think. Each mode is led by a persona; they only change how
+the conversation starts. All four end the same way: MVP cut, business rules, blockers and `prd.md`.
+That's why the following stages don't depend on the chosen mode.
 
-| Modo | Escolha quando | Quem conduz |
+| Mode | Pick it when | Who leads |
 |---|---|---|
-| Entrevista guiada | você já sabe o que quer e precisa de ajuda para fechar | 🧠 Facilitador |
-| Foco nas pessoas (design thinking) | o app muda o dia a dia de muita gente, em perfis diferentes | 🎨 Designer de experiência: mapa de empatia, um dia na vida, "Como poderíamos…?" |
-| Foco no problema (causa raiz) | algo está quebrado (retrabalho, erro, atraso) e você quer a causa | 🔬 Investigador: 5 porquês, espinha de peixe, gargalo, brainstorm reverso |
-| Mesa redonda | a ideia ainda está vaga e você quer ouvir vários pontos de vista | 🧠 modera 👤 usuário da ponta, 💼 negócio e 😈 advogado do diabo, e chama 🎨 🔬 🛠️ 🛡️ quando precisa |
+| Guided interview | you already know what you want and need help to close it | 🧠 Facilitator |
+| People first (design thinking) | the app changes the day-to-day of many people, in different roles | 🎨 Experience designer: empathy map, a day in the life, "How might we…?" |
+| Problem first (root cause) | something is broken (rework, errors, delays) and you want the cause | 🔬 Investigator: 5 whys, fishbone, bottleneck, reverse brainstorm |
+| Round table | the idea is still vague and you want to hear several points of view | 🧠 moderates 👤 front-line user, 💼 business and 😈 devil's advocate, and calls 🎨 🔬 🛠️ 🛡️ when needed |
 
-Dá para trocar de modo no meio ("trocar de modo") sem perder nada do log. As personas perguntam e
-propõem; quem decide é você. Elas foram inspiradas no módulo criativo e no *party mode* do BMAD
+You can switch modes midway ("switch mode") without losing anything from the log. The personas ask
+and propose; you decide. They were inspired by the creative module and the *party mode* of the BMAD
 Method.
 
-### Cinco jeitos de navegar
+### Five ways to navigate
 
-Na etapa 3 o designer pergunta como o app leva de uma área para outra, mostrando um desenho de
-cada opção. A escolha vale para os mockups, o protótipo e a construção.
+In stage 3 the designer asks how the app takes you from one area to another, showing a drawing of
+each option. The choice holds for the mockups, the prototype and the build.
 
-| Padrão | Bom para |
+| Pattern | Good for |
 |---|---|
-| Menu lateral sempre aberto | uso diário no desktop, 3 ou mais áreas |
-| Menu lateral recolhível (☰ alterna) | telas com tabela larga |
-| Gaveta que abre por cima (hambúrguer) | tablet, tela estreita, uso eventual |
-| Barra no topo | 2 a 6 áreas com nome curto |
-| Tela inicial com cartões | uso eventual, uma tarefa por visita |
+| Side menu, always open | daily desktop use, 3 or more areas |
+| Collapsible side menu (☰ toggles) | screens with a wide table |
+| Drawer that opens on top (hamburger) | tablet, narrow screen, occasional use |
+| Top bar | 2 to 6 areas with short names |
+| Home screen with cards | occasional use, one task per visit |
 
-No protótipo, o seletor "Navegação" troca o padrão ao vivo para comparar; se preferir outro, é
-um item de ajuste e o pipeline volta ao `/pp:design`.
+In the prototype, the "Navigation" selector switches the pattern live so you can compare; if you
+prefer another one, it's an adjustment item and the pipeline goes back to `/pp-en:design`.
 
-### Quem pensa e quem executa
+### Who thinks and who executes
 
-A sessão de cada etapa é a cabeça: conversa com você, escreve o pedido de cada agente e julga o
-que volta. Os agentes são as mãos: escrevem telas, fluxos, procedures e o protótipo, e fecham a
-entrega dizendo **como verificaram** (o comando e o que saiu), o que cumpriram, o que acham
-arriscado e a confiança que têm. A sessão roda o validador de novo e dá um veredito por agente:
-**aceito**, **revisão** (o mesmo agente, com um pedido mais preciso; no máximo duas) ou
-**escalado** (vem para você decidir). O `/pp:progresso` mostra quantas revisões cada etapa
-precisou. Antes de mostrar a amostra do design ou o protótipo, o Claude fotografa as telas e olha
-(texto cortado, sobreposição, contraste).
+Each stage's session is the head: it talks with you, writes each agent's request and judges what
+comes back. The agents are the hands: they write screens, flows, procedures and the prototype, and
+close the delivery saying **how they verified it** (the command and its output), what they
+delivered, what they find risky and how confident they are. The session runs the validator again and
+gives a verdict per agent: **accepted**, **revision** (the same agent, with a sharper request; two at
+most) or **escalated** (comes to you to decide). `/pp-en:progress` shows how many revisions each
+stage needed. Before showing the design sample or the prototype, Claude takes screenshots of the
+screens and looks at them (clipped text, overlap, contrast).
 
-Como pensar e julgar é a parte pequena do trabalho, a cabeça pode usar um modelo mais forte e as
-mãos um mais rápido. No `/pp:novo` você escolhe o perfil:
+Since thinking and judging is the small part of the work, the head can use a stronger model and the
+hands a faster one. In `/pp-en:new` you pick the profile:
 
-| Perfil | Sessão de cada etapa | Arquitetura e QA | Telas, fluxos, SQL, mockups, protótipo | Pesquisa |
+| Profile | Each stage's session | Architecture and QA | Screens, flows, SQL, mockups, prototype | Research |
 |---|---|---|---|---|
-| **Equilibrado** (recomendado) | Opus | Opus | Sonnet | Sonnet |
-| Máximo | Fable, se a conta tem (senão Opus) | Opus | Opus | Sonnet |
-| Econômico | Sonnet | Sonnet | Sonnet | Haiku |
-| Herdar | o modelo em que a sessão abrir | idem | idem | idem |
+| **Balanced** (recommended) | Opus | Opus | Sonnet | Sonnet |
+| Maximum | Fable, if the account has it (otherwise Opus) | Opus | Opus | Sonnet |
+| Economy | Sonnet | Sonnet | Sonnet | Haiku |
+| Inherit | the model the session opens with | same | same | same |
 
-A sessão abre no modelo escolhido pelo `.claude/settings.local.json` do projeto (pessoal, fora do
-Git), e cada agente recebe o seu na chamada. Dá para trocar um papel depois:
-`modelos.py aplicar equilibrado --execucao opus`. Detalhes em
+The session opens on the model chosen by the project's `.claude/settings.local.json` (personal,
+outside Git), and each agent gets its own in the call. You can switch a role later:
+`modelos.py aplicar equilibrado --execucao opus`. Details in
 [`references/modelos.md`](skills/power-platform/references/modelos.md).
 
-### As voltas
+### The loops
 
-- **Protótipo não aprovado:** os pedidos de ajuste vão para `ajustes-prototipo.md` e o próximo passo
-  é `/pp:design` de novo. Ele classifica cada pedido em identidade, tela ou comportamento, e os
-  mockups e o protótipo refazem só o que mudou.
-- **Teste ou homologação com falha:** cada falha vai para `docs/qa/correcoes.md`, marcada como app
-  ou fluxos, e o próximo passo é `/pp:construir app` ou `/pp:construir flows`. Depois da correção, o
-  teste roda de novo.
-- **Depois de publicado:** mande a lista de mudanças com `/pp:mudanca`. Cada pedido vira um spec em
-  `docs/mudancas/MUD-<NNN>.md`, os agentes fazem em paralelo, o QA da mudança roda e a homologação
-  e a publicação reabrem para uma versão nova. Mudança grande (perfil ou entidade nova) reabre o
-  pipeline no brainstorm.
+- **Prototype not approved:** the adjustment requests go to `prototype-adjustments.md` and the next
+  step is `/pp-en:design` again. It sorts each request into identity, screen or behavior, and the
+  mockups and the prototype redo only what changed.
+- **Failing test or user acceptance:** each failure goes to `docs/qa/fixes.md`, tagged as app or
+  flows, and the next step is `/pp-en:build app` or `/pp-en:build flows`. After the fix, the test
+  runs again.
+- **After publishing:** send the list of changes with `/pp-en:change`. Each request becomes a spec in
+  `docs/changes/CHG-<NNN>.md`, the agents work in parallel, the change's QA runs, and user acceptance
+  and publishing reopen for a new version. A big change (a new role or entity) reopens the pipeline
+  at the brainstorm.
 
-### Mockups (chave da OpenAI opcional)
+### Mockups (OpenAI key optional)
 
-A etapa 4 pode transformar cada tela numa imagem com a API de imagens da OpenAI, usando a sua
-paleta. O Claude sempre valida o spec antes (`--simular`: sem chave, sem rede), mostra quantas
-imagens e qual modelo, avisa que a descrição das telas vai para a OpenAI e só gera depois que você
-autoriza. Os dados de exemplo são sempre fictícios.
+Stage 4 can turn each screen into an image with the OpenAI image API, using your palette. Claude
+always validates the spec first (`--simular`: no key, no network), shows how many images and which
+model, warns that the screen descriptions go to OpenAI, and only generates after you authorize it.
+The sample data is always fictitious.
 
-Configure a chave **fora do chat** e reabra o Claude Code num terminal novo:
+Set the key **outside the chat** and reopen Claude Code in a new terminal:
 
 ```powershell
-setx OPENAI_API_KEY "<sua-chave>"        # Windows, permanente (abra um terminal novo)
+setx OPENAI_API_KEY "<your-key>"         # Windows, permanent (open a new terminal)
 ```
 
 ```bash
-export OPENAI_API_KEY="<sua-chave>"      # macOS/Linux; coloque no ~/.bashrc ou ~/.zshrc
+export OPENAI_API_KEY="<your-key>"       # macOS/Linux; put it in ~/.bashrc or ~/.zshrc
 ```
 
-O modelo é uma variável: `--modelo` > `OPENAI_IMAGE_MODEL` > `mockups.modelo` no config >
-`gpt-image-2`. Sem chave, ou sem aprovação da segurança? Escolha "não gerar": o protótipo é montado
-só a partir do inventário de telas. Detalhes em
+The model is a variable: `--modelo` > `OPENAI_IMAGE_MODEL` > `mockups.modelo` in the config >
+`gpt-image-2`. No key, or no security approval? Choose "don't generate": the prototype is built
+from the screen inventory alone. Details in
 [`references/mockups.md`](skills/power-platform/references/mockups.md).
 
-## Os agentes
+## The agents
 
-| Agente | Etapa | Roda como | Ferramentas |
+| Agent | Stage | Runs as | Tools |
 |---|---|---|---|
-| Brainstorm | `/pp:brainstorm` | na própria sessão da etapa (precisa conversar com você), na pele da persona do modo escolhido | — |
-| Designer Branding | `/pp:design` | na própria sessão da etapa | — |
-| `pp:agente-mockups` | `/pp:mockups` | subagente | lê e escreve; **sem shell**, então não consegue chamar a API de imagens |
-| `pp:agente-prototipo` | `/pp:prototipo` | subagente | lê, escreve, shell (verificador do protótipo) |
-| `pp:agente-arquitetura` | `/pp:arquitetura` | subagente | lê, escreve, shell; escreve o spec das procedures, não o corpo |
-| `pp:agente-sql` | `/pp:arquitetura`, correções | subagente, um por grupo de procedures, em paralelo | lê, escreve, shell (`lint-procedure.py`) |
-| `pp:agente-canvas` | `/pp:construir` | subagente, um por grupo de até 3 telas, em paralelo | lê, escreve, shell (`validar-telas.py`) |
-| `pp:agente-automate` | `/pp:construir` | subagente, um por grupo de até 3 fluxos, em paralelo | lê, escreve, shell (`verificar-fluxo.py`) |
-| `pp:agente-qa` | `/pp:testar` | subagente | só lê, mais shell para os validadores |
-| `pp:agente-pesquisa` | brainstorm, arquitetura, construção, `/pp:mudanca` | subagente, quando falta um fato | só lê, mais busca na documentação oficial; nada do projeto vai para a web |
+| Brainstorm | `/pp-en:brainstorm` | in the stage's own session (it needs to talk with you), in the persona of the chosen mode | — |
+| Branding Designer | `/pp-en:design` | in the stage's own session | — |
+| `pp-en:mockups-agent` | `/pp-en:mockups` | subagent | reads and writes; **no shell**, so it can't call the image API |
+| `pp-en:prototype-agent` | `/pp-en:prototype` | subagent | reads, writes, shell (prototype checker) |
+| `pp-en:architecture-agent` | `/pp-en:architecture` | subagent | reads, writes, shell; writes the procedures' spec, not their body |
+| `pp-en:sql-agent` | `/pp-en:architecture`, fixes | subagent, one per group of procedures, in parallel | reads, writes, shell (`lint-procedure.py`) |
+| `pp-en:canvas-agent` | `/pp-en:build` | subagent, one per group of up to 3 screens, in parallel | reads, writes, shell (`validar-telas.py`) |
+| `pp-en:automate-agent` | `/pp-en:build` | subagent, one per group of up to 3 flows, in parallel | reads, writes, shell (`verificar-fluxo.py`) |
+| `pp-en:qa-agent` | `/pp-en:test` | subagent | read-only, plus shell for the validators |
+| `pp-en:research-agent` | brainstorm, architecture, build, `/pp-en:change` | subagent, when a fact is missing | read-only, plus search in the official documentation; nothing from the project goes to the web |
 
-Subagente não consegue fazer perguntas a você, por isso os dois agentes que conversam rodam na
-própria sessão da etapa. A etapa que chama um subagente julga o trabalho dele (roda o validador de
-novo, confere o pedido item a item) e dá o veredito antes de seguir.
+A subagent can't ask you questions, so the two agents that talk with you run in the stage's own
+session. The stage that calls a subagent judges its work (runs the validator again, checks the
+request item by item) and gives the verdict before moving on.
 
-## Trabalhando num app que já existe
+## Working on an existing app
 
-| Você diz | O que o Claude faz |
+| You say | What Claude does |
 |---|---|
-| "O KPI não bate com a galeria" / "está lento" / "não atualiza" | **Modo investigar.** Percorre a cadeia tela → fórmula → fonte → fluxo → procedure → dado, testa uma hipótese por vez e prova a causa raiz antes de propor código. |
-| "Um usuário de uma unidade vê dados de outra" | Confere a camada que de fato bloqueia o acesso: fluxo + procedure no SQL, ou papéis de segurança no Dataverse. A tela só filtra. |
-| "Audite o app inteiro" | Roda revisores em paralelo por disciplina (UX, desenvolvimento, performance, dados, fluxos, SQL) e confere de novo os achados mais fortes antes de relatar. |
-| "Coloque um filtro de status nesta tela" | Vai direto para o `powerapps-canvas`, sem o protocolo completo. |
-| Uma lista de mudanças num app publicado pelo kit | `/pp:mudanca <lista>`: escopo de cada pedido, um spec por frente, agentes em paralelo, julgamento, QA e reabertura da homologação. |
-| "Promova para HML/PRD" | Cobre soluções, variáveis de ambiente, connection references e o CLI `pac`, e diz o que vai por colagem e o que vai por solução. |
-| "Está pronto?" | Roda o portão final: todos os validadores que se aplicam, mais o checklist. |
+| "The KPI doesn't match the gallery" / "it's slow" / "it doesn't refresh" | **Investigate mode.** Walks the chain screen → formula → source → flow → procedure → data, tests one hypothesis at a time and proves the root cause before proposing code. |
+| "A user from one unit sees another unit's data" | Checks the layer that actually blocks access: flow + procedure on SQL, or security roles on Dataverse. The screen only filters. |
+| "Audit the whole app" | Runs reviewers in parallel by discipline (UX, development, performance, data, flows, SQL) and double-checks the strongest findings before reporting. |
+| "Add a status filter to this screen" | Goes straight to `powerapps-canvas`, without the full protocol. |
+| A list of changes to an app published by the kit | `/pp-en:change <list>`: scope of each request, one spec per front, agents in parallel, judgment, QA and reopening of user acceptance. |
+| "Promote to UAT/PROD" | Covers solutions, environment variables, connection references and the `pac` CLI, and says what goes by pasting and what goes by solution. |
+| "Is it ready?" | Runs the final gate: every validator that applies, plus the checklist. |
 
-## Catálogos de componentes
+## Component catalogs
 
 **Canvas — [`powerapps-canvas/assets/componentes/`](skills/powerapps-canvas/assets/componentes/INDICE.md)**
-(25 componentes em YAML pronto para colar)
+(25 components in ready-to-paste YAML)
 
-| Grupo | Componentes |
+| Group | Components |
 |---|---|
-| Layout e navegação | cabeçalho de tela, menu lateral (fixo, recolhível ou gaveta), menu no topo, tela inicial com cartões, abas, seletor de unidade |
-| Dados | galeria em tabela, linha expansível, ordenação por coluna, paginação por cursor, rodapé com contagem, seleção em lote, badge de status, card de KPI |
-| Filtros e ações | barra de filtros, botões, exportação |
-| Modais | confirmação, formulário, informativo, destrutivo com motivo |
-| Feedback | overlay de carregamento, toast, estado vazio, painel sem acesso |
+| Layout and navigation | screen header, side menu (fixed, collapsible or drawer), top menu, home screen with cards, tabs, unit selector |
+| Data | table gallery, expandable row, column sort, cursor pagination, count footer, bulk selection, status badge, KPI card |
+| Filters and actions | filter bar, buttons, export |
+| Modals | confirmation, form, informational, destructive with reason |
+| Feedback | loading overlay, toast, empty state, no-access panel |
 
 **Power Automate — [`power-automate/assets/componentes/`](skills/power-automate/assets/componentes/INDICE.md)**
-(34 blocos: JSON de área de transferência mais notas)
+(34 blocks: clipboard JSON plus notes)
 
-| Grupo | Blocos |
+| Group | Blocks |
 |---|---|
-| Gatilhos (digitados à mão) | Power Apps (V2), entrada HTTP |
-| Núcleo do fluxo chamado pelo app | config, identificar quem chama, ler quem chama (SQL), switch por ação, autorizar por flag, negar + Terminate, normalizar entrada, derivar valor, estado antes da mudança, escopo por unidade, validar com mensagem, trilha de auditoria, guarda "nada mudou", gravar via stored procedure, traduzir código e responder, captura do conector |
-| Variantes Dataverse | ler quem chama (Dataverse), escopo multiunidade, compensação quando não há transação |
-| Efeitos colaterais e relatórios | resolver ID do diretório, e-mail de suporte com resultado parcial, filtros da tela como JSON, exportação CSV, HTML para PDF |
-| Entrada HTTP e lote | config de entrada, cache de token + resposta HTTP, mapear lote, upsert de uma linha, índice de chave do destino, changeset de upsert `$batch` no Dataverse, paginação nativa |
-| Observabilidade | log de execução |
+| Triggers (typed by hand) | Power Apps (V2), HTTP inbound |
+| Core of the flow called by the app | config, identify the caller, read the caller (SQL), switch by action, authorize by flag, deny + Terminate, normalize input, derive value, state before the change, scope by unit, validate with message, audit trail, "nothing changed" guard, write via stored procedure, translate code and respond, connector catch |
+| Dataverse variants | read the caller (Dataverse), multi-unit scope, compensation when there's no transaction |
+| Side effects and reports | resolve directory ID, support e-mail with partial result, screen filters as JSON, CSV export, HTML to PDF |
+| HTTP inbound and batch | inbound config, token cache + HTTP response, map batch, single-row upsert, target key index, Dataverse `$batch` upsert changeset, native pagination |
+| Observability | run log |
 
-Cada `INDICE.md` traz as dependências e a maturidade de cada item. O índice do Power Automate
-acrescenta a ordem de montagem para cada tipo de fluxo. O do Canvas lista as variáveis que cada
-componente espera no `OnStart`, e os tokens já estão em `app-formulas-tokens.md`.
+Each `INDICE.md` lists the dependencies and maturity of each item. The Power Automate index adds
+the assembly order for each kind of flow. The Canvas one lists the variables each component expects
+in `OnStart`, and the tokens are already in `app-formulas-tokens.md`.
 
-## Convenções que o kit garante
+## Conventions the kit guarantees
 
-São os padrões. Estão registrados em
-[`decisoes-padrao.md`](skills/power-platform/references/decisoes-padrao.md), e mudar qualquer um
-exige um ADR.
+These are the defaults. They're recorded in
+[`decisoes-padrao.md`](skills/power-platform/references/decisoes-padrao.md), and changing any of them
+takes an ADR.
 
-- **Uma trilha de dados por projeto:** SQL Server *ou* Dataverse.
-- **O nome real vence.** Fórmulas e fluxos são escritos com os nomes lidos do ambiente
-  (`NOMES-AS-BUILT`), nunca com os do plano.
-- **Toda tabela nasce com carga mockup.** Um `.xlsx` com dados fictícios, uma aba por tabela na ordem
-  de carga; no SQL, também o `INSERT` para o banco de DEV. O Dataverse deduz o tipo de cada coluna
-  pelos dados e erra com frequência: o kit avisa e confere (`montar-carga-mockup.py --conferir`)
-  antes de qualquer dado real. Ou, no Dataverse, o **construtor**: um flow que cria as tabelas, as
-  colunas com o tipo do modelo, os relacionamentos e a carga mockup direto pela Web API (`--flow`).
-- **Escrita sempre passa por um fluxo,** com a resposta de 4 campos e `.Run()` dentro de `IfError`.
-- **O fluxo lê a identidade do usuário do próprio contexto** e autoriza cada ação. Os parâmetros do
-  fluxo são posicionais, e um novo entra sempre no fim.
-- **O separador depende de onde a fórmula vai:** `;` / `;;` na barra de fórmulas pt-BR, `,` / `;` no
-  YAML colado.
-- **Nenhum literal de ambiente nas entregas:** nada de servidor, tabela `dev*` ou GUID. Use
-  variáveis de ambiente e connection references.
-- **Gerador nunca sobrescreve o que foi colado.** O arquivo colado é a fonte da verdade, e o que é
-  gerado vai para `dist/`.
-- **✅ exige evidência:** comando, saída e data. A evidência vence quando o arquivo muda.
+- **One data track per project:** SQL Server *or* Dataverse.
+- **The real name wins.** Formulas and flows are written with the names read from the environment
+  (`AS-BUILT-NAMES`), never with the ones from the plan.
+- **Every table is born with a mockup load.** An `.xlsx` with fictitious data, one sheet per table in
+  load order; on SQL, also the `INSERT` for the DEV database. Dataverse infers each column's type
+  from the data and often gets it wrong: the kit warns and checks (`montar-carga-mockup.py --conferir`)
+  before any real data. Or, on Dataverse, the **builder**: a flow that creates the tables, the
+  columns with the model's type, the relationships and the mockup load straight through the Web API
+  (`--flow`).
+- **Writes always go through a flow,** with the 4-field response and `.Run()` inside `IfError`.
+- **The flow reads the user's identity from its own context** and authorizes each action. The flow's
+  parameters are positional, and a new one always goes at the end.
+- **One separator everywhere:** in the en-US formula bar and in pasted YAML alike, `,` separates
+  arguments and `;` chains.
+- **No environment literals in deliverables:** no server, no `dev*` table, no GUID. Use environment
+  variables and connection references.
+- **A generator never overwrites what was pasted.** The pasted file is the source of truth, and
+  what's generated goes to `dist/`.
+- **✅ requires evidence:** command, output and date. The evidence expires when the file changes.
 
-## Estrutura do repositório
+## Repository layout
 
 ```text
 .claude-plugin/          plugin.json + marketplace.json
@@ -446,8 +452,8 @@ agents/                  agente-mockups, agente-prototipo, agente-arquitetura, a
 skills/
   novo/ brainstorm/ design/ mockups/ prototipo/ arquitetura/
   construir/ testar/ homologar/ publicar/ progresso/ mudanca/
-                         os comandos /pp:* de cada etapa (finos: apontam para as skills abaixo)
-  power-platform/        orquestrador: pipeline, estado, roteamento, protocolo, portões, ALM
+                         the /pp:* command for each stage (thin: they point to the skills below)
+  power-platform/        orchestrator: pipeline, state, routing, protocol, gates, ALM
     references/  assets/  prompts/
     scripts/estado.py  modelos.py  desenhar-mockups.py  verificar-prototipo.py
             capturar-telas.py  montar-carga-mockup.py (+ _carga_*.py)
@@ -456,79 +462,79 @@ skills/
   sql-procedures/        references/  assets/  scripts/lint-procedure.py
   dataverse/             references/  assets/  scripts/extrair-nomes-as-built.py
 docs/
-  index.html             o site (GitHub Pages)
-  diagrama/              o diagrama 3D em blocos (three.js), também no site
-  img/                   as imagens do README (diagrama nos temas claro e escuro, páginas do PDF)
-  Power-Platform-Kit.pdf a apresentação de 4 páginas
-  PADRAO-SKILL.md        o padrão que toda skill segue
-  CONFIG.md              referência do power-platform.config.json
-tests/                   testes pytest de cada script, dos catálogos e do lint
-tools/lint_skills.py     lint de estrutura + sanitização
+  index.html             the site (GitHub Pages)
+  diagrama/              the 3D block diagram (three.js), also on the site
+  img/                   the README images (diagram in light and dark themes, PDF pages)
+  Power-Platform-Kit.pdf the 4-page presentation
+  PADRAO-SKILL.md        the standard every skill follows
+  CONFIG.md              power-platform.config.json reference
+tests/                   pytest tests for each script, the catalogs and the lint
+tools/lint_skills.py     structure lint + sanitization
 ```
 
-## Como contribuir
+## How to contribute
 
-O kit é aberto para quem quiser somar: melhorar uma etapa, adicionar um componente, corrigir uma
-regra que não bate com o seu dia a dia. Abra uma issue ou mande um pull request: eu acompanho e
-reviso cada um.
+The kit is open to anyone who wants to add to it: improve a stage, add a component, fix a rule that
+doesn't match your day-to-day. Open an issue or send a pull request: I follow and review each one.
 
-Toda skill segue o [`docs/PADRAO-SKILL.md`](docs/PADRAO-SKILL.md). As regras principais:
+Every skill follows [`docs/PADRAO-SKILL.md`](docs/PADRAO-SKILL.md). The main rules:
 
-- o frontmatter tem uma descrição que diz quando usar a skill e quando não usar;
-- o `SKILL.md` fica com 250 linhas ou menos;
-- detalhe vai em `references/`, arquivos prontos para copiar em `assets/`;
-- scripts aceitam `--help` e retornam exit code 0, 1 ou 2;
-- todo script tem testes.
+- the frontmatter has a description that says when to use the skill and when not to;
+- `SKILL.md` stays at 250 lines or fewer;
+- detail goes in `references/`, ready-to-copy files in `assets/`;
+- scripts accept `--help` and return exit code 0, 1 or 2;
+- every script has tests.
 
-**Toda alteração entra em pt-BR e en-US.** O kit é mantido nas duas línguas: skill, agente,
-referência, molde, catálogo, mensagem de script, teste, README e site. Cada pull request traz a
-mudança nas duas versões, com o mesmo conteúdo; mudança numa língua só não entra. Na versão en-US,
-o Power Fx da barra de fórmulas usa `,` para separar argumentos e `;` para encadear.
+**Every change lands in pt-BR and en-US.** The kit is maintained in both languages: skill, agent,
+reference, template, catalog, script message, test, README and site. Each pull request brings the
+change in both versions, with the same content; a change in only one language doesn't get in. In
+the en-US version, the formula bar's Power Fx uses `,` to separate arguments and `;` to chain.
 
-Antes de abrir um pull request:
+Before opening a pull request:
 
 ```bash
 pip install pyyaml pytest
-python tools/lint_skills.py        # estrutura + sanitização; precisa imprimir 0 erro(s)
-python -m pytest tests -q          # scripts, catálogos e lint
-claude plugin validate .           # manifesto e frontmatter
+python tools/lint_skills.py        # structure + sanitization; must print 0 erro(s)
+python -m pytest tests -q          # scripts, catalogs and lint
+claude plugin validate .           # manifest and frontmatter
 ```
 
-**Sanitização.** Este repositório não pode conter nada disto, e o lint barra:
+**Sanitization.** This repository can't contain any of these, and the lint blocks them:
 
-- caminhos de máquina, nomes de servidor, IDs de tenant ou de ambiente, GUIDs reais;
-- endereços de e-mail, exceto os de exemplo no estilo `@contoso.com`;
-- dados de negócio ou nomes de empresa.
+- machine paths, server names, tenant or environment IDs, real GUIDs;
+- e-mail addresses, except sample ones in the `@contoso.com` style;
+- business data or company names.
 
-Para barrar também os nomes internos da sua organização, crie `tools/sanitizacao.local.txt`
-(ignorado pelo git) com um regex por linha.
+To also block your organization's internal names, create `tools/sanitizacao.local.txt` (ignored by
+git) with one regex per line.
 
-## Próximos passos
+## Next steps
 
-- **Skill `power-bi` completa**, no mesmo nível desta: modelo estrela, Power Query M e DAX. É a próxima.
-- Um `gate.py` único que roda todos os validadores das camadas que uma onda tocou.
-- Um conferidor de nomes que compara telas e fluxos com o `NOMES-AS-BUILT`.
-- Avaliações de gatilho para a descrição de cada skill.
+- **A full `power-bi` skill**, at the same level as this one: star schema, Power Query M and DAX.
+  It's next.
+- A single `gate.py` that runs every validator for the layers a wave touched.
+- A name checker that compares screens and flows against `AS-BUILT-NAMES`.
+- Trigger evaluations for each skill's description.
 
-O histórico de versões está no [`CHANGELOG.md`](CHANGELOG.md).
+The version history is in [`CHANGELOG.md`](CHANGELOG.md).
 
-## Créditos e marcas
+## Credits and trademarks
 
-- O ciclo de planejamento e as personas do brainstorm são **inspirados no
-  [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD)** (código sob licença MIT, de BMad
-  Code, LLC). Este projeto não é afiliado nem endossado pela BMad Code, LLC. "BMad" e "BMad Method"
-  são marcas deles, citadas aqui só para descrever compatibilidade.
-- A separação entre quem pensa e quem executa (cabeça julga, mãos fazem e provam, veredito por
-  entrega) é inspirada no guia ["The Fable Loop"](https://thomaslentine.com/fable-guide.html), de Thomas Lentine.
-- O diagrama em blocos foi montado em three.js com a técnica de blocos da
-  [lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) (MIT, LemoLab). O Clawd é o mascote do
-  Claude; o desenho de referência é da [ClaudeAnimationBase](https://github.com/JohnHeibel/ClaudeAnimationBase)
-  (MIT, John Heibel). Uso de fã: não é material oficial da Anthropic.
-- Power Apps, Power Automate, Power Platform, Dataverse e SQL Server são marcas do grupo de
-  empresas Microsoft. Claude e Claude Code são marcas da Anthropic. Este projeto não é afiliado a
-  nenhuma das duas.
+- The planning cycle and the brainstorm personas are **inspired by the
+  [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD)** (code under the MIT license, by BMad
+  Code, LLC). This project is not affiliated with or endorsed by BMad Code, LLC. "BMad" and "BMad
+  Method" are their trademarks, cited here only to describe compatibility.
+- The split between who thinks and who executes (the head judges, the hands do and prove, a verdict
+  per delivery) is inspired by the guide ["The Fable Loop"](https://thomaslentine.com/fable-guide.html), by Thomas Lentine.
+- The block diagram was built in three.js with the block technique from
+  [lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) (MIT, LemoLab). Clawd is Claude's
+  mascot; the reference drawing is from [ClaudeAnimationBase](https://github.com/JohnHeibel/ClaudeAnimationBase)
+  (MIT, John Heibel). Fan use: not official Anthropic material.
+- Power Apps, Power Automate, Power Platform, Dataverse and SQL Server are trademarks of the
+  Microsoft group of companies. Claude and Claude Code are trademarks of Anthropic. This project is
+  not affiliated with either.
 
-## Licença
+## License
 
-[MIT](LICENSE). Pode usar, copiar, modificar e distribuir, inclusive em projetos comerciais,
-desde que mantenha o aviso de copyright e a licença. O software vem sem garantia.
+[MIT](LICENSE). You can use, copy, modify and distribute it, including in commercial projects, as
+long as you keep the copyright notice and the license. The software comes with no warranty.

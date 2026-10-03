@@ -1,8 +1,8 @@
 {
   "_leia": "pt-BR → en-US de cada arquivo do kit. situacao: \"feito\" (o en-US existe e acompanha o pt-BR) ou \"pendente\". Toda alteração atualiza este mapa no mesmo commit (CLAUDE.md); o lint confere (L014).",
   "arquivos": {
-    "README.md": {
-      "en": "README.en.md",
+    "README.pt-BR.md": {
+      "en": "README.md",
       "situacao": "feito"
     },
     "agents/agente-arquitetura.md": {
@@ -45,8 +45,8 @@
       "en": "docs/diagrama/index.html?lang=en",
       "situacao": "feito"
     },
-    "docs/index.html": {
-      "en": "docs/en/index.html",
+    "docs/pt-br/index.html": {
+      "en": "docs/index.html",
       "situacao": "feito"
     },
     "skills/arquitetura/SKILL.md": {
