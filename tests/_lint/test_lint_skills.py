@@ -184,6 +184,117 @@ def test_main_exit_codes(tmp_path, capsys):
     assert "erro(s)" in saida and "aviso(s)" in saida
 
 
+def _mapa(raiz: Path, arquivos: dict[str, tuple[str, str]]) -> None:
+    (raiz / "i18n").mkdir(exist_ok=True)
+    corpo = {"arquivos": {pt: {"en": en, "situacao": sit} for pt, (en, sit) in arquivos.items()}}
+    (raiz / "i18n" / "mapa.json").write_text(json.dumps(corpo, indent=2), encoding="utf-8")
+
+
+def _l014(achados, nivel: str) -> list:
+    return [a for a in achados if a.codigo == "L014" and a.nivel == nivel]
+
+
+def test_i18n_arquivo_pt_br_sem_entrada_no_mapa_e_erro(tmp_path):
+    raiz = _repo(tmp_path)
+    _skill(raiz, "mapeada")
+    _skill(raiz, "esquecida")
+    (raiz / "agents").mkdir()
+    (raiz / "agents" / "agente-x.md").write_text("# x\n", encoding="utf-8")
+    _mapa(raiz, {"skills/mapeada/SKILL.md": ("en/skills/mapped/SKILL.md", "pendente")})
+    erros = _l014(lint.executar([raiz], raiz), "ERRO")
+    assert {a.caminho for a in erros} == {"skills/esquecida/SKILL.md", "agents/agente-x.md"}
+
+
+def test_i18n_feito_sem_arquivo_en_e_erro_e_com_arquivo_passa(tmp_path):
+    raiz = _repo(tmp_path)
+    _skill(raiz, "a")
+    _skill(raiz, "b")
+    (raiz / "en" / "skills" / "b-en").mkdir(parents=True)
+    (raiz / "en" / "skills" / "b-en" / "SKILL.md").write_text("# b\n", encoding="utf-8")
+    _mapa(raiz, {"skills/a/SKILL.md": ("en/skills/a-en/SKILL.md", "feito"),
+                 "skills/b/SKILL.md": ("en/skills/b-en/SKILL.md", "feito")})
+    erros = _l014(lint.executar([raiz], raiz), "ERRO")
+    assert len(erros) == 1 and "en/skills/a-en/SKILL.md" in erros[0].mensagem
+    assert erros[0].caminho == "i18n/mapa.json" and erros[0].linha > 1
+
+
+def test_i18n_feito_com_parametro_de_idioma_confere_o_arquivo_sem_parametro(tmp_path):
+    raiz = _repo(tmp_path)
+    (raiz / "docs").mkdir()
+    (raiz / "docs" / "d.html").write_text("<p>x</p>", encoding="utf-8")
+    _mapa(raiz, {"docs/d.html": ("docs/d.html?lang=en", "feito")})
+    assert not _l014(lint.executar([raiz], raiz), "ERRO")
+
+
+def test_i18n_pendente_e_aviso_e_main_imprime_a_contagem(tmp_path, capsys):
+    raiz = _repo(tmp_path)
+    _skill(raiz, "um")
+    _skill(raiz, "dois")
+    _mapa(raiz, {"skills/um/SKILL.md": ("en/skills/one/SKILL.md", "pendente"),
+                 "skills/dois/SKILL.md": ("en/skills/two/SKILL.md", "pendente")})
+    achados = lint.executar([raiz], raiz)
+    assert not _l014(achados, "ERRO") and len(_l014(achados, "AVISO")) == 2
+    assert lint.main(["--raiz", str(raiz), "--sem-scripts"]) == 0
+    linhas = capsys.readouterr().out.strip().splitlines()
+    assert linhas[-2:] == ["2 pendente(s) de tradução", "0 erro(s), 2 aviso(s)"]
+
+
+@pytest.mark.parametrize("conteudo, trecho", [
+    ('{"arquivos": [', "ilegível"),
+    ('{"outro": {}}', "ilegível"),
+    ('{"arquivos": {"skills/x/SKILL.md": {"en": "en/x.md", "situacao": "talvez"}}}', "situacao"),
+    ('{"arquivos": {"skills/sumiu/SKILL.md": {"en": "en/s.md", "situacao": "pendente"}}}', "não existe"),
+])
+def test_i18n_mapa_invalido_ou_orfao_e_erro(tmp_path, conteudo, trecho):
+    raiz = _repo(tmp_path)
+    _skill(raiz, "x")
+    (raiz / "i18n").mkdir()
+    (raiz / "i18n" / "mapa.json").write_text(conteudo, encoding="utf-8")
+    erros = _l014(lint.executar([raiz], raiz), "ERRO")
+    assert any(trecho in a.mensagem for a in erros)
+
+
+@pytest.mark.parametrize("en, trecho", [
+    ("skills/x/SKILL.md", "próprio arquivo pt-BR"),
+    ("../fora/SKILL.md", "sai do repositório"),
+    ("/abs/SKILL.md", "sai do repositório"),
+    ("C:/abs/SKILL.md", "sai do repositório"),
+])
+def test_i18n_destino_en_invalido_e_erro(tmp_path, en, trecho):
+    raiz = _repo(tmp_path)
+    _skill(raiz, "x")
+    _mapa(raiz, {"skills/x/SKILL.md": (en, "feito")})
+    assert any(trecho in a.mensagem for a in _l014(lint.executar([raiz], raiz), "ERRO"))
+
+
+def test_i18n_ignora_lixo_do_sistema_e_ocultos(tmp_path):
+    raiz = _repo(tmp_path)
+    pasta = _skill(raiz, "x")
+    for nome in ("Thumbs.db", "desktop.ini", ".DS_Store"):
+        (pasta / nome).write_text("", encoding="utf-8")
+    _mapa(raiz, {"skills/x/SKILL.md": ("en/skills/x/SKILL.md", "pendente")})
+    assert not _l014(lint.executar([raiz], raiz), "ERRO")
+
+
+def test_i18n_mapa_ilegivel_nao_imprime_contagem(tmp_path, capsys):
+    raiz = _repo(tmp_path)
+    _skill(raiz, "x")
+    (raiz / "i18n").mkdir()
+    (raiz / "i18n" / "mapa.json").write_text("{", encoding="utf-8")
+    assert lint.main(["--raiz", str(raiz), "--sem-scripts"]) == 1
+    assert "pendente(s)" not in capsys.readouterr().out
+
+
+def test_i18n_sem_mapa_so_acusa_quando_existe_en(tmp_path, capsys):
+    raiz = _repo(tmp_path)
+    _skill(raiz, "x")
+    assert not _l014(lint.executar([raiz], raiz), "ERRO")
+    lint.main(["--raiz", str(raiz), "--sem-scripts"])
+    assert "pendente(s)" not in capsys.readouterr().out
+    (raiz / "en").mkdir()
+    assert _l014(lint.executar([raiz], raiz), "ERRO")
+
+
 def test_alvo_skill_unica_checa_so_ela(tmp_path):
     raiz = _repo(tmp_path)
     alvo = _skill(raiz, "alvo")

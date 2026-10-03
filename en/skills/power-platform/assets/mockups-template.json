@@ -1,0 +1,91 @@
+{
+  "app": "Orders",
+  "idioma": "en-US",
+  "canvas": "1920x1080",
+  "design_system": {
+    "paleta": {
+      "primary (fxColorPrimary)": "#0F6CBD",
+      "dark primary, menu (fxColorPrimaryDark)": "#0C3B5E",
+      "light primary, table header (fxColorPrimaryLight)": "#EBF3FC",
+      "background (fxColorBackground)": "#F9FAFB",
+      "surface, cards and modals (fxColorSurface)": "#FFFFFF",
+      "primary text (fxColorTextPrimary)": "#111827",
+      "secondary text (fxColorTextSecondary)": "#4D4D4D",
+      "border (fxColorBorder)": "#A6A6A6",
+      "success (fxColorSuccess)": "#15803D",
+      "warning (fxColorWarning)": "#FFC107",
+      "error (fxColorError)": "#C82333",
+      "toast background (fxColorToastBg)": "#212529"
+    },
+    "fonte": "Segoe UI",
+    "raio": 8,
+    "estilo": "Microsoft Fluent 2, corporate, clean, high information density, line icons"
+  },
+  "moldura": {
+    "header": "100 px top bar in the primary color: app name and screen title on the left; unit selector, user name and date and time on the right; white text",
+    "navegacao": "left side menu in dark primary, 260 px, icon + label per item, active item in primary, collapse button",
+    "notificacoes": "toast in the top-right corner, dark background, icon and left border in the status color (green success, yellow warning, red error), time bar at the bottom",
+    "popups": "modal centered over a background darkened to 50%, white card with radius 12: title, text, primary button on the right and gray secondary button on the left",
+    "carregando": "semi-transparent overlay over the screen with a spinner and the message of the action in progress",
+    "estados": "empty list with an icon and a sentence saying what to do; 'no access' panel with a padlock and the owner's contact",
+    "rodape": "discreet line 'Showing N of M records' below the gallery"
+  },
+  "telas": [
+    {
+      "id": "tl-01-orders-list",
+      "inventario": "TL-01",
+      "nome": "Orders list",
+      "objetivo": "follow the unit's orders and act on one of them",
+      "perfil": "unit AAA operator",
+      "componentes": ["screen-header", "side-menu", "kpi-card", "filter-bar", "table-gallery", "status-badge", "count-footer"],
+      "estado": "with data",
+      "descricao": "four KPI cards (open, in progress, closed, total); filter bar with status, search by number and period; gallery in table format with number, unit, status as a colored pill, creation date and one action button per row"
+    },
+    {
+      "id": "tl-01-list-confirm-close",
+      "inventario": "TL-01",
+      "nome": "Orders list",
+      "perfil": "unit AAA operator",
+      "componentes": ["confirm-modal"],
+      "estado": "confirmation modal open over the list",
+      "descricao": "the same list in the background, darkened; modal 'Close order 000123?' with the order summary and the buttons Cancel and Close"
+    },
+    {
+      "id": "tl-01-list-toast-success",
+      "inventario": "TL-01",
+      "nome": "Orders list",
+      "perfil": "unit AAA operator",
+      "componentes": ["toast"],
+      "estado": "success toast visible after closing",
+      "descricao": "the updated list, order 000123 now with closed status; green toast 'Order closed.' in the top-right corner"
+    },
+    {
+      "id": "tl-02-new-order",
+      "inventario": "TL-02",
+      "nome": "New order",
+      "perfil": "unit AAA operator",
+      "componentes": ["form-modal", "buttons"],
+      "estado": "form being filled in, one field with a validation error",
+      "descricao": "wide form modal over the list: unit (fixed AAA), type, description and expected date; the description field with a red border and the message 'Enter the description'; buttons Cancel and Save"
+    },
+    {
+      "id": "tl-03-home",
+      "inventario": "TL-03",
+      "nome": "Home",
+      "objetivo": "see the unit overview and go straight to the most common action",
+      "perfil": "unit AAA manager",
+      "componentes": ["screen-header", "side-menu", "kpi-card", "buttons", "table-gallery", "status-badge"],
+      "estado": "with data",
+      "descricao": "four unit KPI cards (total, open, in progress, closed); shortcut row with the buttons New order and View orders; compact table with the 5 most recent orders: protocol, requester, status as a colored pill and change date"
+    },
+    {
+      "id": "tl-00-no-access",
+      "inventario": "TL-00",
+      "nome": "No access",
+      "perfil": "user without a role in the app",
+      "componentes": ["screen-header", "no-access-panel"],
+      "estado": "user without permission",
+      "descricao": "normal header without the menu; in the center, a panel with a padlock, the text 'You do not have access to this app yet' and the contact support@contoso.com"
+    }
+  ]
+}

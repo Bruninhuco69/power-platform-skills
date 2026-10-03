@@ -1,0 +1,24 @@
+{
+  "name": "pp-en",
+  "version": "0.3.0",
+  "description": "Guided pipeline for Power Apps Canvas + Power Automate apps on SQL Server or Dataverse: one /pp-en:* command per stage (idea, brainstorm, visual identity, image mockups, clickable HTML prototype, architecture, build, test, user acceptance, publish), a fresh session per stage, specialist subagents, YAML screens and flows ready to paste, and runnable validators.",
+  "author": {
+    "name": "Bruno"
+  },
+  "homepage": "https://stage2dev.github.io/power-platform-skills/en/",
+  "repository": "https://github.com/stage2dev/power-platform-skills",
+  "license": "MIT",
+  "keywords": [
+    "power-platform",
+    "power-apps",
+    "canvas-apps",
+    "power-fx",
+    "power-automate",
+    "dataverse",
+    "sql-server",
+    "en-us",
+    "claude-code",
+    "subagents",
+    "low-code"
+  ]
+}

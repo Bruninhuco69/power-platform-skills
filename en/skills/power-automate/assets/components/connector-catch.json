@@ -1,0 +1,78 @@
+{
+  "nodeId": "Catch_pedido",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Nega_conector": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "status",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "description": {
+                "title": "description",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "id": {
+                "title": "id",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              },
+              "url": {
+                "title": "url",
+                "x-ms-dynamically-added": true,
+                "type": "string"
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "error",
+            "description": "@{concat('The system did not respond. Try again in a moment. Code: ',workflow()?['run']?['name'])}",
+            "id": "",
+            "url": ""
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000084"
+        }
+      },
+      "Nega_conector_fim": {
+        "type": "Terminate",
+        "inputs": {
+          "runStatus": "Succeeded"
+        },
+        "runAfter": {
+          "Nega_conector": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000085"
+        }
+      }
+    },
+    "runAfter": {
+      "Try_pedido": [
+        "Failed",
+        "TimedOut",
+        "Skipped"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000086"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

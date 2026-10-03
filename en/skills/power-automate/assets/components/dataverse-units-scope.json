@@ -1,0 +1,276 @@
+{
+  "nodeId": "Bloco_escopo_unidades",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Minhas_unidades": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "entityName": "<prefixo>_usuariounidades",
+            "$filter": "@concat('<prefixo>_upn eq ''',replace(outputs('Chamador'),'''',''''''),'''')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "connection": "shared_commondataserviceforapps",
+            "operationId": "ListRecords"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000046"
+        }
+      },
+      "Lista_minhas_unidades": {
+        "type": "Select",
+        "inputs": {
+          "from": "@coalesce(body('Minhas_unidades')?['value'],json('[]'))",
+          "select": "@trim(string(item()?['<prefixo>_unidade']))"
+        },
+        "runAfter": {
+          "Minhas_unidades": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000047"
+        }
+      },
+      "Unidades_permitidas": {
+        "type": "Compose",
+        "inputs": "@union(body('Lista_minhas_unidades'),if(empty(trim(string(first(body('Ler_chamador')?['value'])?['<prefixo>_unidade']))),json('[]'),createArray(trim(string(first(body('Ler_chamador')?['value'])?['<prefixo>_unidade'])))))",
+        "runAfter": {
+          "Lista_minhas_unidades": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000048"
+        }
+      },
+      "Pode_todas_unidades": {
+        "type": "Compose",
+        "inputs": "@equals(first(body('Ler_perfil')?['value'])?['<prefixo>_todasunidades'],true)",
+        "runAfter": {
+          "Unidades_permitidas": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000049"
+        }
+      },
+      "Se_sem_unidade": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@outputs('Pode_todas_unidades')",
+                false
+              ]
+            },
+            {
+              "equals": [
+                "@empty(trim(join(outputs('Unidades_permitidas'),'')))",
+                true
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Nega_sem_unidade": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "error",
+                "description": "Your user is not linked to any unit. Contact support.",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000050"
+            }
+          },
+          "Nega_sem_unidade_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Nega_sem_unidade": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000051"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Pode_todas_unidades": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000052"
+        }
+      },
+      "Se_unidade_alheia": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@outputs('Pode_todas_unidades')",
+                false
+              ]
+            },
+            {
+              "or": [
+                {
+                  "equals": [
+                    "@empty(trim(coalesce(triggerBody()['text_3'],'')))",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@contains(outputs('Unidades_permitidas'),toUpper(trim(coalesce(triggerBody()['text_3'],''))))",
+                    false
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Nega_unidade_alheia": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "error",
+                "description": "You do not have access to this record's unit.",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000053"
+            }
+          },
+          "Nega_unidade_alheia_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Nega_unidade_alheia": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000054"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Se_sem_unidade": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000055"
+        }
+      }
+    },
+    "runAfter": {
+      "Ler_perfil": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000056"
+    }
+  },
+  "allConnectionData": {
+    "Minhas_unidades": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

@@ -1,0 +1,169 @@
+{
+  "nodeId": "Bloco_indice",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Limites": {
+        "type": "Compose",
+        "description": "Replaces one minimum Compose and one maximum Compose per key.",
+        "inputs": {
+          "MinChave1": "@first(sort(body('Mapear_lote'),outputs('CONFIG')?['ColunaChave1']))?[outputs('CONFIG')?['ColunaChave1']]",
+          "MaxChave1": "@last(sort(body('Mapear_lote'),outputs('CONFIG')?['ColunaChave1']))?[outputs('CONFIG')?['ColunaChave1']]",
+          "MinChave2": "@first(sort(body('Mapear_lote'),outputs('CONFIG')?['ColunaChave2']))?[outputs('CONFIG')?['ColunaChave2']]",
+          "MaxChave2": "@last(sort(body('Mapear_lote'),outputs('CONFIG')?['ColunaChave2']))?[outputs('CONFIG')?['ColunaChave2']]"
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000160"
+        }
+      },
+      "Clausulas_chave1": {
+        "type": "Select",
+        "inputs": {
+          "from": "@body('Mapear_lote')",
+          "select": "@concat(outputs('CONFIG')?['ColunaChave1'],' eq ',string(item()?[outputs('CONFIG')?['ColunaChave1']]))"
+        },
+        "runAfter": {
+          "Limites": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000161"
+        }
+      },
+      "Filtro_chave1": {
+        "type": "Compose",
+        "description": "Up to 10 keys: exact list (no duplicates). Above that: minimum-maximum range.",
+        "inputs": "@if(greater(length(body('Mapear_lote')),10),concat(outputs('CONFIG')?['ColunaChave1'],' ge ',outputs('Limites')?['MinChave1'],' and ',outputs('CONFIG')?['ColunaChave1'],' le ',outputs('Limites')?['MaxChave1']),concat('(',join(union(body('Clausulas_chave1'),body('Clausulas_chave1')),' or '),')'))",
+        "runAfter": {
+          "Clausulas_chave1": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000162"
+        }
+      },
+      "Ler_destino": {
+        "type": "OpenApiConnection",
+        "description": "Native pagination (Settings > Pagination) brings all pages in a single action.",
+        "inputs": {
+          "parameters": {
+            "entityName": "@outputs('CONFIG')?['EntitySetName']",
+            "$select": "@concat(outputs('CONFIG')?['ColunaGuid'],',',outputs('CONFIG')?['ColunaChave1'],',',outputs('CONFIG')?['ColunaChave2'])",
+            "$filter": "@concat('(',outputs('Filtro_chave1'),') and ',outputs('CONFIG')?['ColunaChave2'],' ge ''',outputs('Limites')?['MinChave2'],''' and ',outputs('CONFIG')?['ColunaChave2'],' le ''',outputs('Limites')?['MaxChave2'],'''')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "connection": "shared_commondataserviceforapps",
+            "operationId": "ListRecords"
+          }
+        },
+        "runtimeConfiguration": {
+          "paginationPolicy": {
+            "minimumItemCount": 100000
+          }
+        },
+        "runAfter": {
+          "Filtro_chave1": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000163"
+        }
+      },
+      "Chaves_destino": {
+        "type": "Select",
+        "inputs": {
+          "from": "@body('Ler_destino')?['value']",
+          "select": {
+            "@{outputs('CONFIG')?['ColunaGuid']}": "@item()?[outputs('CONFIG')?['ColunaGuid']]",
+            "@{outputs('CONFIG')?['ColunaChave1']}": "@item()?[outputs('CONFIG')?['ColunaChave1']]",
+            "@{outputs('CONFIG')?['ColunaChave2']}": "@item()?[outputs('CONFIG')?['ColunaChave2']]"
+          }
+        },
+        "runAfter": {
+          "Ler_destino": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000164"
+        }
+      },
+      "Indice_chaves": {
+        "type": "Select",
+        "inputs": {
+          "from": "@body('Chaves_destino')",
+          "select": {
+            "@{concat(string(item()?[outputs('CONFIG')?['ColunaChave1']]),string(item()?[outputs('CONFIG')?['ColunaChave2']]))}": "@item()"
+          }
+        },
+        "runAfter": {
+          "Chaves_destino": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000165"
+        }
+      },
+      "Indice_objeto": {
+        "type": "Compose",
+        "description": "Single {key: row} object. Guarded for an empty index (json('') throws).",
+        "inputs": "@json(if(empty(body('Indice_chaves')),'{}',replace(replace(replace(string(body('Indice_chaves')),'[',''),']',''),'},{',',')))",
+        "runAfter": {
+          "Indice_chaves": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000166"
+        }
+      },
+      "Lote_com_guid": {
+        "type": "Select",
+        "description": "Adds GuidKey to each row from the index. The Z suffix makes the date format match on both sides.",
+        "inputs": {
+          "from": "@body('Mapear_lote')",
+          "select": "@addProperty(item(),'GuidKey',outputs('Indice_objeto')?[concat(string(item()?[outputs('CONFIG')?['ColunaChave1']]),string(item()?[outputs('CONFIG')?['ColunaChave2']]),'Z')]?[outputs('CONFIG')?['ColunaGuid']])"
+        },
+        "runAfter": {
+          "Indice_objeto": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000167"
+        }
+      }
+    },
+    "runAfter": {
+      "Mapear_lote": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000168"
+    }
+  },
+  "allConnectionData": {
+    "Ler_destino": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

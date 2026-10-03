@@ -75,7 +75,16 @@ body.shot .topo { display: none; }
 { const q = new URLSearchParams(location.search);
   if (q.has('shot')) document.body.classList.add('shot');
   // fundo igual ao do GitHub: a imagem do README some na página, no tema claro e no escuro
-  if (q.get('fundo')) document.documentElement.style.background = document.body.style.background = q.get('fundo') === 'escuro' ? '#0d1117' : '#ffffff'; }
+  if (q.get('fundo')) document.documentElement.style.background = document.body.style.background = q.get('fundo') === 'escuro' ? '#0d1117' : '#ffffff';
+  // ?lang=en: título, dica e legenda em inglês (a cena lê o mesmo parâmetro)
+  if (q.get('lang') === 'en') {
+    document.documentElement.lang = 'en';
+    document.title = 'Pipeline in blocks';
+    document.querySelector('.topo h1').textContent = 'Power Platform Kit · the path in blocks';
+    document.querySelector('.topo p').textContent = 'Drag to rotate · scroll to zoom';
+    const legenda = ['you act in the environment', 'agent that executes and proves'];
+    document.querySelectorAll('.legenda > span').forEach((s, i) => { s.lastChild.nodeValue = legenda[i]; });
+  } }
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -311,26 +320,33 @@ const hopY = (t, t0, t1, h) => (t > t0 && t < t1) ? Math.sin((t - t0) / (t1 - t0
 
 const SHOT = new URLSearchParams(location.search).has('shot');
 const LARG = 1200, ALT = 720;
+// ?lang=en = rótulos do plugin pp-en; sem o parâmetro, o pt-BR de sempre
+const EN = new URLSearchParams(location.search).get('lang') === 'en';
+const TXT = EN
+  ? { ajuste: 'adjust', design: '/pp-en:design', falhou: 'failed', construir: 'build', noAr: 'app live',
+      mudanca: '/pp-en:change', aprovado: 'approved?', orquestrador: 'orchestrator' }
+  : { ajuste: 'ajuste', design: '/pp:design', falhou: 'falhou', construir: 'construir', noAr: 'app no ar',
+      mudanca: '/pp:mudanca', aprovado: 'aprovado?', orquestrador: 'orquestrador' };
 
 const ZONAS = [
-  { n: 1, nome: 'Definição', cor: '#7c3aed', x: [-17.5, -3.5], z: [-12.5, -0.5] },
-  { n: 2, nome: 'Identidade', cor: '#db2777', x: [-3.5, 17.5], z: [-12.5, -0.5] },
-  { n: 3, nome: 'Construção', cor: '#2563eb', x: [3.5, 17.5], z: [0.5, 14.5] },
-  { n: 4, nome: 'Entrega', cor: '#059669', x: [-17.5, 3.5], z: [0.5, 14.5] },
+  { n: 1, nome: EN ? 'Definition' : 'Definição', cor: '#7c3aed', x: [-17.5, -3.5], z: [-12.5, -0.5] },
+  { n: 2, nome: EN ? 'Identity' : 'Identidade', cor: '#db2777', x: [-3.5, 17.5], z: [-12.5, -0.5] },
+  { n: 3, nome: EN ? 'Build' : 'Construção', cor: '#2563eb', x: [3.5, 17.5], z: [0.5, 14.5] },
+  { n: 4, nome: EN ? 'Delivery' : 'Entrega', cor: '#059669', x: [-17.5, 3.5], z: [0.5, 14.5] },
 ];
 const TRAS = -5.5, FRENTE = 6.5;          // linha das etapas em cada fileira
 const PISO = PLATE * 2;                    // topo da placa cinza
 const ETAPAS = [
-  { n: 1, cmd: '/pp:novo', zona: 0, x: -14, z: TRAS },
-  { n: 2, cmd: '/pp:brainstorm', zona: 0, x: -7, z: TRAS },
-  { n: 3, cmd: '/pp:design', zona: 1, x: 0, z: TRAS },
-  { n: 4, cmd: '/pp:mockups', zona: 1, x: 7, z: TRAS },
-  { n: 5, cmd: '/pp:prototipo', zona: 1, x: 14, z: TRAS },
-  { n: 6, cmd: '/pp:arquitetura', zona: 2, x: 14, z: FRENTE, voce: true },
-  { n: 7, cmd: '/pp:construir', zona: 2, x: 7, z: FRENTE, voce: true },
-  { n: 8, cmd: '/pp:testar', zona: 3, x: 0, z: FRENTE, voce: true },
-  { n: 9, cmd: '/pp:homologar', zona: 3, x: -7, z: FRENTE, voce: true },
-  { n: 10, cmd: '/pp:publicar', zona: 3, x: -14, z: FRENTE, voce: true },
+  { n: 1, cmd: '/pp:novo', en: 'new', zona: 0, x: -14, z: TRAS },
+  { n: 2, cmd: '/pp:brainstorm', en: 'brainstorm', zona: 0, x: -7, z: TRAS },
+  { n: 3, cmd: '/pp:design', en: 'design', zona: 1, x: 0, z: TRAS },
+  { n: 4, cmd: '/pp:mockups', en: 'mockups', zona: 1, x: 7, z: TRAS },
+  { n: 5, cmd: '/pp:prototipo', en: 'prototype', zona: 1, x: 14, z: TRAS },
+  { n: 6, cmd: '/pp:arquitetura', en: 'architecture', zona: 2, x: 14, z: FRENTE, voce: true },
+  { n: 7, cmd: '/pp:construir', en: 'build', zona: 2, x: 7, z: FRENTE, voce: true },
+  { n: 8, cmd: '/pp:testar', en: 'test', zona: 3, x: 0, z: FRENTE, voce: true },
+  { n: 9, cmd: '/pp:homologar', en: 'uat', zona: 3, x: -7, z: FRENTE, voce: true },
+  { n: 10, cmd: '/pp:publicar', en: 'publish', zona: 3, x: -14, z: FRENTE, voce: true },
 ];
 // os agentes, com os chapéus do vídeo
 const AGENTES = [
@@ -399,7 +415,7 @@ function estampa(e) {
     c.fillStyle = ZONAS[e.zona].cor; c.fillRect(0, 0, w, h);
     c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle';
     c.font = '700 220px Fredoka'; c.fillText(String(e.n), w / 2, 170);
-    const palavra = e.cmd.replace('/pp:', '');
+    const palavra = EN ? e.en : e.cmd.replace('/pp:', '');
     let px = 112; c.font = `700 ${px}px Fredoka`;
     while (c.measureText(palavra).width > 476) { px -= 2; c.font = `700 ${px}px Fredoka`; }
     c.fillText(palavra, w / 2, 392);
@@ -466,11 +482,11 @@ for (const zn of ZONAS) {
   rotulo(`<b style="background:${zn.cor}">${zn.n}</b>${zn.nome}`, 'zona', esquerda ? zn.x[0] - .8 : zn.x[1] + .8, PISO, zr,
     esquerda ? 'esq' : 'dir');
 }
-rotulo('<span class="seta">↺</span> ajuste → <code>/pp:design</code>', 'volta ajuste', 7, 10.6, TRAS);
-rotulo('✓ aprovado?', 'portao', 18.4, PISO, -1.6, 'dir');
-rotulo('<span class="seta">↺</span> falhou → <code>construir</code>', 'volta corrige', 3.5, 1.2, 12.4);
-rotulo('<span class="seta">↺</span> app no ar → <code>/pp:mudanca</code>', 'volta muda', -3, 1.2, 14.8);
-rotulo('orquestrador', 'quem', -14, 6.2, -10.1);
+rotulo(`<span class="seta">↺</span> ${TXT.ajuste} → <code>${TXT.design}</code>`, 'volta ajuste', 7, 10.6, TRAS);
+rotulo(`✓ ${TXT.aprovado}`, 'portao', 18.4, PISO, -1.6, 'dir');
+rotulo(`<span class="seta">↺</span> ${TXT.falhou} → <code>${TXT.construir}</code>`, 'volta corrige', 3.5, 1.2, 12.4);
+rotulo(`<span class="seta">↺</span> ${TXT.noAr} → <code>${TXT.mudanca}</code>`, 'volta muda', -3, 1.2, 14.8);
+rotulo(TXT.orquestrador, 'quem', -14, 6.2, -10.1);
 
 // ---------- quadro ----------
 function ajustar() {

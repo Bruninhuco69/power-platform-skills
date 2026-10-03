@@ -1,0 +1,283 @@
+{
+  "nodeId": "Log",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Filtrar_acoes_falhas": {
+        "type": "Query",
+        "description": "First-level actions of Escopo_Principal with status Failed. result() only accepts Scope, Foreach and Until, not If.",
+        "inputs": {
+          "from": "@result('Escopo_Principal')",
+          "where": "@equals(item()?['status'],'Failed')"
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000194"
+        }
+      },
+      "Compor_log": {
+        "type": "Compose",
+        "description": "One Compose instead of one variable per field. Safe with an empty list and null: if() evaluates both branches.",
+        "inputs": {
+          "RunId": "@workflow()?['run']?['name']",
+          "StartTime": "@trigger()?['startTime']",
+          "EndTime": "@utcNow()",
+          "DurationSeconds": "@div(sub(ticks(utcNow()),ticks(trigger()?['startTime'])),10000000)",
+          "RowsReceived": "@length(coalesce(triggerBody()?['dados'],json('[]')))",
+          "RowsFailed": "@if(not(empty(body('Filtrar_acoes_falhas'))),length(coalesce(triggerBody()?['dados'],json('[]'))),variables('Linhas_com_erro'))",
+          "Status": "@if(or(not(empty(body('Filtrar_acoes_falhas'))),greater(length(variables('Erros_lote')),0)),1,0)",
+          "FailedAction": "@if(not(empty(body('Filtrar_acoes_falhas'))),last(body('Filtrar_acoes_falhas'))?['name'],if(greater(length(variables('Erros_lote')),0),'Enviar_lote',null))",
+          "ErrorMessage": "@if(not(empty(body('Filtrar_acoes_falhas'))),take(string(last(body('Filtrar_acoes_falhas'))?['error']?['message']),4000),if(greater(length(variables('Erros_lote')),0),take(variables('Erros_lote'),4000),null))",
+          "PayloadSize": "@length(string(triggerBody()))",
+          "TriggerName": "@trigger()?['name']",
+          "FlowId": "@workflow()?['name']",
+          "FlowDisplayName": "@workflow()?['tags']?['flowDisplayName']"
+        },
+        "runAfter": {
+          "Filtrar_acoes_falhas": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000195"
+        }
+      },
+      "Listar_monitorado": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "entityName": "<prefixo>_monitoramentos",
+            "$select": "<prefixo>_monitoramentoid,<prefixo>_totalexecucoes,<prefixo>_totalfalhas,<prefixo>_falhasseguidas",
+            "$filter": "@concat('<prefixo>_flowid eq ''',workflow()?['name'],'''')",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "connection": "shared_commondataserviceforapps",
+            "operationId": "ListRecords"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000196"
+        }
+      },
+      "Se_monitorado_existe": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "greater": [
+                "@length(outputs('Listar_monitorado')?['body/value'])",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Atualizar_monitorado": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "entityName": "<prefixo>_monitoramentos",
+                "recordId": "@first(outputs('Listar_monitorado')?['body/value'])?['<prefixo>_monitoramentoid']",
+                "item/<prefixo>_ultimostatus": "@outputs('Compor_log')?['Status']",
+                "item/<prefixo>_ultimaexecucao": "@outputs('Compor_log')?['EndTime']",
+                "item/<prefixo>_falhasseguidas": "@if(equals(outputs('Compor_log')?['Status'],1),add(coalesce(first(outputs('Listar_monitorado')?['body/value'])?['<prefixo>_falhasseguidas'],0),1),0)",
+                "item/<prefixo>_totalfalhas": "@add(coalesce(first(outputs('Listar_monitorado')?['body/value'])?['<prefixo>_totalfalhas'],0),if(equals(outputs('Compor_log')?['Status'],1),1,0))",
+                "item/<prefixo>_totalexecucoes": "@add(coalesce(first(outputs('Listar_monitorado')?['body/value'])?['<prefixo>_totalexecucoes'],0),1)"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connection": "shared_commondataserviceforapps",
+                "operationId": "UpdateRecord"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000197"
+            }
+          }
+        },
+        "else": {
+          "actions": {
+            "Criar_monitorado": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "<prefixo>_monitoramentos",
+                  "item/<prefixo>_flowid": "@outputs('Compor_log')?['FlowId']",
+                  "item/<prefixo>_nome": "@outputs('Compor_log')?['FlowDisplayName']",
+                  "item/<prefixo>_ultimostatus": "@outputs('Compor_log')?['Status']",
+                  "item/<prefixo>_ultimaexecucao": "@outputs('Compor_log')?['EndTime']",
+                  "item/<prefixo>_falhasseguidas": "@if(equals(outputs('Compor_log')?['Status'],1),1,0)",
+                  "item/<prefixo>_totalfalhas": "@if(equals(outputs('Compor_log')?['Status'],1),1,0)",
+                  "item/<prefixo>_totalexecucoes": 1
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connection": "shared_commondataserviceforapps",
+                  "operationId": "CreateRecord"
+                }
+              },
+              "metadata": {
+                "operationMetadataId": "00000000-0000-0000-0000-000000000198"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Compor_log": [
+            "Succeeded"
+          ],
+          "Listar_monitorado": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000199"
+        }
+      },
+      "Registrar_execucao": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "entityName": "<prefixo>_execucoes",
+            "item/<prefixo>_runidentifier": "@outputs('Compor_log')?['RunId']",
+            "item/<prefixo>_flowidentifier": "@outputs('Compor_log')?['FlowId']",
+            "item/<prefixo>_starttime": "@outputs('Compor_log')?['StartTime']",
+            "item/<prefixo>_endtime": "@outputs('Compor_log')?['EndTime']",
+            "item/<prefixo>_durationseconds": "@outputs('Compor_log')?['DurationSeconds']",
+            "item/<prefixo>_runstatus": "@outputs('Compor_log')?['Status']",
+            "item/<prefixo>_triggername": "@outputs('Compor_log')?['TriggerName']",
+            "item/<prefixo>_rowsreceived": "@outputs('Compor_log')?['RowsReceived']",
+            "item/<prefixo>_rowsfailed": "@outputs('Compor_log')?['RowsFailed']",
+            "item/<prefixo>_inputpayloadsize": "@outputs('Compor_log')?['PayloadSize']",
+            "item/<prefixo>_errorcode": "@outputs('Compor_log')?['FailedAction']",
+            "item/<prefixo>_errormessage": "@outputs('Compor_log')?['ErrorMessage']"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "connection": "shared_commondataserviceforapps",
+            "operationId": "CreateRecord"
+          }
+        },
+        "runAfter": {
+          "Compor_log": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000200"
+        }
+      },
+      "Falhar_execucao": {
+        "type": "If",
+        "description": "Only after the log is written: the handled failure stops showing as Succeeded in the run history.",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@outputs('Compor_log')?['Status']",
+                1
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Terminar_com_falha": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Failed",
+              "runError": {
+                "code": "FluxoFalhou",
+                "message": "@coalesce(outputs('Compor_log')?['ErrorMessage'],'Failure without a message')"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000201"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Se_monitorado_existe": [
+            "Succeeded"
+          ],
+          "Registrar_execucao": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000202"
+        }
+      }
+    },
+    "runAfter": {
+      "Escopo_Principal": [
+        "Succeeded",
+        "Failed",
+        "TimedOut"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000203"
+    }
+  },
+  "allConnectionData": {
+    "Listar_monitorado": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    },
+    "Atualizar_monitorado": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    },
+    "Criar_monitorado": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    },
+    "Registrar_execucao": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedcommondataserviceforapps"
+        },
+        "connectionName": "<prefixo>_sharedcommondataserviceforapps",
+        "impersonation": {}
+      },
+      "referenceKey": "shared_commondataserviceforapps"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

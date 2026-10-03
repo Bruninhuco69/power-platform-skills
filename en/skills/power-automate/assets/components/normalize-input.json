@@ -1,0 +1,34 @@
+{
+  "nodeId": "Bloco_normalizar",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Normalizar_gravar": {
+        "type": "Compose",
+        "inputs": {
+          "id": "@trim(coalesce(triggerBody()['text_1'],''))",
+          "idNumero": "@int(if(and(not(empty(trim(coalesce(triggerBody()['text_1'],'')))),equals(length(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(trim(coalesce(triggerBody()['text_1'],'')),'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9','')),0),less(length(trim(coalesce(triggerBody()['text_1'],''))),10)),trim(coalesce(triggerBody()['text_1'],'')),'0'))",
+          "descricao": "@take(trim(coalesce(triggerBody()['text_2'],'')),200)",
+          "unidade": "@toUpper(trim(coalesce(triggerBody()['text_3'],'')))",
+          "quantidade": "@int(if(and(not(empty(trim(coalesce(triggerBody()['text_4'],'')))),equals(length(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(trim(coalesce(triggerBody()['text_4'],'')),'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9','')),0),less(length(trim(coalesce(triggerBody()['text_4'],''))),10)),trim(coalesce(triggerBody()['text_4'],'')),'0'))",
+          "prazo": "@if(empty(trim(coalesce(triggerBody()['text_5'],''))),null,trim(coalesce(triggerBody()['text_5'],'')))"
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000034"
+        }
+      }
+    },
+    "runAfter": {
+      "Autorizar_gravar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000035"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

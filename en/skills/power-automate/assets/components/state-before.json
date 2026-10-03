@@ -1,0 +1,135 @@
+{
+  "nodeId": "Bloco_estado_antes",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Estado_antes_gravar": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "server": "default",
+            "database": "default",
+            "table": "[dbo].[<tabela_pedido>]",
+            "$filter": "@concat('Id_Pedido eq ',string(outputs('Normalizar_gravar')?['idNumero']))",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sql",
+            "connection": "shared_sql",
+            "operationId": "GetItems_V2"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000036"
+        }
+      },
+      "Se_pedido_inexistente_gravar": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@empty(coalesce(body('Estado_antes_gravar')?['value'],json('[]')))",
+                "@true"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Nega_inexistente_gravar": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "title": "description",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "id",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "url": {
+                    "title": "url",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "status": "error",
+                "description": "Order not found.",
+                "id": "",
+                "url": ""
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000037"
+            }
+          },
+          "Nega_inexistente_gravar_fim": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Nega_inexistente_gravar": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "00000000-0000-0000-0000-000000000038"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Estado_antes_gravar": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "00000000-0000-0000-0000-000000000039"
+        }
+      }
+    },
+    "runAfter": {
+      "Bloco_normalizar": [
+        "Succeeded"
+      ]
+    },
+    "metadata": {
+      "operationMetadataId": "00000000-0000-0000-0000-000000000040"
+    }
+  },
+  "allConnectionData": {
+    "Estado_antes_gravar": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sql"
+        },
+        "connection": {
+          "id": "<prefixo>_sharedsql"
+        },
+        "connectionName": "<prefixo>_sharedsql"
+      },
+      "referenceKey": "shared_sql"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

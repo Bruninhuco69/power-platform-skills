@@ -5,6 +5,109 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
 ## [Não lançado]
 
 ### Adicionado
+- **Base bilíngue pt-BR/en-US.**
+  - **Plugin `pp-en`** na pasta `en/` (`en/.claude-plugin/plugin.json`, mesma versão do `pp`), listado
+    no `marketplace.json` ao lado do `pp`. Ainda sem skills.
+  - **`i18n/mapa.json`:** cada arquivo de `skills/` e `agents/`, mais README, site, diagrama e PDF, com
+    o caminho en-US (nomes em inglês: `/pp-en:new`, `research-agent`, `references/field-lessons.md`…)
+    e a situação, `feito` ou `pendente`.
+  - **Lint L014** (paridade): arquivo pt-BR sem entrada no mapa ou entrada `feito` sem o arquivo
+    en-US é erro; `pendente` é aviso, e o lint imprime `N pendente(s) de tradução` antes do total.
+  - **`README.en.md`**, tradução do README com Power Fx en-US; os dois READMEs apontam um para o
+    outro no topo, e a instalação do `pp-en` fica "coming soon" até o plugin ter skills.
+  - **`CLAUDE.md`** na raiz: toda alteração nas duas línguas, o mapa, Power Fx por idioma e as três
+    checagens antes de commitar.
+- **Site, diagrama 3D e PDF em en-US.**
+  - **`docs/en/index.html`:** o site traduzido, com o mesmo layout, tokens e temas claro/escuro. Os
+    dois sites ganham um seletor de idioma (PT · EN) no menu e `hreflang`; no celular (abaixo de
+    480 px) o botão do GitHub sai do menu, que o herói já tem o link.
+  - **Diagrama 3D:** `docs/diagrama/index.html?lang=en` troca rótulos, estampas
+    (`new` … `publish`), voltas (`/pp-en:design`, `build`, `/pp-en:change`), legenda e título. Sem o
+    parâmetro, a imagem é a mesma de antes, pixel a pixel. Imagens novas `docs/img/pipeline-en-claro.webp`
+    e `pipeline-en-escuro.webp` no topo do `README.en.md`.
+  - **`docs/Power-Platform-Kit.en.pdf`:** a apresentação de 4 páginas A4 em inglês, com miniaturas
+    `docs/img/pdf-en-1.jpg` a `-4.jpg` no `README.en.md`.
+  - O `README.en.md` aponta para o site, o diagrama e o PDF em inglês; o mapa marca os três como
+    `feito`.
+- **Scripts em en-US** (parte a do plugin `pp-en`).
+  - **Um código só:** cada script das skills escreve as mensagens em `tr("pt", "en")` e escolhe o
+    idioma pelo `plugin.json` acima dele (`pp` fala pt-BR, `pp-en` fala inglês) ou pela variável
+    `PP_LANG` (`_idioma.py`, igual nas cinco skills). No en-US o resumo é `0 error(s), 0 warning(s)`,
+    o nível aparece como `ERROR`/`WARNING` e os arquivos gerados têm nome em inglês (`STATE.md`,
+    `mockup-load.sql`, `dataverse-builder/`…). Subcomando, opção e chave de JSON ficam iguais; o
+    `estado.py` aceita também o id en-US da etapa (`comecar new`).
+  - **`tools/sincronizar_en.py`** copia `skills/*/scripts/*.py`, idênticos, para a pasta en-US de cada
+    skill e marca o mapa; `--conferir` só confere. O teste falha se uma cópia dessincronizar.
+  - **`i18n/glossario.md`:** comandos, agentes, arquivos que o kit cria e termos em en-US.
+  - Testes novos em `tests/_i18n/`: cópias idênticas, idioma por plugin e por `PP_LANG`, `--help`
+    de cada script sem português e a saída en-US dos validadores, do `estado.py`, da carga mockup e
+    dos nomes as-built. A saída pt-BR não muda.
+- **Skill `power-platform` em en-US** (parte b do plugin `pp-en`).
+  - **`en/skills/power-platform/`:** o `SKILL.md`, as 20 referências, os 6 prompts de revisão e os
+    14 moldes em inglês, com os nomes do mapa (`references/mockup-load.md`,
+    `assets/prd-template.md`…), comandos `/pp-en:*`, agentes `pp-en:*-agent` e os arquivos do projeto
+    em inglês (`STATE.md`, `docs/planning/`, `AS-BUILT-ENVIRONMENT/`).
+  - **Moldes que os scripts leem:** o `assets/dataverse-builder.json` tem o mesmo código do
+    construtor pt-BR e só troca título, descrição e o texto do relatório (`done`, `already existed`,
+    `not run`); o `mockup-load-template.json`, o `mockups-template.json` e o `prototype-template.html`
+    passam limpos nos scripts en-US, com os componentes do catálogo Canvas pelo nome en-US
+    (`screen-header`…). Chave de config, id de padrão de navegação e chave de perfil ficam como no
+    pt-BR, porque script lê.
+  - **`i18n/glossario.md`:** `AMBIENTE-AS-BUILT/`, `docs/decisoes/`, `RF-`/`RN-`, entidades de
+    exemplo e o que fica igual no código.
+  - **Testes novos** em `tests/_i18n/test_skills_en.py`: cada skill en-US no padrão (description
+    "Use when … Do not use", até 250 linhas, links que existem), todo arquivo en-US é par `feito` do
+    mapa, nenhum `/pp:` nem agente pt no texto en-US, o construtor com o mesmo código do pt-BR e os
+    moldes en-US nos scripts.
+- **Etapas e agentes em en-US** (parte c do plugin `pp-en`).
+  - **As 12 skills de etapa** (`en/skills/new`, `brainstorm`, `design`, `mockups`, `prototype`,
+    `architecture`, `build`, `test`, `uat`, `publish`, `progress`, `change`): os comandos
+    `/pp-en:*`, com o `estado.py` chamado pelo id en-US da etapa.
+  - **Os 8 agentes** (`en/agents/*-agent.md`): o mesmo cabeçalho do pt-BR (`tools`, `color`,
+    `effort`, que o `modelos.py` lê) e `skills` do `pp-en`.
+  - **Entrada da etapa para o agente:** a chave fica (`RAIZ`, `TELAS`, `TOKENS`, `ONDE`…), o valor
+    é em inglês (`TOKENS: yes`, `ONDE: both`); classes da rodada de ajustes `identity`, `screen`,
+    `behavior`. O glossário registra.
+  - Teste novo: cada agente en-US com o cabeçalho do pt-BR.
+- **Skill `powerapps-canvas` em en-US** (parte d do plugin `pp-en`).
+  - **`en/skills/powerapps-canvas/`:** o `SKILL.md`, as 16 referências, o molde de tela
+    (`assets/screen-template.md`), o OnStart, os tokens e o catálogo de 25 componentes
+    (`assets/components/`, com o nome en-US de cada um, o mesmo do `verificar-prototipo.py`).
+  - **Power Fx por destino:** o que vai na barra de fórmulas (App.Formulas, App.OnStart, fórmula no
+    texto) está em en-US (`,` separa, `;` encadeia, `.` decimal); o YAML colado tem o mesmo código do
+    pt-BR e só troca texto visível e comentário (datas `mm/dd/yyyy`, `[$-en-US]`).
+  - Tudo passa no `validar-telas.py` en-US como o pt-BR passa no pt-BR: o catálogo sem achado, o molde
+    de tela sem achado e, na trilha SQL, só o T013.
+  - Teste novo `tests/_i18n/test_powerapps_canvas_en.py`: o catálogo é o do `verificar-prototipo.py`,
+    estrutura de cada componente, índice, erro plantado, tokens, e cada bloco YAML en-US com as
+    mesmas chaves, controles, tipos e fórmulas do pt-BR.
+- **Skill `power-automate` em en-US** (parte e do plugin `pp-en`).
+  - **`en/skills/power-automate/`:** o `SKILL.md`, as 12 referências, o contrato e o molde de flow
+    (`assets/flow-write-template.json`) e os 32 componentes (`.json` + `.md`) e 2 gatilhos
+    descritivos em `assets/components/`, com o índice `INDEX.md`.
+  - **O JSON colado tem o mesmo código do pt-BR:** nomes de ação, variável, parâmetro, coluna, os
+    códigos (`GRAVADO`, `TokenInvalido`…) e as ações do switch (`gravar`/`excluir`) ficam; muda só a
+    mensagem ao usuário, `description` e o sentinela `'(unresolved)'`. O CSV exportado usa `,` como
+    separador (Excel en-US). Moldes de expressão Power Fx do app em en-US.
+  - Tudo passa no `verificar-fluxo.py` en-US com os mesmos códigos do pt-BR (`0 error(s)`); o molde
+    de gravação dá `0 error(s), 0 warning(s)`.
+  - Teste novo `tests/_i18n/test_power_automate_en.py` (com `tests/_i18n/_fluxo.py`): mesmos
+    componentes do pt-BR, cada um limpo no verificador en-US, `.md` com o mesmo JSON e as seções,
+    índice completo, e cada JSON en-US com as mesmas chaves, tipos, expressões e GUIDs do pt-BR.
+- **Skills `sql-procedures` e `dataverse` em en-US** (parte f; o plugin `pp-en` fica completo).
+  - **`en/skills/sql-procedures/`:** o `SKILL.md`, as 9 referências e os 4 moldes (procedure de
+    gravação, função de leitura, contrato e pedido de DDL ao DBA). O SQL é o mesmo do pt-BR: muda
+    só comentário e texto; nomes, marcadores e códigos (`N'NAO_APLICADO'`) ficam. Tudo passa no
+    `lint-procedure.py` en-US com `0 error(s), 0 warning(s)` e os mesmos objetos do pt-BR.
+  - **`en/skills/dataverse/`:** o `SKILL.md`, as 7 referências e o molde `AS-BUILT-NAMES`, com o
+    cabeçalho que o `extrair-nomes-as-built.py` en-US gera. A fórmula da barra está em en-US (`,`
+    separa, `;` encadeia).
+  - Teste novo `tests/_i18n/test_sql_dataverse_en.py` (com `tests/_i18n/_sql.py`): lint en-US limpo,
+    cada arquivo com o mesmo SQL do pt-BR, fórmula do Dataverse sem `;` de argumento nem `;;`, e o
+    molde as-built com o cabeçalho do script nos dois idiomas.
+  - **`i18n/glossario.md`:** a regra do código colado (marcador e nome de exemplo ficam).
+  - **READMEs e site:** sai o "em breve" do `pp-en`; o `README.en.md` instala com
+    `/plugin install pp-en@power-platform-kit` e aponta o `pp` como a edição pt-BR.
 - **Carga mockup das tabelas** (`skills/power-platform/scripts/montar-carga-mockup.py`,
   `references/carga-mockup.md`, `assets/carga-mockup-molde.json`), nas duas trilhas, no
   `/pp:arquitetura`.
@@ -55,6 +158,9 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
 - **Apresentação em PDF** (`docs/Power-Platform-Kit.pdf`, 4 páginas), com miniaturas no README.
 
 ### Mudado
+- **PDF en-US sem o aviso de `pp-en` em tradução** (página 1) e miniaturas `pdf-en-*.jpg` de novo;
+  o site pt-BR ganha a regra que o en-US já tinha (`.install > * { min-width: 0; }`): o bloco de
+  instalação rola por dentro em vez de alargar a página no celular (546 px → 390 px).
 - **Datas da carga mockup só com dia 13 ou mais** (`data_base` padrão `2026-01-13`): se a importação
   trocar dia e mês, a linha é recusada em vez de entrar com a data errada.
 - README com nova capa: diagrama, links rápidos, "Em 30 segundos", por que o kit existe e os

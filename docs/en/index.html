@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Platform Kit</title>
+<meta name="description" content="Claude Code plugin that takes a Power Apps Canvas + Power Automate app from a one-line idea to a published app, one guided /pp-en:* command at a time, on SQL Server or Dataverse.">
+<meta property="og:title" content="Power Platform Kit for Claude Code">
+<meta property="og:description" content="From a one-line idea to a published Power Apps app, one guided command at a time.">
+<meta property="og:type" content="website">
+<link rel="alternate" hreflang="pt-BR" href="../">
+<link rel="alternate" hreflang="en" href="./">
+<!-- Optional: "owner/repo". Empty = inferred from the address <owner>.github.io/<repo>/. -->
+<meta name="pp-repo" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='28' fill='white' text-anchor='middle'%3Epp%3C/text%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #f7f7f5; --surface: #ffffff; --surface-2: #f1f2f4; --line: #e3e5e9; --line-2: #d3d7de;
+  --ink: #14161a; --ink-2: #4a5160; --ink-3: #6b7383;
+  --accent: #2563eb; --accent-ink: #1d4ed8; --accent-soft: #e8efff;
+  --claude: #c8603f; --human: #dc2626; --human-soft: #fdecec;
+  --b1: #7c3aed; --b2: #db2777; --b3: #2563eb; --b4: #059669;
+  --term-bg: #0f1115; --term-ink: #d6d9e0; --term-dim: #8a91a0; --term-line: #262a33;
+  --shadow: 0 1px 2px rgba(20,22,26,.05), 0 8px 24px rgba(20,22,26,.06);
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1014; --surface: #161920; --surface-2: #1c2029; --line: #2a2f3a; --line-2: #363c49;
+    --ink: #eceef2; --ink-2: #b4bac6; --ink-3: #8a91a0;
+    --accent: #6d9bff; --accent-ink: #93b4ff; --accent-soft: #1b2540;
+    --claude: #e08a6b; --human: #f87171; --human-soft: #3a1c1f;
+    --b1: #a78bfa; --b2: #f472b6; --b3: #6d9bff; --b4: #34d399;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1014; --surface: #161920; --surface-2: #1c2029; --line: #2a2f3a; --line-2: #363c49;
+  --ink: #eceef2; --ink-2: #b4bac6; --ink-3: #8a91a0;
+  --accent: #6d9bff; --accent-ink: #93b4ff; --accent-soft: #1b2540;
+  --claude: #e08a6b; --human: #f87171; --human-soft: #3a1c1f;
+  --b1: #a78bfa; --b2: #f472b6; --b3: #6d9bff; --b4: #34d399;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.6 "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: var(--accent-ink); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre, .mono { font-family: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace; }
+code { font-size: .86em; background: var(--surface-2); border: 1px solid var(--line); padding: .08em .38em; border-radius: 6px; }
+p code, td code, h2 code { white-space: nowrap; } /* en-US: /pp-en:* has a hyphen; never split a command */
+#install .note code { white-space: normal; } /* long command lines may wrap */
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 24px; } }
+
+/* nav */
+.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.nav .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+.brand:hover { text-decoration: none; }
+.mark { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font: 700 14px/1 "JetBrains Mono", monospace; }
+.nav-links { display: none; gap: 18px; margin-left: 8px; }
+.nav-links a { color: var(--ink-2); font-size: 14px; font-weight: 500; }
+.nav-links a:hover { color: var(--ink); text-decoration: none; }
+.nav-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+@media (min-width: 900px) { .nav-links { display: flex; } }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 10px; font: 600 14px/1 inherit; font-family: inherit; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.btn:hover { text-decoration: none; border-color: var(--ink-3); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.07); }
+.btn.icon { width: 40px; padding: 0; justify-content: center; }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn.sm { height: 36px; padding: 0 12px; font-size: 13px; }
+.lang { display: inline-flex; height: 40px; padding: 3px; gap: 2px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); }
+.lang a { display: grid; place-items: center; min-width: 34px; padding: 0 7px; border-radius: 7px; font: 700 12.5px/1 "JetBrains Mono", monospace; color: var(--ink-3); }
+.lang a:hover { color: var(--ink); text-decoration: none; }
+.lang a[aria-current] { background: var(--accent-soft); color: var(--accent-ink); }
+@media (max-width: 479px) { .gh-nav { display: none; } } /* o herói já tem o link do GitHub */
+
+/* hero */
+.hero { padding: 56px 0 40px; }
+.hero .wrap { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 980px) { .hero .wrap { grid-template-columns: 1.05fr 1fr; } .hero { padding: 80px 0 56px; } }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); padding: 6px 12px; border-radius: 999px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--claude); }
+h1 { font-size: clamp(34px, 5.4vw, 54px); line-height: 1.07; letter-spacing: -.025em; margin: 18px 0 16px; font-weight: 800; }
+h1 em { font-style: normal; color: var(--accent); }
+.lead { font-size: 18px; color: var(--ink-2); margin: 0 0 26px; max-width: 560px; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 26px; font-size: 13px; color: var(--ink-3); }
+.meta-row span { display: inline-flex; align-items: center; gap: 6px; }
+.meta-row b { color: var(--ink-2); font-weight: 600; }
+
+/* terminal */
+.term { background: var(--term-bg); color: var(--term-ink); border-radius: var(--radius); border: 1px solid #22262f; box-shadow: 0 20px 50px rgba(15,17,21,.28); overflow: hidden; min-width: 0; }
+.term-bar { display: flex; align-items: center; gap: 7px; padding: 12px 14px; border-bottom: 1px solid var(--term-line); }
+.term-bar i { width: 11px; height: 11px; border-radius: 50%; background: #3a3f4b; }
+.term-bar span { margin-left: 8px; font: 12px/1 "JetBrains Mono", monospace; color: var(--term-dim); }
+.term pre { margin: 0; padding: 18px 18px 20px; font-size: 12.5px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+.t-dim { color: var(--term-dim); } .t-ok { color: #4ade80; } .t-cmd { color: #93b4ff; } .t-hi { color: #fff; font-weight: 500; } .t-acc { color: #f0a58a; }
+.t-prompt { color: #f0a58a; }
+
+/* sections */
+section { padding: 64px 0; }
+section.alt { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.kicker { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+h2 { font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; letter-spacing: -.02em; margin: 0 0 12px; font-weight: 800; }
+.sub { color: var(--ink-2); max-width: 680px; margin: 0 0 32px; font-size: 17px; }
+h3 { font-size: 18px; margin: 0 0 6px; letter-spacing: -.01em; }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+@media (min-width: 760px) { .stats { grid-template-columns: repeat(5, 1fr); } }
+.stat { background: var(--surface); padding: 18px 18px 16px; }
+.stat b { display: block; font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
+.stat span { font-size: 13px; color: var(--ink-3); }
+.stats-wrap { padding-bottom: 8px; }
+@media (max-width: 759px) { .stat:last-child { grid-column: span 2; } }
+
+/* idea cards */
+.cards { display: grid; gap: 16px; }
+@media (min-width: 820px) { .cards.c3 { grid-template-columns: repeat(3, 1fr); } .cards.c2 { grid-template-columns: repeat(2, 1fr); } .cards.c4 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .cards.c4 { grid-template-columns: repeat(4, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); min-width: 0; }
+section.alt .card { background: var(--bg); box-shadow: none; }
+.card p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.num { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 800; font-size: 15px; margin-bottom: 14px; }
+
+/* pipeline */
+.pipe { display: grid; gap: 18px; }
+.block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.block-h { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.block-h .bar { width: 4px; height: 22px; border-radius: 4px; background: var(--c, var(--accent)); }
+.block-h h3 { margin: 0; font-size: 15px; }
+.block-h small { margin-left: auto; color: var(--ink-3); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.step { display: grid; grid-template-columns: 36px 1fr; gap: 6px 14px; padding: 16px 20px; border-top: 1px solid var(--line); }
+.step:first-of-type { border-top: 0; }
+.step .n { grid-row: span 3; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: var(--c, var(--accent)); border: 2px solid var(--c, var(--accent)); }
+.step .top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.step .cmd { font: 500 13px/1 "JetBrains Mono", monospace; color: var(--accent-ink); background: var(--accent-soft); padding: 6px 9px; border-radius: 7px; }
+.step .ttl { font-weight: 700; }
+.step .who { font-size: 13px; color: var(--ink-3); }
+.step .you { font-size: 14.5px; color: var(--ink-2); }
+.step .out { font-size: 13px; color: var(--ink-3); }
+.step .out code { font-size: 12px; white-space: nowrap; }
+.human { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--human); background: var(--human-soft); padding: 2px 8px; border-radius: 999px; }
+@media (min-width: 900px) {
+  .step { grid-template-columns: 36px minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; }
+  .step .n { grid-row: span 2; }
+  .step .top { grid-column: 2 / 4; }
+  .step .you { grid-column: 2; }
+  .step .out { grid-column: 3; grid-row: 2; }
+}
+.loops { display: grid; gap: 16px; margin-top: 18px; }
+@media (min-width: 820px) { .loops { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .loops { grid-template-columns: repeat(4, 1fr); } }
+.loop { border: 1px dashed var(--line-2); border-radius: var(--radius); padding: 18px 20px; background: transparent; }
+.loop h3 { font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.loop p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.loop svg { width: 18px; height: 18px; color: var(--accent); flex: none; }
+
+/* personas & modes */
+.mode .persona { font-size: 30px; line-height: 1; margin-bottom: 12px; }
+.mode .when { font-size: 14px; color: var(--ink-2); margin: 0 0 12px; }
+.mode .when b { color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; font-weight: 600; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line); padding: 3px 9px; border-radius: 999px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.personas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 18px; }
+@media (min-width: 760px) { .personas { grid-template-columns: repeat(4, 1fr); } }
+.p { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); min-width: 0; }
+.p .e { font-size: 20px; line-height: 1.2; }
+.p b { display: block; font-size: 14px; }
+.p span { font-size: 12.5px; color: var(--ink-3); }
+.note { margin-top: 18px; font-size: 14px; color: var(--ink-3); }
+
+/* table */
+.table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; font-size: 14.5px; }
+section.alt .table { background: var(--bg); }
+.table th, .table td { text-align: left; padding: 13px 16px; border-top: 1px solid var(--line); vertical-align: top; }
+.table thead th { border-top: 0; background: var(--surface-2); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+.table td:first-child { font-weight: 600; white-space: nowrap; }
+.table td { color: var(--ink-2); }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; }
+.pill.s { color: var(--claude); border-color: color-mix(in srgb, var(--claude) 35%, transparent); background: color-mix(in srgb, var(--claude) 10%, transparent); }
+.pill.a { color: var(--accent-ink); border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-soft); }
+@media (max-width: 760px) {
+  .table.stack thead { display: none; }
+  .table.stack, .table.stack tbody, .table.stack tr, .table.stack td { display: block; width: 100%; }
+  .table.stack tr { border-top: 1px solid var(--line); padding: 12px 16px; }
+  .table.stack tr:first-child { border-top: 0; }
+  .table.stack td { border: 0; padding: 3px 0; white-space: normal !important; }
+  .table.stack td[data-l]::before { content: attr(data-l); display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+}
+
+/* inside */
+.big { font-size: 40px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-bottom: 8px; }
+.list { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
+.list li { display: flex; gap: 8px; }
+.list code { white-space: nowrap; align-self: flex-start; }
+.list li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 9px; flex: none; }
+.conv { display: grid; gap: 10px 28px; margin-top: 28px; }
+@media (min-width: 820px) { .conv { grid-template-columns: 1fr 1fr; } }
+.conv div { font-size: 14.5px; color: var(--ink-2); padding-left: 14px; border-left: 2px solid var(--line-2); }
+.conv b { color: var(--ink); }
+
+/* install */
+.install { display: grid; gap: 20px; }
+.install > * { min-width: 0; } /* the <pre> scrolls instead of widening the page on phones */
+@media (min-width: 900px) { .install { grid-template-columns: 1.1fr .9fr; } }
+.code { position: relative; background: var(--term-bg); color: var(--term-ink); border-radius: 12px; border: 1px solid #22262f; margin: 0 0 14px; }
+.code pre { margin: 0; padding: 16px 52px 16px 16px; font-size: 13px; line-height: 1.7; overflow-x: auto; }
+.code .lbl { display: block; padding: 10px 16px 0; font: 600 11px/1 "Plus Jakarta Sans", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--term-dim); }
+.copy { position: absolute; top: 8px; right: 8px; height: 30px; padding: 0 10px; border-radius: 8px; border: 1px solid #333844; background: #1a1d24; color: var(--term-ink); font: 600 12px/1 "Plus Jakarta Sans", sans-serif; cursor: pointer; }
+.copy:hover { background: #232733; }
+.req { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.req li { display: flex; gap: 12px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; font-size: 14.5px; color: var(--ink-2); }
+section.alt .req li { background: var(--bg); }
+.req li b { color: var(--ink); display: block; font-size: 14px; }
+.req .ic { font-size: 18px; line-height: 1.3; }
+.opt { font-size: 11px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; margin-left: 6px; }
+
+/* footer */
+footer { padding: 40px 0 56px; color: var(--ink-3); font-size: 13.5px; }
+footer .wrap { display: grid; gap: 24px; }
+@media (min-width: 820px) { footer .wrap { grid-template-columns: 1fr 1.4fr; } }
+footer h4 { margin: 0 0 10px; color: var(--ink); font-size: 14px; }
+footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+footer p { margin: 0 0 8px; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; transition: .2s; pointer-events: none; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.gh-off { opacity: .55; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mark">pp</span>Power Platform Kit</a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#pipeline">Stages</a>
+      <a href="#brainstorm">Brainstorm</a>
+      <a href="#agents">Agents</a>
+      <a href="#inside">What's included</a>
+      <a href="#install">Install</a>
+    </div>
+    <div class="nav-right">
+      <nav class="lang" aria-label="Language"><a href="../" hreflang="pt-BR" lang="pt-BR" title="Português">PT</a><a aria-current="page" lang="en" title="English">EN</a></nav>
+      <button class="btn icon" id="theme" type="button" aria-label="Toggle light/dark theme" title="Toggle light/dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <a class="btn sm gh-link gh-nav" href="#" data-gh="" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg><span>GitHub</span></a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Claude Code plugin · v0.3.0</span>
+      <h1>From a one-line idea to a <em>published Power Apps app</em>.</h1>
+      <p class="lead">One guided <code>/pp-en:*</code> command per stage. Every stage ends by telling you exactly what to run next, in a fresh session. Power Apps Canvas + Power Automate, on SQL Server (stored procedures) or Dataverse.</p>
+      <div class="cta">
+        <a class="btn primary" href="#install">Install the plugin</a>
+        <a class="btn gh-link" href="#" data-gh="">View on GitHub</a>
+      </div>
+      <div class="meta-row">
+        <span><b>10</b> guided stages</span>
+        <span><b>8</b> specialist subagents</span>
+        <span><b>59</b> ready-made components</span>
+        <span>In <b>en-US</b> and <b>pt-BR</b></span>
+        <span><b>MIT</b> license</span>
+      </div>
+    </div>
+    <div class="term" role="img" aria-label="Example: a stage ends with the next command to run">
+      <div class="term-bar"><i></i><i></i><i></i><span>claude · OrdersApp</span></div>
+<pre><span class="t-prompt">&gt;</span> <span class="t-hi">/pp-en:brainstorm</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+ <span class="t-acc">PP ►</span> <span class="t-hi">BRAINSTORM AND REQUIREMENTS</span>
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="t-dim">  … People-first mode · 22 ideas · MVP approved …</span>
+
+<span class="t-ok">✓</span> Brainstorm and requirements complete
+  progress <span class="t-ok">██</span><span class="t-dim">░░░░░░░░</span> 20% (2 of 10 stages)
+
+<span class="t-hi">## ▶ Next step</span>
+
+<span class="t-hi">Stage 3 of 10 · Visual identity</span>
+Branding Designer Agent: colors, fonts,
+components and visual identity
+
+<span class="t-cmd">/pp-en:design</span>
+
+<span class="t-dim">Open a fresh session first: type /clear.
+Each stage starts clean and reads everything from disk.</span></pre>
+    </div>
+  </div>
+</header>
+
+<div class="wrap stats-wrap">
+  <div class="stats">
+    <div class="stat"><b>12</b><span>/pp-en:* commands</span></div>
+    <div class="stat"><b>10</b><span>agents (2 talk with you)</span></div>
+    <div class="stat"><b>25</b><span>Canvas components</span></div>
+    <div class="stat"><b>34</b><span>Power Automate blocks</span></div>
+    <div class="stat"><b>4</b><span>brainstorm modes</span></div>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <p class="kicker">How it works</p>
+    <h2>You don't need to know the method.</h2>
+    <p class="sub">The kit carries the method for you. Four ideas make the path easy, even for someone who has never gathered requirements or built a Power App.</p>
+    <div class="cards c4">
+      <div class="card">
+        <span class="num">1</span>
+        <h3>One command per stage</h3>
+        <p>Ten stages, from <code>/pp-en:new</code> to <code>/pp-en:publish</code>. Each one checks that the previous one is done. Ran one out of order? It tells you which one to run instead.</p>
+      </div>
+      <div class="card">
+        <span class="num">2</span>
+        <h3>A fresh session per stage</h3>
+        <p>Everything a stage produces is saved to disk, so the next one starts with a clean context. Every stage ends with the <b>Next step</b> block: the command and a reminder to type <code>/clear</code> first.</p>
+      </div>
+      <div class="card">
+        <span class="num">3</span>
+        <h3>You only stop where a person is needed</h3>
+        <p>Approving the MVP, the identity and the prototype; creating tables, pasting screens and flows, running user acceptance and publishing. Everything else is produced and validated for you.</p>
+      </div>
+      <div class="card">
+        <span class="num">4</span>
+        <h3>Who thinks is not who executes</h3>
+        <p>The session defines the request and judges; the agents write and prove what they did. Every delivery gets a verdict (accepted, revision or escalated to you) before it reaches you.</p>
+      </div>
+    </div>
+    <p class="note">Lost the thread? <code>/pp-en:progress</code> shows at any time where the project stands and the next command. The state lives in <code>STATE.md</code>, at the project root.</p>
+  </div>
+</section>
+
+<section id="pipeline" class="alt">
+  <div class="wrap">
+    <p class="kicker">The stages</p>
+    <h2>Ten stages, four blocks.</h2>
+    <p class="sub">Open Claude Code in an empty folder and type <code>/pp-en:new</code> followed by your idea. Then follow the Next step block at the end of each stage. <span class="human">🔴 person</span> marks what only someone in the environment can do; Claude shows a numbered walkthrough and waits.</p>
+
+    <div class="pipe">
+      <div class="block" style="--c: var(--ink-3)">
+        <div class="block-h"><span class="bar"></span><h3>Start</h3><small>Orchestrator</small></div>
+        <div class="step">
+          <span class="n">1</span>
+          <div class="top"><span class="cmd">/pp-en:new</span><span class="ttl">New project</span><span class="who">Orchestrator</span></div>
+          <div class="you">Tell the idea however you have it (a sentence, a list, a screenshot); pick folder, commits and models in one round.</div>
+          <div class="out"><code>power-platform.config.json</code> <code>raw-idea.md</code> <code>STATE.md</code>, git repository</div>
+        </div>
+      </div>
+
+      <div class="block" style="--c: var(--b1)">
+        <div class="block-h"><span class="bar"></span><h3>1 · Product definition</h3><small>talks with you</small></div>
+        <div class="step">
+          <span class="n">2</span>
+          <div class="top"><span class="cmd">/pp-en:brainstorm</span><span class="ttl">Brainstorm and requirements</span><span class="who">Brainstorm Agent</span></div>
+          <div class="you">Pick one of the four modes, answer the questions and decide what goes into the MVP.</div>
+          <div class="out"><code>brainstorm.md</code> <code>prd.md</code> with the MVP scope</div>
+        </div>
+      </div>
+
+      <div class="block" style="--c: var(--b2)">
+        <div class="block-h"><span class="bar"></span><h3>2 · Identity and experience</h3><small>loops until approved</small></div>
+        <div class="step">
+          <span class="n">3</span>
+          <div class="top"><span class="cmd">/pp-en:design</span><span class="ttl">Visual identity</span><span class="who">Branding Designer Agent</span></div>
+          <div class="you">Pick colors, style, font and the way to navigate (side menu, top bar or home screen with cards); approve a visual sample with checked contrast.</div>
+          <div class="out"><code>ux-design-system.md</code> <code>identity.html</code></div>
+        </div>
+        <div class="step">
+          <span class="n">4</span>
+          <div class="top"><span class="cmd">/pp-en:mockups</span><span class="ttl">Image mockups</span><span class="who">pp-en:mockups-agent + script</span></div>
+          <div class="you">Check the screen list (navigation, loading, errors, empty states); authorize the images or skip them.</div>
+          <div class="out"><code>screen-inventory.md</code> <code>mockups/*.png</code></div>
+        </div>
+        <div class="step">
+          <span class="n">5</span>
+          <div class="top"><span class="cmd">/pp-en:prototype</span><span class="ttl">Clickable prototype</span><span class="who">pp-en:prototype-agent</span></div>
+          <div class="you">Click through the HTML prototype; approve it or ask for adjustments.</div>
+          <div class="out"><code>prototype/index.html</code>, checked by <code>verificar-prototipo.py</code></div>
+        </div>
+      </div>
+
+      <div class="block" style="--c: var(--b3)">
+        <div class="block-h"><span class="bar"></span><h3>3 · Build on the Power Platform</h3><small>Canvas ∥ Automate ∥ SQL</small></div>
+        <div class="step">
+          <span class="n">6</span>
+          <div class="top"><span class="cmd">/pp-en:architecture</span><span class="ttl">Architecture</span><span class="who">pp-en:architecture-agent + pp-en:sql-agent ∥</span><span class="human">🔴 person</span></div>
+          <div class="you">Choose SQL Server or Dataverse with the decision matrix; create the tables in the environment.</div>
+          <div class="out"><code>architecture.md</code> ADR, DDL and procedures (or Dataverse model), mockup load <code>.xlsx</code> (and <code>.sql</code>; on Dataverse, the builder flow that creates everything through the Web API), waves in <code>GOAL.md</code></div>
+        </div>
+        <div class="step">
+          <span class="n">7</span>
+          <div class="top"><span class="cmd">/pp-en:build</span><span class="ttl">Build, one wave per session</span><span class="who">pp-en:canvas-agent ∥ pp-en:automate-agent, per group</span><span class="human">🔴 person</span></div>
+          <div class="you">Paste the generated screens and flows into Power Apps Studio and Power Automate.</div>
+          <div class="out"><code>.pa.yaml</code> screens, flow JSON, both validated</div>
+        </div>
+      </div>
+
+      <div class="block" style="--c: var(--b4)">
+        <div class="block-h"><span class="bar"></span><h3>4 · Validation and delivery</h3><small>loops until green</small></div>
+        <div class="step">
+          <span class="n">8</span>
+          <div class="top"><span class="cmd">/pp-en:test</span><span class="ttl">Testing and quality</span><span class="who">pp-en:qa-agent</span><span class="human">🔴 person</span></div>
+          <div class="you">Run the test script in the environment and report what failed.</div>
+          <div class="out"><code>docs/qa/QA-&lt;date&gt;.md</code></div>
+        </div>
+        <div class="step">
+          <span class="n">9</span>
+          <div class="top"><span class="cmd">/pp-en:uat</span><span class="ttl">User acceptance</span><span class="who">Orchestrator, with you</span><span class="human">🔴 person</span></div>
+          <div class="you">Run user acceptance with real users and collect the sign-off.</div>
+          <div class="out"><code>docs/qa/UAT-&lt;date&gt;.md</code></div>
+        </div>
+        <div class="step">
+          <span class="n">10</span>
+          <div class="top"><span class="cmd">/pp-en:publish</span><span class="ttl">Publishing and documentation</span><span class="who">Orchestrator</span><span class="human">🔴 person</span></div>
+          <div class="you">Publish to production and run the smoke test.</div>
+          <div class="out">user manual, technical guide, go-live checklist, tag <code>v1.0.0</code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loops">
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Prototype not approved</h3>
+        <p>The adjustment requests go to <code>prototype-adjustments.md</code> and the next step is <code>/pp-en:design</code> again. Mockups and prototype redo only what changed.</p>
+      </div>
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Test or acceptance failed</h3>
+        <p>Each failure goes to <code>fixes.md</code>, tagged as app or flows. The next step is <code>/pp-en:build app</code> or <code>/pp-en:build flows</code>, and then the test again.</p>
+      </div>
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Stopped midway?</h3>
+        <p>Run the same command again. The stage resumes from what's on disk, and <code>/pp-en:progress</code> always knows where you are.</p>
+      </div>
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>After publishing</h3>
+        <p>Send the list of changes with <code>/pp-en:change</code>. Each request becomes a spec, the agents work in parallel, QA runs and user acceptance reopens for a new version.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="brainstorm">
+  <div class="wrap">
+    <p class="kicker">Brainstorm</p>
+    <h2>Four ways to think, one PRD at the end.</h2>
+    <p class="sub">Stage 2 starts by asking how you want to think. Each mode is led by a persona and only changes how the conversation starts. All four close the same way: MVP cut, business rules, blockers, volumes and <code>prd.md</code>.</p>
+    <div class="cards c4">
+      <div class="card mode">
+        <div class="persona">🧠</div>
+        <span class="tag">Facilitator</span>
+        <h3>Guided interview</h3>
+        <p class="when"><b>Pick it when</b> you already know what you want and need help to close it.</p>
+        <div class="chips"><span class="chip">one question at a time</span><span class="chip">roles × actions</span></div>
+      </div>
+      <div class="card mode">
+        <div class="persona">🎨</div>
+        <span class="tag">Experience designer</span>
+        <h3>People first</h3>
+        <p class="when"><b>Pick it when</b> the app changes the day-to-day of many people, in different roles.</p>
+        <div class="chips"><span class="chip">empathy map</span><span class="chip">a day in the life</span><span class="chip">How might we…?</span></div>
+      </div>
+      <div class="card mode">
+        <div class="persona">🔬</div>
+        <span class="tag">Investigator</span>
+        <h3>Problem first</h3>
+        <p class="when"><b>Pick it when</b> something is broken (rework, errors, delays) and you want the cause.</p>
+        <div class="chips"><span class="chip">5 whys</span><span class="chip">fishbone</span><span class="chip">bottleneck</span><span class="chip">reverse brainstorm</span></div>
+      </div>
+      <div class="card mode">
+        <div class="persona">🗣️</div>
+        <span class="tag">Facilitator moderates</span>
+        <h3>Round table</h3>
+        <p class="when"><b>Pick it when</b> the idea is still vague and you want to hear several points of view.</p>
+        <div class="chips"><span class="chip">2–3 personas per round</span><span class="chip">one question for you</span></div>
+      </div>
+    </div>
+    <div class="personas" aria-label="Personas">
+      <div class="p"><span class="e">🧠</span><div><b>Facilitator</b><span>keeps the session moving</span></div></div>
+      <div class="p"><span class="e">🎨</span><div><b>Experience designer</b><span>the people who will use it</span></div></div>
+      <div class="p"><span class="e">🔬</span><div><b>Investigator</b><span>the root cause</span></div></div>
+      <div class="p"><span class="e">💼</span><div><b>Business strategist</b><span>the value and the metric</span></div></div>
+      <div class="p"><span class="e">👤</span><div><b>Front-line user</b><span>clicks, phone, no signal</span></div></div>
+      <div class="p"><span class="e">🛠️</span><div><b>Power Platform architect</b><span>volumes, licenses, limits</span></div></div>
+      <div class="p"><span class="e">🛡️</span><div><b>Security and compliance</b><span>data, access, approvals</span></div></div>
+      <div class="p"><span class="e">😈</span><div><b>Devil's advocate</b><span>what can go wrong</span></div></div>
+    </div>
+    <p class="note">The personas ask and propose; you decide. You can switch modes midway without losing anything. Inspired by the creative module and the party mode of the BMAD Method.</p>
+  </div>
+</section>
+
+<section id="agents" class="alt">
+  <div class="wrap">
+    <p class="kicker">The agents</p>
+    <h2>Specialists with the fewest tools.</h2>
+    <p class="sub">A subagent can't ask you questions, so the two agents that talk with you run in the stage's own session. The stage that calls a subagent judges its work before moving on.</p>
+    <table class="table stack">
+      <thead><tr><th>Agent</th><th>Stage</th><th>Runs as</th><th>Tools</th></tr></thead>
+      <tbody>
+        <tr><td data-l="Agent">Brainstorm</td><td data-l="Stage"><code>/pp-en:brainstorm</code></td><td data-l="Runs as"><span class="pill s">your session</span></td><td data-l="Tools">talks with you, in the persona of the chosen mode</td></tr>
+        <tr><td data-l="Agent">Branding Designer</td><td data-l="Stage"><code>/pp-en:design</code></td><td data-l="Runs as"><span class="pill s">your session</span></td><td data-l="Tools">talks with you; builds a visual sample</td></tr>
+        <tr><td data-l="Agent"><code>pp-en:mockups-agent</code></td><td data-l="Stage"><code>/pp-en:mockups</code></td><td data-l="Runs as"><span class="pill a">subagent</span></td><td data-l="Tools">reads and writes; <b>no shell</b>, so it can't call the image API</td></tr>
+        <tr><td data-l="Agent"><code>pp-en:prototype-agent</code></td><td data-l="Stage"><code>/pp-en:prototype</code></td><td data-l="Runs as"><span class="pill a">subagent</span></td><td data-l="Tools">reads, writes, shell (prototype checker)</td></tr>
+        <tr><td data-l="Agent"><code>pp-en:architecture-agent</code></td><td data-l="Stage"><code>/pp-en:architecture</code></td><td data-l="Runs as"><span class="pill a">subagent</span></td><td data-l="Tools">reads, writes, shell; writes the procedures' spec, not their body</td></tr>
+        <tr><td data-l="Agent"><code>pp-en:sql-agent</code></td><td data-l="Stage"><code>/pp-en:architecture</code></td><td data-l="Runs as"><span class="pill a">subagent ∥</span></td><td data-l="Tools">reads, writes, shell (<code>lint-procedure.py</code>); one per group of procedures</td></tr>
+        <tr><td data-l="Agent"><code>pp-en:canvas-agent</code></td><td data-l="Stage"><code>/pp-en:build</code></td><td data-l="Runs as"><span class="pill a">subagent ∥</span></td><td data-l="Tools">reads, writes, shell (<code>validar-telas.py</code>)</td></tr>
+        <tr><td data-l="Agent"><code>pp-en:automate-agent</code></td><td data-l="Stage"><code>/pp-en:build</code></td><td data-l="Runs as"><span class="pill a">subagent ∥</span></td><td data-l="Tools">reads, writes, shell (<code>verificar-fluxo.py</code>)</td></tr>
+        <tr><td data-l="Agent"><code>pp-en:qa-agent</code></td><td data-l="Stage"><code>/pp-en:test</code></td><td data-l="Runs as"><span class="pill a">subagent</span></td><td data-l="Tools"><b>read-only</b>, plus shell for the validators</td></tr>
+        <tr><td data-l="Agent"><code>pp-en:research-agent</code></td><td data-l="Stage">when a fact is missing</td><td data-l="Runs as"><span class="pill a">subagent</span></td><td data-l="Tools"><b>read-only</b>, plus search in the official documentation; nothing from the project goes to the web</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:40px">Who thinks and who executes</h3>
+    <p class="sub">Each stage's session is the head: it writes each agent's request, runs the validator again and gives a verdict per delivery: <b>accepted</b>, <b>revision</b> (the same agent, with a sharper request, two at most) or <b>escalated</b> (comes to you). Before showing the design sample or the prototype, Claude takes screenshots of the screens and looks at them. Since thinking and judging is the small part of the work, the head can use a stronger model and the hands a faster one. You pick the profile in <code>/pp-en:new</code>.</p>
+    <table class="table stack">
+      <thead><tr><th>Profile</th><th>Each stage's session</th><th>Architecture and QA</th><th>Screens, flows, SQL, prototype</th><th>Research</th></tr></thead>
+      <tbody>
+        <tr><td data-l="Profile"><b>Balanced</b> <span class="pill s" style="margin-left:6px">recommended</span></td><td data-l="Session">Opus</td><td data-l="Architecture and QA">Opus</td><td data-l="Execution">Sonnet</td><td data-l="Research">Sonnet</td></tr>
+        <tr><td data-l="Profile">Maximum</td><td data-l="Session">Fable, if the account has it (otherwise Opus)</td><td data-l="Architecture and QA">Opus</td><td data-l="Execution">Opus</td><td data-l="Research">Sonnet</td></tr>
+        <tr><td data-l="Profile">Economy</td><td data-l="Session">Sonnet</td><td data-l="Architecture and QA">Sonnet</td><td data-l="Execution">Sonnet</td><td data-l="Research">Haiku</td></tr>
+        <tr><td data-l="Profile">Inherit</td><td data-l="Session">the model the session opens with</td><td data-l="Architecture and QA">same</td><td data-l="Execution">same</td><td data-l="Research">same</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="existing">
+  <div class="wrap">
+    <p class="kicker">Existing app</p>
+    <h2>Already have an app? Just describe the problem.</h2>
+    <p class="sub">Outside the pipeline, the <code>power-platform</code> orchestrator routes a plain-language request to the right mode.</p>
+    <table class="table stack">
+      <thead><tr><th>You say</th><th>What Claude does</th></tr></thead>
+      <tbody>
+        <tr><td data-l="You say">“The KPI doesn't match the gallery”</td><td data-l="What Claude does"><b>Investigate mode.</b> Walks screen → formula → source → flow → procedure → data, one hypothesis at a time, and proves the root cause before proposing code.</td></tr>
+        <tr><td data-l="You say">“A user sees another unit's data”</td><td data-l="What Claude does">Checks the layer that actually blocks access: flow + procedure on SQL, security roles on Dataverse. The screen only filters.</td></tr>
+        <tr><td data-l="You say">“Audit the whole app”</td><td data-l="What Claude does">Reviewers in parallel by discipline (UX, development, performance, data, flows, SQL) and a second check of the strongest findings.</td></tr>
+        <tr><td data-l="You say">“Add a status filter here”</td><td data-l="What Claude does">Goes straight to <code>powerapps-canvas</code>, without the full protocol.</td></tr>
+        <tr><td data-l="You say">A list of changes to an app published by the kit</td><td data-l="What Claude does"><code>/pp-en:change</code>: one spec per request, agents in parallel, judgment, the change's QA and user acceptance reopened.</td></tr>
+        <tr><td data-l="You say">“Promote to UAT/PROD”</td><td data-l="What Claude does">Solutions, environment variables, connection references and the <code>pac</code> CLI; what goes by pasting and what goes by solution.</td></tr>
+        <tr><td data-l="You say">“Is it ready?”</td><td data-l="What Claude does">Runs the final gate: every validator that applies, plus the checklist.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="inside" class="alt">
+  <div class="wrap">
+    <p class="kicker">What's included</p>
+    <h2>Ready-to-paste pieces and validators that run.</h2>
+    <p class="sub">Five domain skills behind the stage commands: <code>power-platform</code>, <code>powerapps-canvas</code>, <code>power-automate</code>, <code>sql-procedures</code> and <code>dataverse</code>.</p>
+    <div class="cards c3">
+      <div class="card">
+        <div class="big">25</div>
+        <h3>Canvas components</h3>
+        <p>Ready-to-paste YAML, with the variables each one expects in <code>OnStart</code>.</p>
+        <ul class="list"><li>side menu (fixed, collapsible or drawer), top menu, home screen with cards</li><li>table gallery, sorting, cursor pagination, KPI card</li><li>modals, loading overlay, toast, empty state, no-access panel</li></ul>
+      </div>
+      <div class="card">
+        <div class="big">34</div>
+        <h3>Power Automate blocks</h3>
+        <p>Clipboard JSON plus notes, with the assembly order for each kind of flow.</p>
+        <ul class="list"><li>identify and authorize the caller, scope by unit</li><li>write via stored procedure, translate code and respond</li><li><code>$batch</code> upsert on Dataverse, CSV export, run log</li></ul>
+      </div>
+      <div class="card">
+        <div class="big">✓</div>
+        <h3>Runnable validators</h3>
+        <p>Python, standard library only. ✅ requires evidence: command, output and date.</p>
+        <ul class="list"><li><code>validar-telas.py</code> for screens</li><li><code>verificar-fluxo.py</code> for flows</li><li><code>lint-procedure.py</code> for procedures</li><li><code>verificar-prototipo.py</code> for the prototype</li></ul>
+      </div>
+    </div>
+    <div class="conv">
+      <div><b>One data track per project:</b> SQL Server or Dataverse.</div>
+      <div><b>The real name wins.</b> Formulas and flows use the names read from the environment, never the ones from the plan.</div>
+      <div><b>Writes always go through a flow,</b> with a 4-field response and <code>.Run()</code> inside <code>IfError</code>.</div>
+      <div><b>The flow reads the caller's identity</b> from its own context and authorizes each action.</div>
+      <div><b>No environment literals</b> in deliverables: environment variables and connection references instead.</div>
+      <div><b>A generator never overwrites what was pasted.</b> What's generated goes to <code>dist/</code>.</div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <p class="kicker">Install</p>
+    <h2>Two commands, then <code style="font-size:.8em">/pp-en:new</code>.</h2>
+    <p class="sub">Inside Claude Code, add the marketplace and install the plugin. Type <code>/pp-en:</code> to see the stage commands; if they don't show up in a session that was already open, restart Claude Code.</p>
+    <div class="install">
+      <div>
+        <div class="code"><span class="lbl">Inside Claude Code</span><button class="copy" type="button">Copy</button><pre class="repo-text">/plugin marketplace add &lt;owner&gt;/power-platform-skills
+/plugin install pp-en@power-platform-kit</pre></div>
+        <div class="code"><span class="lbl">Or from the terminal</span><button class="copy" type="button">Copy</button><pre class="repo-text">claude plugin marketplace add &lt;owner&gt;/power-platform-skills
+claude plugin install pp-en@power-platform-kit</pre></div>
+        <div class="code"><span class="lbl">Your first app</span><button class="copy" type="button">Copy</button><pre>/pp-en:new an app to track orders across units</pre></div>
+        <p class="note" style="margin-top:4px">To update later: <code>claude plugin marketplace update power-platform-kit</code> and then <code>claude plugin update pp-en</code>.</p>
+      </div>
+      <ul class="req">
+        <li><span class="ic">⌘</span><div><b>Claude Code</b>with plugin support</div></li>
+        <li><span class="ic">🐍</span><div><b>Python 3.10+</b>project state and validators; <code>pip install pyyaml</code> to validate the screens</div></li>
+        <li><span class="ic">⚡</span><div><b>A Power Platform environment</b>Power Apps Studio and Power Automate, to paste, test and publish</div></li>
+        <li><span class="ic">🖼️</span><div><b>OpenAI API key <span class="opt">optional</span></b>only for the image mockups in stage 4, generated after you authorize them. Set it outside the chat; without it, the stage goes on without images.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#top" style="margin-bottom:12px"><span class="mark">pp</span>Power Platform Kit</a>
+      <p>The kit is maintained in Brazilian Portuguese and English, and every change lands in both. Power Fx examples follow each language's formula bar: in en-US, <code>,</code> separates arguments and <code>;</code> chains. The pt-BR edition is the <code>pp</code> plugin, in the same marketplace.</p>
+      <ul>
+        <li><a class="repo-file" data-file="README.en.md" href="../../README.en.md">README</a></li>
+        <li><a class="repo-file" data-file="CHANGELOG.md" href="../../CHANGELOG.md">Version history</a></li>
+        <li><a class="repo-file" data-file="docs/CONFIG.md" href="../CONFIG.md">Project config reference</a></li>
+        <li><a class="repo-file" data-file="docs/PADRAO-SKILL.md" href="../PADRAO-SKILL.md">Skill standard</a></li>
+        <li><a class="repo-file" data-file="LICENSE" href="../../LICENSE">MIT license</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Credits and trademarks</h4>
+      <p>The planning cycle and the brainstorm personas are inspired by the <a href="https://github.com/bmad-code-org/BMAD-METHOD">BMAD Method</a> (code under the MIT license, by BMad Code, LLC). This project is not affiliated with or endorsed by BMad Code, LLC. "BMad" and "BMad Method" are their trademarks, cited only to describe compatibility.</p>
+      <p>The split between who thinks and who executes (a verdict per delivery) is inspired by the guide <a href="https://thomaslentine.com/fable-guide.html">"The Fable Loop"</a>, by Thomas Lentine.</p>
+      <p>Power Apps, Power Automate, Power Platform, Dataverse and SQL Server are trademarks of the Microsoft group of companies. This project is not affiliated with Microsoft. Claude and Claude Code are Anthropic products.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  // Theme: the system's by default; the button's choice is kept in the browser when storage is available.
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem("pp-theme"); if (saved) root.setAttribute("data-theme", saved); } catch (e) {}
+  document.getElementById("theme").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme")
+      ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("pp-theme", next); } catch (e) {}
+  });
+
+  // Repository: <meta name="pp-repo">, or inferred from <owner>.github.io/<repo>/.
+  var repo = (document.querySelector('meta[name="pp-repo"]').content || "").trim();
+  if (!repo) {
+    var m = location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
+    if (m) {
+      var seg = location.pathname.split("/").filter(Boolean)[0];
+      repo = m[1] + "/" + (seg && seg.indexOf(".") === -1 && seg !== "en" ? seg : "power-platform-skills");
+    }
+  }
+  var ghLinks = document.querySelectorAll(".gh-link");
+  if (repo) {
+    var base = "https://github.com/" + repo;
+    ghLinks.forEach(function (a) { a.href = base; });
+    document.querySelectorAll(".repo-file").forEach(function (a) {
+      a.href = base + "/blob/HEAD/" + a.getAttribute("data-file");
+    });
+    document.querySelectorAll(".repo-text").forEach(function (pre) {
+      pre.textContent = pre.textContent.split("<owner>/power-platform-skills").join(repo);
+    });
+  } else {
+    ghLinks.forEach(function (a) { a.classList.add("gh-off"); a.setAttribute("aria-disabled", "true"); a.title = "The repository link appears when the page is published on GitHub Pages"; });
+  }
+
+  // Copy buttons
+  var toast = document.getElementById("toast"), timer;
+  function say(msg) { toast.textContent = msg; toast.classList.add("on"); clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove("on"); }, 1600); }
+  document.querySelectorAll(".copy").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var text = b.parentNode.querySelector("pre").textContent;
+      if (!navigator.clipboard) { say("Select the text to copy"); return; }
+      navigator.clipboard.writeText(text).then(function () { say("Copied"); }, function () { say("Couldn't copy: select the text"); });
+    });
+  });
+})();
+</script>
+</body>
+</html>

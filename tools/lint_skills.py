@@ -6,7 +6,8 @@ Uso:
     python tools/lint_skills.py skills/<nome>   # só uma skill (+ sanitização dela)
     python tools/lint_skills.py --sem-scripts   # não executa `--help` dos scripts
 
-Saída: `caminho:linha: ERRO|AVISO <CÓDIGO> mensagem` e, no fim, `N erro(s), M aviso(s)`.
+Saída: `caminho:linha: ERRO|AVISO <CÓDIGO> mensagem` e, no fim, `N erro(s), M aviso(s)`. No repositório
+inteiro, antes do total, `P pendente(s) de tradução` (paridade pt-BR/en-US, `i18n/mapa.json`, L014).
 Exit: 0 sem erro, 1 com erro, 2 uso incorreto.
 """
 from __future__ import annotations
@@ -53,6 +54,14 @@ DOMINIOS_FICTICIOS = {"contoso.com", "fabrikam.com", "example.com", "exemplo.com
 PREFIXO_ANOTACAO_ODATA = "odata."  # <coluna>@odata.bind, @odata.nextLink: anotação OData, não e-mail
 GUID = re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b")
 PREFIXO_GUID_FICTICIO = "00000000-0000-0000-"
+
+MAPA_I18N = Path("i18n/mapa.json")
+PASTAS_I18N = ("skills", "agents")  # todo arquivo pt-BR destas pastas precisa de par en-US no mapa
+PASTA_EN = Path("en")
+SITUACOES_I18N = {"feito", "pendente"}
+LIXO_DO_SISTEMA = {"Thumbs.db", "desktop.ini"}  # e todo arquivo oculto (.DS_Store…)
+MAPA_ILEGIVEL = "mapa ilegível"
+CHAVE_NO_MAPA = re.compile(r'^\s*"([^"]+)":\s*\{')
 
 
 @dataclass(frozen=True)
@@ -265,6 +274,81 @@ def checar_manifestos(raiz: Path) -> list[Achado]:
     return achados
 
 
+def arquivos_pt_br(raiz: Path) -> list[str]:
+    """Arquivos de `skills/` e `agents/` que precisam de par en-US, relativos à raiz."""
+    saida = []
+    for pasta in PASTAS_I18N:
+        base = raiz / pasta
+        if not base.is_dir():
+            continue
+        for p in base.rglob("*"):
+            partes = p.relative_to(raiz).parts
+            if (not p.is_file() or p.suffix == ".pyc" or p.name in LIXO_DO_SISTEMA or p.name.startswith(".")
+                    or any(parte in PASTAS_IGNORADAS for parte in partes)):
+                continue
+            saida.append(_rel(p, raiz))
+    return sorted(saida)
+
+
+def _sem_ancora(caminho: str) -> str:
+    """`docs/diagrama/index.html?lang=en` → `docs/diagrama/index.html` (mesmo arquivo, outro idioma)."""
+    return re.split(r"[?#]", caminho, maxsplit=1)[0]
+
+
+def _destino_en_invalido(pt: str, en: str) -> str | None:
+    """O par en-US fica dentro do repositório e não é o próprio pt-BR (salvo `?lang=`, mesmo arquivo)."""
+    alvo = _sem_ancora(en)
+    if alvo.startswith(("/", "\\")) or ":" in alvo or ".." in re.split(r"[\\/]", alvo):
+        return "sai do repositório"
+    if alvo == pt and "?lang=" not in en:
+        return "é o próprio arquivo pt-BR"
+    return None
+
+
+def checar_mapa_i18n(raiz: Path) -> list[Achado]:
+    """L014: paridade pt-BR/en-US. Sem entrada ou "feito" sem arquivo = ERRO; "pendente" = AVISO."""
+    arquivo = raiz / MAPA_I18N
+    rel = MAPA_I18N.as_posix()
+    if not arquivo.is_file():
+        if (raiz / PASTA_EN).is_dir():
+            return [Achado(rel, 1, "ERRO", "L014", "existe `en/` mas falta o mapa pt-BR para en-US")]
+        return []
+    texto = _ler(arquivo)
+    try:
+        entradas = json.loads(texto)["arquivos"]
+        if not isinstance(entradas, dict):
+            raise TypeError("`arquivos` não é um objeto")
+    except (json.JSONDecodeError, KeyError, TypeError) as erro:
+        return [Achado(rel, 1, "ERRO", "L014", f"{MAPA_ILEGIVEL} (esperado {{\"arquivos\": {{...}}}}): {erro}")]
+    linha_da = {}
+    for numero, linha in enumerate(texto.splitlines(), start=1):
+        if (m := CHAVE_NO_MAPA.match(linha)) and m.group(1) in entradas:
+            linha_da.setdefault(m.group(1), numero)
+
+    achados = [Achado(pt, 1, "ERRO", "L014", f"arquivo pt-BR sem entrada em `{rel}`")
+               for pt in arquivos_pt_br(raiz) if pt not in entradas]
+    for pt, entrada in entradas.items():
+        linha = linha_da.get(pt, 1)
+        en = entrada.get("en") if isinstance(entrada, dict) else None
+        situacao = entrada.get("situacao") if isinstance(entrada, dict) else None
+        if not isinstance(en, str) or not en or situacao not in SITUACOES_I18N:
+            achados.append(Achado(rel, linha, "ERRO", "L014",
+                                  f"`{pt}`: entrada precisa de \"en\" e \"situacao\" ({' ou '.join(sorted(SITUACOES_I18N))})"))
+        elif problema := _destino_en_invalido(pt, en):
+            achados.append(Achado(rel, linha, "ERRO", "L014", f"`{pt}`: \"en\" `{en}` {problema}"))
+        elif not (raiz / pt).is_file():
+            achados.append(Achado(rel, linha, "ERRO", "L014", f"`{pt}` está no mapa mas não existe"))
+        elif situacao == "feito" and not (raiz / _sem_ancora(en)).is_file():
+            achados.append(Achado(rel, linha, "ERRO", "L014", f"`{pt}` marcado feito, mas `{en}` não existe"))
+        elif situacao == "pendente":
+            achados.append(Achado(rel, linha, "AVISO", "L014", f"`{pt}` pendente de tradução para `{en}`"))
+    return achados
+
+
+def contar_pendentes(achados: list[Achado]) -> int:
+    return sum(a.codigo == "L014" and a.nivel == "AVISO" for a in achados)
+
+
 def executar(alvos: list[Path], raiz: Path, executar_scripts: bool = True) -> list[Achado]:
     achados: list[Achado] = []
     padroes_locais = carregar_padroes_locais(raiz)
@@ -273,7 +357,7 @@ def executar(alvos: list[Path], raiz: Path, executar_scripts: bool = True) -> li
                               "arquivo ausente ou vazio — só padrões genéricos de sanitização"))
     repo_inteiro = alvos == [raiz]
     if repo_inteiro:
-        achados += checar_manifestos(raiz)
+        achados += checar_manifestos(raiz) + checar_mapa_i18n(raiz)
         skills = sorted(p for p in (raiz / "skills").iterdir() if p.is_dir()) if (raiz / "skills").is_dir() else []
     else:
         skills = [a for a in alvos if a.is_dir() and a.parent.name == "skills"]
@@ -303,6 +387,9 @@ def main(argv: list[str] | None = None) -> int:
         print(achado.formatar())
     erros = sum(a.nivel == "ERRO" for a in achados)
     avisos = len(achados) - erros
+    mapa_lido = not any(a.codigo == "L014" and a.mensagem.startswith(MAPA_ILEGIVEL) for a in achados)
+    if alvos == [raiz] and (raiz / MAPA_I18N).is_file() and mapa_lido:
+        print(f"{contar_pendentes(achados)} pendente(s) de tradução")
     print(f"{erros} erro(s), {avisos} aviso(s)")
     return 1 if erros else 0
 
