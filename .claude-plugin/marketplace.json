@@ -5,7 +5,7 @@
     "name": "Bruno"
   },
   "metadata": {
-    "description": "Plugin do Claude Code para projetos Power Apps + Power Automate com SQL Server ou Dataverse."
+    "description": "Claude Code plugin for Power Apps + Power Automate projects on SQL Server or Dataverse: pp-en in English, pp in Brazilian Portuguese."
   },
   "plugins": [
     {

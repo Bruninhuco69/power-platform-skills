@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Platform Kit</title>
+<meta name="description" content="Plugin do Claude Code que leva um app Power Apps Canvas + Power Automate da ideia em uma linha ao app publicado, um comando /pp:* guiado por vez, com SQL Server ou Dataverse.">
+<meta property="og:title" content="Power Platform Kit para Claude Code">
+<meta property="og:description" content="Da ideia em uma linha ao app Power Apps publicado, um comando guiado por vez.">
+<meta property="og:type" content="website">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../">
+<link rel="alternate" hreflang="x-default" href="../">
+<!-- Opcional: "owner/repo". Vazio = deduzido do endereço <owner>.github.io/<repo>/. -->
+<meta name="pp-repo" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='28' fill='white' text-anchor='middle'%3Epp%3C/text%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #f7f7f5; --surface: #ffffff; --surface-2: #f1f2f4; --line: #e3e5e9; --line-2: #d3d7de;
+  --ink: #14161a; --ink-2: #4a5160; --ink-3: #6b7383;
+  --accent: #2563eb; --accent-ink: #1d4ed8; --accent-soft: #e8efff;
+  --claude: #c8603f; --human: #dc2626; --human-soft: #fdecec;
+  --b1: #7c3aed; --b2: #db2777; --b3: #2563eb; --b4: #059669;
+  --term-bg: #0f1115; --term-ink: #d6d9e0; --term-dim: #8a91a0; --term-line: #262a33;
+  --shadow: 0 1px 2px rgba(20,22,26,.05), 0 8px 24px rgba(20,22,26,.06);
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1014; --surface: #161920; --surface-2: #1c2029; --line: #2a2f3a; --line-2: #363c49;
+    --ink: #eceef2; --ink-2: #b4bac6; --ink-3: #8a91a0;
+    --accent: #6d9bff; --accent-ink: #93b4ff; --accent-soft: #1b2540;
+    --claude: #e08a6b; --human: #f87171; --human-soft: #3a1c1f;
+    --b1: #a78bfa; --b2: #f472b6; --b3: #6d9bff; --b4: #34d399;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1014; --surface: #161920; --surface-2: #1c2029; --line: #2a2f3a; --line-2: #363c49;
+  --ink: #eceef2; --ink-2: #b4bac6; --ink-3: #8a91a0;
+  --accent: #6d9bff; --accent-ink: #93b4ff; --accent-soft: #1b2540;
+  --claude: #e08a6b; --human: #f87171; --human-soft: #3a1c1f;
+  --b1: #a78bfa; --b2: #f472b6; --b3: #6d9bff; --b4: #34d399;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.6 "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: var(--accent-ink); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre, .mono { font-family: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace; }
+code { font-size: .86em; background: var(--surface-2); border: 1px solid var(--line); padding: .08em .38em; border-radius: 6px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 24px; } }
+
+/* nav */
+.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.nav .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+.brand:hover { text-decoration: none; }
+.mark { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font: 700 14px/1 "JetBrains Mono", monospace; }
+.nav-links { display: none; gap: 18px; margin-left: 8px; }
+.nav-links a { color: var(--ink-2); font-size: 14px; font-weight: 500; }
+.nav-links a:hover { color: var(--ink); text-decoration: none; }
+.nav-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+@media (min-width: 900px) { .nav-links { display: flex; } }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 10px; font: 600 14px/1 inherit; font-family: inherit; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.btn:hover { text-decoration: none; border-color: var(--ink-3); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.07); }
+.btn.icon { width: 40px; padding: 0; justify-content: center; }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn.sm { height: 36px; padding: 0 12px; font-size: 13px; }
+.lang { display: inline-flex; height: 40px; padding: 3px; gap: 2px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); }
+.lang a { display: grid; place-items: center; min-width: 34px; padding: 0 7px; border-radius: 7px; font: 700 12.5px/1 "JetBrains Mono", monospace; color: var(--ink-3); }
+.lang a:hover { color: var(--ink); text-decoration: none; }
+.lang a[aria-current] { background: var(--accent-soft); color: var(--accent-ink); }
+@media (max-width: 479px) { .gh-nav { display: none; } } /* o herói já tem o link do GitHub */
+@media (max-width: 359px) { .nav .brand-name { display: none; } } /* em 320 px o nome não cabe ao lado do idioma e do tema; fica o "pp" */
+
+/* hero */
+.hero { padding: 56px 0 40px; }
+.hero .wrap { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 980px) { .hero .wrap { grid-template-columns: 1.05fr 1fr; } .hero { padding: 80px 0 56px; } }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); padding: 6px 12px; border-radius: 999px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--claude); }
+h1 { font-size: clamp(34px, 5.4vw, 54px); line-height: 1.07; letter-spacing: -.025em; margin: 18px 0 16px; font-weight: 800; }
+h1 em { font-style: normal; color: var(--accent); }
+.lead { font-size: 18px; color: var(--ink-2); margin: 0 0 26px; max-width: 560px; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 26px; font-size: 13px; color: var(--ink-3); }
+.meta-row span { display: inline-flex; align-items: center; gap: 6px; }
+.meta-row b { color: var(--ink-2); font-weight: 600; }
+
+/* terminal */
+.term { background: var(--term-bg); color: var(--term-ink); border-radius: var(--radius); border: 1px solid #22262f; box-shadow: 0 20px 50px rgba(15,17,21,.28); overflow: hidden; min-width: 0; }
+.term-bar { display: flex; align-items: center; gap: 7px; padding: 12px 14px; border-bottom: 1px solid var(--term-line); }
+.term-bar i { width: 11px; height: 11px; border-radius: 50%; background: #3a3f4b; }
+.term-bar span { margin-left: 8px; font: 12px/1 "JetBrains Mono", monospace; color: var(--term-dim); }
+.term pre { margin: 0; padding: 18px 18px 20px; font-size: 12.5px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+.t-dim { color: var(--term-dim); } .t-ok { color: #4ade80; } .t-cmd { color: #93b4ff; } .t-hi { color: #fff; font-weight: 500; } .t-acc { color: #f0a58a; }
+.t-prompt { color: #f0a58a; }
+
+/* sections */
+section { padding: 64px 0; }
+section.alt { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.kicker { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+h2 { font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; letter-spacing: -.02em; margin: 0 0 12px; font-weight: 800; }
+.sub { color: var(--ink-2); max-width: 680px; margin: 0 0 32px; font-size: 17px; }
+h3 { font-size: 18px; margin: 0 0 6px; letter-spacing: -.01em; }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+@media (min-width: 760px) { .stats { grid-template-columns: repeat(5, 1fr); } }
+.stat { background: var(--surface); padding: 18px 18px 16px; }
+.stat b { display: block; font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
+.stat span { font-size: 13px; color: var(--ink-3); }
+.stats-wrap { padding-bottom: 8px; }
+@media (max-width: 759px) { .stat:last-child { grid-column: span 2; } }
+
+/* idea cards */
+.cards { display: grid; gap: 16px; }
+@media (min-width: 820px) { .cards.c3 { grid-template-columns: repeat(3, 1fr); } .cards.c2 { grid-template-columns: repeat(2, 1fr); } .cards.c4 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .cards.c4 { grid-template-columns: repeat(4, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); min-width: 0; }
+section.alt .card { background: var(--bg); box-shadow: none; }
+.card p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.num { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 800; font-size: 15px; margin-bottom: 14px; }
+
+/* pipeline */
+.pipe { display: grid; gap: 18px; }
+.block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.block-h { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.block-h .bar { width: 4px; height: 22px; border-radius: 4px; background: var(--c, var(--accent)); }
+.block-h h3 { margin: 0; font-size: 15px; }
+.block-h small { margin-left: auto; color: var(--ink-3); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.step { display: grid; grid-template-columns: 36px 1fr; gap: 6px 14px; padding: 16px 20px; border-top: 1px solid var(--line); }
+.step:first-of-type { border-top: 0; }
+.step .n { grid-row: span 3; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: var(--c, var(--accent)); border: 2px solid var(--c, var(--accent)); }
+.step .top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.step .cmd { font: 500 13px/1 "JetBrains Mono", monospace; color: var(--accent-ink); background: var(--accent-soft); padding: 6px 9px; border-radius: 7px; }
+.step .ttl { font-weight: 700; }
+.step .who { font-size: 13px; color: var(--ink-3); }
+.step .you { font-size: 14.5px; color: var(--ink-2); }
+.step .out { font-size: 13px; color: var(--ink-3); }
+.step .out code { font-size: 12px; white-space: nowrap; }
+.human { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--human); background: var(--human-soft); padding: 2px 8px; border-radius: 999px; }
+@media (min-width: 900px) {
+  .step { grid-template-columns: 36px minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; }
+  .step .n { grid-row: span 2; }
+  .step .top { grid-column: 2 / 4; }
+  .step .you { grid-column: 2; }
+  .step .out { grid-column: 3; grid-row: 2; }
+}
+.loops { display: grid; gap: 16px; margin-top: 18px; }
+@media (min-width: 820px) { .loops { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .loops { grid-template-columns: repeat(4, 1fr); } }
+.loop { border: 1px dashed var(--line-2); border-radius: var(--radius); padding: 18px 20px; background: transparent; }
+.loop h3 { font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.loop p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.loop svg { width: 18px; height: 18px; color: var(--accent); flex: none; }
+
+/* personas & modes */
+.mode .persona { font-size: 30px; line-height: 1; margin-bottom: 12px; }
+.mode .when { font-size: 14px; color: var(--ink-2); margin: 0 0 12px; }
+.mode .when b { color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; font-weight: 600; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line); padding: 3px 9px; border-radius: 999px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.personas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 18px; }
+@media (min-width: 760px) { .personas { grid-template-columns: repeat(4, 1fr); } }
+.p { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); min-width: 0; }
+.p .e { font-size: 20px; line-height: 1.2; }
+.p b { display: block; font-size: 14px; }
+.p span { font-size: 12.5px; color: var(--ink-3); }
+.note { margin-top: 18px; font-size: 14px; color: var(--ink-3); }
+
+/* table */
+.table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; font-size: 14.5px; }
+section.alt .table { background: var(--bg); }
+.table th, .table td { text-align: left; padding: 13px 16px; border-top: 1px solid var(--line); vertical-align: top; }
+.table thead th { border-top: 0; background: var(--surface-2); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+.table td:first-child { font-weight: 600; white-space: nowrap; }
+.table td { color: var(--ink-2); }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; }
+.pill.s { color: var(--claude); border-color: color-mix(in srgb, var(--claude) 35%, transparent); background: color-mix(in srgb, var(--claude) 10%, transparent); }
+.pill.a { color: var(--accent-ink); border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-soft); }
+@media (max-width: 760px) {
+  .table.stack thead { display: none; }
+  .table.stack, .table.stack tbody, .table.stack tr, .table.stack td { display: block; width: 100%; }
+  .table.stack tr { border-top: 1px solid var(--line); padding: 12px 16px; }
+  .table.stack tr:first-child { border-top: 0; }
+  .table.stack td { border: 0; padding: 3px 0; white-space: normal !important; }
+  .table.stack td[data-l]::before { content: attr(data-l); display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+}
+
+/* inside */
+.big { font-size: 40px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-bottom: 8px; }
+.list { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
+.list li { display: flex; gap: 8px; }
+.list code { white-space: nowrap; }
+.list li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 9px; flex: none; }
+.conv { display: grid; gap: 10px 28px; margin-top: 28px; }
+@media (min-width: 820px) { .conv { grid-template-columns: 1fr 1fr; } }
+.conv div { font-size: 14.5px; color: var(--ink-2); padding-left: 14px; border-left: 2px solid var(--line-2); }
+.conv b { color: var(--ink); }
+
+/* install */
+.install { display: grid; gap: 20px; }
+.install > * { min-width: 0; } /* o <pre> rola em vez de alargar a página no celular */
+@media (min-width: 900px) { .install { grid-template-columns: 1.1fr .9fr; } }
+.code { position: relative; background: var(--term-bg); color: var(--term-ink); border-radius: 12px; border: 1px solid #22262f; margin: 0 0 14px; }
+.code pre { margin: 0; padding: 16px 52px 16px 16px; font-size: 13px; line-height: 1.7; overflow-x: auto; }
+.code .lbl { display: block; padding: 10px 16px 0; font: 600 11px/1 "Plus Jakarta Sans", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--term-dim); }
+.copy { position: absolute; top: 8px; right: 8px; height: 30px; padding: 0 10px; border-radius: 8px; border: 1px solid #333844; background: #1a1d24; color: var(--term-ink); font: 600 12px/1 "Plus Jakarta Sans", sans-serif; cursor: pointer; }
+.copy:hover { background: #232733; }
+.req { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.req li { display: flex; gap: 12px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; font-size: 14.5px; color: var(--ink-2); }
+section.alt .req li { background: var(--bg); }
+.req li b { color: var(--ink); display: block; font-size: 14px; }
+.req .ic { font-size: 18px; line-height: 1.3; }
+.opt { font-size: 11px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; margin-left: 6px; }
+
+/* footer */
+footer { padding: 40px 0 56px; color: var(--ink-3); font-size: 13.5px; }
+footer .wrap { display: grid; gap: 24px; }
+@media (min-width: 820px) { footer .wrap { grid-template-columns: 1fr 1.4fr; } }
+footer h4 { margin: 0 0 10px; color: var(--ink); font-size: 14px; }
+footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+footer p { margin: 0 0 8px; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; transition: .2s; pointer-events: none; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.gh-off { opacity: .55; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Principal">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mark">pp</span><span class="brand-name">Power Platform Kit</span></a>
+    <div class="nav-links">
+      <a href="#como">Como funciona</a>
+      <a href="#pipeline">Etapas</a>
+      <a href="#brainstorm">Brainstorm</a>
+      <a href="#agentes">Agentes</a>
+      <a href="#dentro">O que vem junto</a>
+      <a href="#instalar">Instalar</a>
+    </div>
+    <div class="nav-right">
+      <nav class="lang" aria-label="Idioma"><a aria-current="page" lang="pt-BR" title="Português">PT</a><a href="../" hreflang="en" lang="en" title="English">EN</a></nav>
+      <button class="btn icon" id="theme" type="button" aria-label="Alternar tema claro/escuro" title="Alternar tema claro/escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <a class="btn sm gh-link gh-nav" href="#" data-gh="" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg><span>GitHub</span></a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Plugin do Claude Code · v0.3.0</span>
+      <h1>Da ideia em uma linha ao <em>app Power Apps publicado</em>.</h1>
+      <p class="lead">Um comando <code>/pp:*</code> guiado por etapa. Toda etapa termina dizendo exatamente o que rodar em seguida, numa sessão nova. Power Apps Canvas + Power Automate, com SQL Server (stored procedures) ou Dataverse.</p>
+      <div class="cta">
+        <a class="btn primary" href="#instalar">Instalar o plugin</a>
+        <a class="btn gh-link" href="#" data-gh="">Ver no GitHub</a>
+      </div>
+      <div class="meta-row">
+        <span><b>10</b> etapas guiadas</span>
+        <span><b>8</b> subagentes especialistas</span>
+        <span><b>59</b> componentes prontos</span>
+        <span>Em <b>pt-BR</b> e <b>en-US</b></span>
+        <span>Licença <b>MIT</b></span>
+      </div>
+    </div>
+    <div class="term" role="img" aria-label="Exemplo: uma etapa termina com o próximo comando a rodar">
+      <div class="term-bar"><i></i><i></i><i></i><span>claude · PedidosApp</span></div>
+<pre><span class="t-prompt">&gt;</span> <span class="t-hi">/pp:brainstorm</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+ <span class="t-acc">PP ►</span> <span class="t-hi">BRAINSTORM E REQUISITOS</span>
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="t-dim">  … modo Foco nas pessoas · 22 ideias · MVP aprovado …</span>
+
+<span class="t-ok">✓</span> Brainstorm e requisitos concluída
+  progresso <span class="t-ok">██</span><span class="t-dim">░░░░░░░░</span> 20% (2 de 10 etapas)
+
+<span class="t-hi">## ▶ Próximo passo</span>
+
+<span class="t-hi">Etapa 3 de 10 · Identidade visual</span>
+Agente Designer Branding: cores, fontes,
+componentes e identidade visual
+
+<span class="t-cmd">/pp:design</span>
+
+<span class="t-dim">Abra uma nova sessão antes: digite /clear.
+Cada etapa começa limpa e lê tudo do disco.</span></pre>
+    </div>
+  </div>
+</header>
+
+<div class="wrap stats-wrap">
+  <div class="stats">
+    <div class="stat"><b>12</b><span>comandos /pp:*</span></div>
+    <div class="stat"><b>10</b><span>agentes (2 conversam com você)</span></div>
+    <div class="stat"><b>25</b><span>componentes Canvas</span></div>
+    <div class="stat"><b>34</b><span>blocos de Power Automate</span></div>
+    <div class="stat"><b>4</b><span>modos de brainstorm</span></div>
+  </div>
+</div>
+
+<section id="como">
+  <div class="wrap">
+    <p class="kicker">Como funciona</p>
+    <h2>Você não precisa conhecer o método.</h2>
+    <p class="sub">O kit carrega o método por você. Quatro ideias deixam o caminho fácil, mesmo para quem nunca fez um levantamento de requisitos nem um Power App.</p>
+    <div class="cards c4">
+      <div class="card">
+        <span class="num">1</span>
+        <h3>Um comando por etapa</h3>
+        <p>Dez etapas, de <code>/pp:novo</code> a <code>/pp:publicar</code>. Cada uma confere se a anterior terminou. Rodou fora de ordem? Ela diz qual rodar no lugar.</p>
+      </div>
+      <div class="card">
+        <span class="num">2</span>
+        <h3>Uma sessão nova por etapa</h3>
+        <p>Tudo o que uma etapa produz fica gravado em disco, então a próxima começa com o contexto limpo. Toda etapa termina com o bloco <b>Próximo passo</b>: o comando e o lembrete de digitar <code>/clear</code> antes.</p>
+      </div>
+      <div class="card">
+        <span class="num">3</span>
+        <h3>Você só para onde precisa de gente</h3>
+        <p>Aprovar o MVP, a identidade e o protótipo; criar tabelas, colar telas e fluxos, homologar e publicar. O resto é produzido e validado para você.</p>
+      </div>
+      <div class="card">
+        <span class="num">4</span>
+        <h3>Quem pensa não é quem executa</h3>
+        <p>A sessão define o pedido e julga; os agentes escrevem e provam o que fizeram. Cada entrega recebe um veredito (aceito, revisão ou levada a você) antes de chegar até você.</p>
+      </div>
+    </div>
+    <p class="note">Perdeu o fio? <code>/pp:progresso</code> mostra a qualquer momento onde o projeto está e o próximo comando. O estado fica no <code>ESTADO.md</code>, na raiz do projeto.</p>
+  </div>
+</section>
+
+<section id="pipeline" class="alt">
+  <div class="wrap">
+    <p class="kicker">As etapas</p>
+    <h2>Dez etapas, quatro blocos.</h2>
+    <p class="sub">Abra o Claude Code numa pasta vazia e digite <code>/pp:novo</code> seguido da sua ideia. Depois, siga o bloco Próximo passo no fim de cada etapa. <span class="human">🔴 pessoa</span> marca o que só alguém no ambiente pode fazer; o Claude mostra um passo a passo numerado e espera.</p>
+
+    <div class="pipe">
+      <div class="block" style="--c: var(--ink-3)">
+        <div class="block-h"><span class="bar"></span><h3>Início</h3><small>Orquestrador</small></div>
+        <div class="step">
+          <span class="n">1</span>
+          <div class="top"><span class="cmd">/pp:novo</span><span class="ttl">Projeto novo</span><span class="who">Orquestrador</span></div>
+          <div class="you">Conte a ideia do jeito que tiver (frase, lista, print); escolha pasta, commits e modelos numa rodada.</div>
+          <div class="out"><code>power-platform.config.json</code> <code>ideia-bruta.md</code> <code>ESTADO.md</code>, repositório git</div>
+        </div>
+      </div>
+
+      <div class="block" style="--c: var(--b1)">
+        <div class="block-h"><span class="bar"></span><h3>1 · Definição do produto</h3><small>conversa com você</small></div>
+        <div class="step">
+          <span class="n">2</span>
+          <div class="top"><span class="cmd">/pp:brainstorm</span><span class="ttl">Brainstorm e requisitos</span><span class="who">Agente Brainstorm</span></div>
+          <div class="you">Escolha um dos quatro modos, responda às perguntas e decida o que entra no MVP.</div>
+          <div class="out"><code>brainstorm.md</code> <code>prd.md</code> com o escopo do MVP</div>
+        </div>
+      </div>
+
+      <div class="block" style="--c: var(--b2)">
+        <div class="block-h"><span class="bar"></span><h3>2 · Identidade e experiência</h3><small>volta até aprovar</small></div>
+        <div class="step">
+          <span class="n">3</span>
+          <div class="top"><span class="cmd">/pp:design</span><span class="ttl">Identidade visual</span><span class="who">Agente Designer Branding</span></div>
+          <div class="you">Escolha cores, estilo, fonte e o jeito de navegar (menu lateral, barra no topo ou tela inicial com cartões); aprove uma amostra visual com o contraste conferido.</div>
+          <div class="out"><code>ux-design-system.md</code> <code>identidade.html</code></div>
+        </div>
+        <div class="step">
+          <span class="n">4</span>
+          <div class="top"><span class="cmd">/pp:mockups</span><span class="ttl">Mockups em imagem</span><span class="who">pp:agente-mockups + script</span></div>
+          <div class="you">Confira a lista de telas (navegação, carregamento, erros, estados vazios); autorize as imagens ou pule.</div>
+          <div class="out"><code>inventario-telas.md</code> <code>mockups/*.png</code></div>
+        </div>
+        <div class="step">
+          <span class="n">5</span>
+          <div class="top"><span class="cmd">/pp:prototipo</span><span class="ttl">Protótipo navegável</span><span class="who">pp:agente-prototipo</span></div>
+          <div class="you">Navegue pelo protótipo HTML; aprove ou peça ajustes.</div>
+          <div class="out"><code>prototipo/index.html</code>, conferido pelo <code>verificar-prototipo.py</code></div>
+        </div>
+      </div>
+
+      <div class="block" style="--c: var(--b3)">
+        <div class="block-h"><span class="bar"></span><h3>3 · Construção na Power Platform</h3><small>Canvas ∥ Automate ∥ SQL</small></div>
+        <div class="step">
+          <span class="n">6</span>
+          <div class="top"><span class="cmd">/pp:arquitetura</span><span class="ttl">Arquitetura</span><span class="who">pp:agente-arquitetura + pp:agente-sql ∥</span><span class="human">🔴 pessoa</span></div>
+          <div class="you">Escolha SQL Server ou Dataverse com a matriz de decisão; crie as tabelas no ambiente.</div>
+          <div class="out"><code>arquitetura.md</code> ADR, DDL e procedures (ou modelo Dataverse), carga mockup <code>.xlsx</code> (e <code>.sql</code>; no Dataverse, o flow construtor que cria tudo pela Web API), ondas no <code>GOAL.md</code></div>
+        </div>
+        <div class="step">
+          <span class="n">7</span>
+          <div class="top"><span class="cmd">/pp:construir</span><span class="ttl">Construção, uma onda por sessão</span><span class="who">pp:agente-canvas ∥ pp:agente-automate, por grupo</span><span class="human">🔴 pessoa</span></div>
+          <div class="you">Cole as telas e os fluxos gerados no Power Apps Studio e no Power Automate.</div>
+          <div class="out">telas <code>.pa.yaml</code>, JSON dos fluxos, ambos validados</div>
+        </div>
+      </div>
+
+      <div class="block" style="--c: var(--b4)">
+        <div class="block-h"><span class="bar"></span><h3>4 · Validação e entrega</h3><small>volta até ficar verde</small></div>
+        <div class="step">
+          <span class="n">8</span>
+          <div class="top"><span class="cmd">/pp:testar</span><span class="ttl">Testes e qualidade</span><span class="who">pp:agente-qa</span><span class="human">🔴 pessoa</span></div>
+          <div class="you">Rode o roteiro de teste no ambiente e conte o que falhou.</div>
+          <div class="out"><code>docs/qa/QA-&lt;data&gt;.md</code></div>
+        </div>
+        <div class="step">
+          <span class="n">9</span>
+          <div class="top"><span class="cmd">/pp:homologar</span><span class="ttl">Homologação</span><span class="who">Orquestrador, com você</span><span class="human">🔴 pessoa</span></div>
+          <div class="you">Faça a homologação com usuários reais e colete o aceite.</div>
+          <div class="out"><code>docs/qa/UAT-&lt;data&gt;.md</code></div>
+        </div>
+        <div class="step">
+          <span class="n">10</span>
+          <div class="top"><span class="cmd">/pp:publicar</span><span class="ttl">Publicação e documentação</span><span class="who">Orquestrador</span><span class="human">🔴 pessoa</span></div>
+          <div class="you">Publique em produção e rode o teste de fumaça.</div>
+          <div class="out">manual do usuário, guia técnico, checklist de go-live, tag <code>v1.0.0</code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loops">
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Protótipo não aprovado</h3>
+        <p>Os pedidos de ajuste vão para <code>ajustes-prototipo.md</code> e o próximo passo é <code>/pp:design</code> de novo. Mockups e protótipo refazem só o que mudou.</p>
+      </div>
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Teste ou homologação falhou</h3>
+        <p>Cada falha vai para <code>correcoes.md</code>, marcada como app ou fluxos. O próximo passo é <code>/pp:construir app</code> ou <code>/pp:construir flows</code>, e depois o teste de novo.</p>
+      </div>
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Parou no meio?</h3>
+        <p>Rode o mesmo comando de novo. A etapa retoma do que está em disco, e o <code>/pp:progresso</code> sempre sabe onde você está.</p>
+      </div>
+      <div class="loop">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Depois de publicado</h3>
+        <p>Mande a lista de mudanças com <code>/pp:mudanca</code>. Cada pedido vira um spec, os agentes fazem em paralelo, o QA roda e a homologação reabre para uma versão nova.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="brainstorm">
+  <div class="wrap">
+    <p class="kicker">Brainstorm</p>
+    <h2>Quatro jeitos de pensar, um PRD no fim.</h2>
+    <p class="sub">A etapa 2 começa perguntando como você quer pensar. Cada modo é conduzido por uma persona e só muda o começo da conversa. Os quatro fecham do mesmo jeito: corte do MVP, regras de negócio, bloqueadores, volumes e <code>prd.md</code>.</p>
+    <div class="cards c4">
+      <div class="card mode">
+        <div class="persona">🧠</div>
+        <span class="tag">Facilitador</span>
+        <h3>Entrevista guiada</h3>
+        <p class="when"><b>Escolha quando</b> você já sabe o que quer e precisa de ajuda para fechar.</p>
+        <div class="chips"><span class="chip">uma pergunta por vez</span><span class="chip">perfis × ações</span></div>
+      </div>
+      <div class="card mode">
+        <div class="persona">🎨</div>
+        <span class="tag">Designer de experiência</span>
+        <h3>Foco nas pessoas</h3>
+        <p class="when"><b>Escolha quando</b> o app muda o dia a dia de muita gente, em perfis diferentes.</p>
+        <div class="chips"><span class="chip">mapa de empatia</span><span class="chip">um dia na vida</span><span class="chip">Como poderíamos…?</span></div>
+      </div>
+      <div class="card mode">
+        <div class="persona">🔬</div>
+        <span class="tag">Investigador</span>
+        <h3>Foco no problema</h3>
+        <p class="when"><b>Escolha quando</b> algo está quebrado (retrabalho, erro, atraso) e você quer a causa.</p>
+        <div class="chips"><span class="chip">5 porquês</span><span class="chip">espinha de peixe</span><span class="chip">gargalo</span><span class="chip">brainstorm reverso</span></div>
+      </div>
+      <div class="card mode">
+        <div class="persona">🗣️</div>
+        <span class="tag">Facilitador modera</span>
+        <h3>Mesa redonda</h3>
+        <p class="when"><b>Escolha quando</b> a ideia ainda está vaga e você quer ouvir vários pontos de vista.</p>
+        <div class="chips"><span class="chip">2–3 personas por rodada</span><span class="chip">uma pergunta para você</span></div>
+      </div>
+    </div>
+    <div class="personas" aria-label="Personas">
+      <div class="p"><span class="e">🧠</span><div><b>Facilitador</b><span>mantém a sessão andando</span></div></div>
+      <div class="p"><span class="e">🎨</span><div><b>Designer de experiência</b><span>as pessoas que vão usar</span></div></div>
+      <div class="p"><span class="e">🔬</span><div><b>Investigador</b><span>a causa raiz</span></div></div>
+      <div class="p"><span class="e">💼</span><div><b>Estrategista de negócio</b><span>o valor e a métrica</span></div></div>
+      <div class="p"><span class="e">👤</span><div><b>Usuário da ponta</b><span>cliques, celular, sem sinal</span></div></div>
+      <div class="p"><span class="e">🛠️</span><div><b>Arquiteto Power Platform</b><span>volumes, licenças, limites</span></div></div>
+      <div class="p"><span class="e">🛡️</span><div><b>Segurança e compliance</b><span>dado, acesso, aprovações</span></div></div>
+      <div class="p"><span class="e">😈</span><div><b>Advogado do diabo</b><span>o que pode dar errado</span></div></div>
+    </div>
+    <p class="note">As personas perguntam e propõem; quem decide é você. Dá para trocar de modo no meio sem perder nada. Inspiradas no módulo criativo e no party mode do BMAD Method.</p>
+  </div>
+</section>
+
+<section id="agentes" class="alt">
+  <div class="wrap">
+    <p class="kicker">Os agentes</p>
+    <h2>Especialistas com o mínimo de ferramentas.</h2>
+    <p class="sub">Subagente não consegue fazer perguntas a você, por isso os dois agentes que conversam rodam na própria sessão da etapa. A etapa que chama um subagente julga o trabalho dele antes de seguir.</p>
+    <table class="table stack">
+      <thead><tr><th>Agente</th><th>Etapa</th><th>Roda como</th><th>Ferramentas</th></tr></thead>
+      <tbody>
+        <tr><td data-l="Agente">Brainstorm</td><td data-l="Etapa"><code>/pp:brainstorm</code></td><td data-l="Roda como"><span class="pill s">sua sessão</span></td><td data-l="Ferramentas">conversa com você, na pele da persona do modo escolhido</td></tr>
+        <tr><td data-l="Agente">Designer Branding</td><td data-l="Etapa"><code>/pp:design</code></td><td data-l="Roda como"><span class="pill s">sua sessão</span></td><td data-l="Ferramentas">conversa com você; monta uma amostra visual</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-mockups</code></td><td data-l="Etapa"><code>/pp:mockups</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas">lê e escreve; <b>sem shell</b>, então não consegue chamar a API de imagens</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-prototipo</code></td><td data-l="Etapa"><code>/pp:prototipo</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas">lê, escreve, shell (verificador do protótipo)</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-arquitetura</code></td><td data-l="Etapa"><code>/pp:arquitetura</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas">lê, escreve, shell; escreve o spec das procedures, não o corpo</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-sql</code></td><td data-l="Etapa"><code>/pp:arquitetura</code></td><td data-l="Roda como"><span class="pill a">subagente ∥</span></td><td data-l="Ferramentas">lê, escreve, shell (<code>lint-procedure.py</code>); um por grupo de procedures</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-canvas</code></td><td data-l="Etapa"><code>/pp:construir</code></td><td data-l="Roda como"><span class="pill a">subagente ∥</span></td><td data-l="Ferramentas">lê, escreve, shell (<code>validar-telas.py</code>)</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-automate</code></td><td data-l="Etapa"><code>/pp:construir</code></td><td data-l="Roda como"><span class="pill a">subagente ∥</span></td><td data-l="Ferramentas">lê, escreve, shell (<code>verificar-fluxo.py</code>)</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-qa</code></td><td data-l="Etapa"><code>/pp:testar</code></td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas"><b>só lê</b>, mais shell para os validadores</td></tr>
+        <tr><td data-l="Agente"><code>pp:agente-pesquisa</code></td><td data-l="Etapa">quando falta um fato</td><td data-l="Roda como"><span class="pill a">subagente</span></td><td data-l="Ferramentas"><b>só lê</b>, mais busca na documentação oficial; nada do projeto vai para a web</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:40px">Quem pensa e quem executa</h3>
+    <p class="sub">A sessão de cada etapa é a cabeça: escreve o pedido de cada agente, roda o validador de novo e dá um veredito por entrega: <b>aceito</b>, <b>revisão</b> (o mesmo agente, com um pedido mais preciso, no máximo duas) ou <b>escalado</b> (vem para você). Antes de mostrar a amostra do design ou o protótipo, o Claude fotografa as telas e olha. Como pensar e julgar é a parte pequena do trabalho, a cabeça pode usar um modelo mais forte e as mãos um mais rápido. Você escolhe o perfil no <code>/pp:novo</code>.</p>
+    <table class="table stack">
+      <thead><tr><th>Perfil</th><th>Sessão de cada etapa</th><th>Arquitetura e QA</th><th>Telas, fluxos, SQL, protótipo</th><th>Pesquisa</th></tr></thead>
+      <tbody>
+        <tr><td data-l="Perfil"><b>Equilibrado</b> <span class="pill s" style="margin-left:6px">recomendado</span></td><td data-l="Sessão">Opus</td><td data-l="Arquitetura e QA">Opus</td><td data-l="Execução">Sonnet</td><td data-l="Pesquisa">Sonnet</td></tr>
+        <tr><td data-l="Perfil">Máximo</td><td data-l="Sessão">Fable, se a conta tem (senão Opus)</td><td data-l="Arquitetura e QA">Opus</td><td data-l="Execução">Opus</td><td data-l="Pesquisa">Sonnet</td></tr>
+        <tr><td data-l="Perfil">Econômico</td><td data-l="Sessão">Sonnet</td><td data-l="Arquitetura e QA">Sonnet</td><td data-l="Execução">Sonnet</td><td data-l="Pesquisa">Haiku</td></tr>
+        <tr><td data-l="Perfil">Herdar</td><td data-l="Sessão">o modelo em que a sessão abrir</td><td data-l="Arquitetura e QA">idem</td><td data-l="Execução">idem</td><td data-l="Pesquisa">idem</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="existente">
+  <div class="wrap">
+    <p class="kicker">App que já existe</p>
+    <h2>Já tem um app? É só descrever o problema.</h2>
+    <p class="sub">Fora do pipeline, o orquestrador <code>power-platform</code> leva o pedido em linguagem natural para o modo certo.</p>
+    <table class="table stack">
+      <thead><tr><th>Você diz</th><th>O que o Claude faz</th></tr></thead>
+      <tbody>
+        <tr><td data-l="Você diz">“O KPI não bate com a galeria”</td><td data-l="O que o Claude faz"><b>Modo investigar.</b> Percorre tela → fórmula → fonte → fluxo → procedure → dado, uma hipótese por vez, e prova a causa raiz antes de propor código.</td></tr>
+        <tr><td data-l="Você diz">“Um usuário vê dados de outra unidade”</td><td data-l="O que o Claude faz">Confere a camada que de fato bloqueia o acesso: fluxo + procedure no SQL, papéis de segurança no Dataverse. A tela só filtra.</td></tr>
+        <tr><td data-l="Você diz">“Audite o app inteiro”</td><td data-l="O que o Claude faz">Revisores em paralelo por disciplina (UX, desenvolvimento, performance, dados, fluxos, SQL) e nova conferência dos achados mais fortes.</td></tr>
+        <tr><td data-l="Você diz">“Coloque um filtro de status aqui”</td><td data-l="O que o Claude faz">Vai direto para o <code>powerapps-canvas</code>, sem o protocolo completo.</td></tr>
+        <tr><td data-l="Você diz">Uma lista de mudanças num app publicado pelo kit</td><td data-l="O que o Claude faz"><code>/pp:mudanca</code>: um spec por pedido, agentes em paralelo, julgamento, QA da mudança e a homologação reaberta.</td></tr>
+        <tr><td data-l="Você diz">“Promova para HML/PRD”</td><td data-l="O que o Claude faz">Soluções, variáveis de ambiente, connection references e o CLI <code>pac</code>; o que vai por colagem e o que vai por solução.</td></tr>
+        <tr><td data-l="Você diz">“Está pronto?”</td><td data-l="O que o Claude faz">Roda o portão final: todos os validadores que se aplicam, mais o checklist.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="dentro" class="alt">
+  <div class="wrap">
+    <p class="kicker">O que vem junto</p>
+    <h2>Peças prontas para colar e validadores que rodam.</h2>
+    <p class="sub">Cinco skills de domínio por trás dos comandos de etapa: <code>power-platform</code>, <code>powerapps-canvas</code>, <code>power-automate</code>, <code>sql-procedures</code> e <code>dataverse</code>.</p>
+    <div class="cards c3">
+      <div class="card">
+        <div class="big">25</div>
+        <h3>Componentes Canvas</h3>
+        <p>YAML pronto para colar, com as variáveis que cada um espera no <code>OnStart</code>.</p>
+        <ul class="list"><li>menu lateral (fixo, recolhível ou gaveta), menu no topo, tela inicial com cartões</li><li>galeria em tabela, ordenação, paginação por cursor, card de KPI</li><li>modais, overlay de carregamento, toast, estado vazio, painel sem acesso</li></ul>
+      </div>
+      <div class="card">
+        <div class="big">34</div>
+        <h3>Blocos de Power Automate</h3>
+        <p>JSON de área de transferência mais notas, com a ordem de montagem de cada tipo de fluxo.</p>
+        <ul class="list"><li>identificar e autorizar quem chama, escopo por unidade</li><li>gravar via stored procedure, traduzir código e responder</li><li>upsert <code>$batch</code> no Dataverse, exportação CSV, log de execução</li></ul>
+      </div>
+      <div class="card">
+        <div class="big">✓</div>
+        <h3>Validadores executáveis</h3>
+        <p>Python, só biblioteca padrão. ✅ exige evidência: comando, saída e data.</p>
+        <ul class="list"><li><code>validar-telas.py</code> para telas</li><li><code>verificar-fluxo.py</code> para fluxos</li><li><code>lint-procedure.py</code> para procedures</li><li><code>verificar-prototipo.py</code> para o protótipo</li></ul>
+      </div>
+    </div>
+    <div class="conv">
+      <div><b>Uma trilha de dados por projeto:</b> SQL Server ou Dataverse.</div>
+      <div><b>O nome real vence.</b> Fórmulas e fluxos usam os nomes lidos do ambiente, nunca os do plano.</div>
+      <div><b>Escrita sempre passa por um fluxo,</b> com resposta de 4 campos e <code>.Run()</code> dentro de <code>IfError</code>.</div>
+      <div><b>O fluxo lê a identidade de quem chama</b> do próprio contexto e autoriza cada ação.</div>
+      <div><b>Nenhum literal de ambiente</b> nas entregas: variáveis de ambiente e connection references no lugar.</div>
+      <div><b>Gerador nunca sobrescreve o que foi colado.</b> O que é gerado vai para <code>dist/</code>.</div>
+    </div>
+  </div>
+</section>
+
+<section id="instalar">
+  <div class="wrap">
+    <p class="kicker">Instalar</p>
+    <h2>Dois comandos, depois <code style="font-size:.8em">/pp:novo</code>.</h2>
+    <p class="sub">Dentro do Claude Code, adicione o marketplace e instale o plugin. Digite <code>/pp:</code> para ver os comandos de etapa; se não aparecerem numa sessão que já estava aberta, reinicie o Claude Code.</p>
+    <div class="install">
+      <div>
+        <div class="code"><span class="lbl">Dentro do Claude Code</span><button class="copy" type="button">Copiar</button><pre class="repo-text">/plugin marketplace add &lt;owner&gt;/power-platform-skills
+/plugin install pp@power-platform-kit</pre></div>
+        <div class="code"><span class="lbl">Ou pelo terminal</span><button class="copy" type="button">Copiar</button><pre class="repo-text">claude plugin marketplace add &lt;owner&gt;/power-platform-skills
+claude plugin install pp@power-platform-kit</pre></div>
+        <div class="code"><span class="lbl">Seu primeiro app</span><button class="copy" type="button">Copiar</button><pre>/pp:novo um app para acompanhar pedidos entre as unidades</pre></div>
+        <p class="note" style="margin-top:4px">Para atualizar depois: <code>claude plugin marketplace update power-platform-kit</code> e, em seguida, <code>claude plugin update pp</code>.</p>
+      </div>
+      <ul class="req">
+        <li><span class="ic">⌘</span><div><b>Claude Code</b>com suporte a plugins</div></li>
+        <li><span class="ic">🐍</span><div><b>Python 3.10+</b>estado do projeto e validadores; <code>pip install pyyaml</code> para validar as telas</div></li>
+        <li><span class="ic">⚡</span><div><b>Um ambiente Power Platform</b>Power Apps Studio e Power Automate, para colar, testar e publicar</div></li>
+        <li><span class="ic">🖼️</span><div><b>Chave da API da OpenAI <span class="opt">opcional</span></b>só para os mockups em imagem da etapa 4, gerados depois que você autoriza. Configure fora do chat; sem ela, a etapa segue sem imagens.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#top" style="margin-bottom:12px"><span class="mark">pp</span>Power Platform Kit</a>
+      <p>O kit é mantido em português do Brasil e em inglês, e toda alteração entra nas duas línguas. Os exemplos de Power Fx seguem a barra de fórmulas de cada idioma: no pt-BR, <code>;</code> separa argumentos e <code>;;</code> encadeia. A edição em inglês é o plugin <code>pp-en</code>, no mesmo marketplace.</p>
+      <ul>
+        <li><a class="repo-file" data-file="README.pt-BR.md" href="../../README.pt-BR.md">README</a></li>
+        <li><a class="repo-file" data-file="CHANGELOG.md" href="../../CHANGELOG.md">Histórico de versões</a></li>
+        <li><a class="repo-file" data-file="docs/CONFIG.md" href="../CONFIG.md">Referência do config do projeto</a></li>
+        <li><a class="repo-file" data-file="docs/PADRAO-SKILL.md" href="../PADRAO-SKILL.md">Padrão das skills</a></li>
+        <li><a class="repo-file" data-file="LICENSE" href="../../LICENSE">Licença MIT</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Créditos e marcas</h4>
+      <p>O ciclo de planejamento e as personas do brainstorm são inspirados no <a href="https://github.com/bmad-code-org/BMAD-METHOD">BMAD Method</a> (código sob licença MIT, de BMad Code, LLC). Este projeto não é afiliado nem endossado pela BMad Code, LLC. "BMad" e "BMad Method" são marcas deles, citadas só para descrever compatibilidade.</p>
+      <p>A separação entre quem pensa e quem executa (veredito por entrega) é inspirada no guia <a href="https://thomaslentine.com/fable-guide.html">"The Fable Loop"</a>, de Thomas Lentine.</p>
+      <p>Power Apps, Power Automate, Power Platform, Dataverse e SQL Server são marcas do grupo de empresas Microsoft. Este projeto não é afiliado à Microsoft. Claude e Claude Code são produtos da Anthropic.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  // Tema: o do sistema por padrão; a escolha no botão fica guardada no navegador quando há storage.
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem("pp-theme"); if (saved) root.setAttribute("data-theme", saved); } catch (e) {}
+  document.getElementById("theme").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme")
+      ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("pp-theme", next); } catch (e) {}
+  });
+
+  // Repositório: <meta name="pp-repo">, ou deduzido de <owner>.github.io/<repo>/.
+  var repo = (document.querySelector('meta[name="pp-repo"]').content || "").trim();
+  if (!repo) {
+    var m = location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
+    if (m) {
+      var seg = location.pathname.split("/").filter(Boolean)[0];
+      repo = m[1] + "/" + (seg && seg.indexOf(".") === -1 && seg !== "pt-br" ? seg : "power-platform-skills");
+    }
+  }
+  var ghLinks = document.querySelectorAll(".gh-link");
+  if (repo) {
+    var base = "https://github.com/" + repo;
+    ghLinks.forEach(function (a) { a.href = base; });
+    document.querySelectorAll(".repo-file").forEach(function (a) {
+      a.href = base + "/blob/HEAD/" + a.getAttribute("data-file");
+    });
+    document.querySelectorAll(".repo-text").forEach(function (pre) {
+      pre.textContent = pre.textContent.split("<owner>/power-platform-skills").join(repo);
+    });
+  } else {
+    ghLinks.forEach(function (a) { a.classList.add("gh-off"); a.setAttribute("aria-disabled", "true"); a.title = "O link do repositório aparece quando a página está publicada no GitHub Pages"; });
+  }
+
+  // Botões de copiar
+  var toast = document.getElementById("toast"), timer;
+  function say(msg) { toast.textContent = msg; toast.classList.add("on"); clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove("on"); }, 1600); }
+  document.querySelectorAll(".copy").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var text = b.parentNode.querySelector("pre").textContent;
+      if (!navigator.clipboard) { say("Selecione o texto para copiar"); return; }
+      navigator.clipboard.writeText(text).then(function () { say("Copiado"); }, function () { say("Não deu para copiar: selecione o texto"); });
+    });
+  });
+})();
+</script>
+</body>
+</html>

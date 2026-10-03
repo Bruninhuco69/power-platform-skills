@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pipeline em blocos</title>
+<title>Pipeline in blocks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -58,12 +58,12 @@ body.shot .topo { display: none; }
 <body>
 <header class="topo">
   <div class="logo">pp</div>
-  <div><h1>Power Platform Kit · o caminho em blocos</h1><p>Arraste para girar · role para aproximar</p></div>
+  <div><h1>Power Platform Kit · the path in blocks</h1><p>Drag to rotate · scroll to zoom</p></div>
 </header>
 <div id="app"></div>
 <div class="legenda">
-  <span><i></i>você age no ambiente</span>
-  <span><i class="chapeu"></i>agente que executa e prova</span>
+  <span><i></i>you act in the environment</span>
+  <span><i class="chapeu"></i>agent that executes and proves</span>
 </div>
 <script type="importmap">
 { "imports": {
@@ -76,13 +76,13 @@ body.shot .topo { display: none; }
   if (q.has('shot')) document.body.classList.add('shot');
   // fundo igual ao do GitHub: a imagem do README some na página, no tema claro e no escuro
   if (q.get('fundo')) document.documentElement.style.background = document.body.style.background = q.get('fundo') === 'escuro' ? '#0d1117' : '#ffffff';
-  // ?lang=en: título, dica e legenda em inglês (a cena lê o mesmo parâmetro)
-  if (q.get('lang') === 'en') {
-    document.documentElement.lang = 'en';
-    document.title = 'Pipeline in blocks';
-    document.querySelector('.topo h1').textContent = 'Power Platform Kit · the path in blocks';
-    document.querySelector('.topo p').textContent = 'Drag to rotate · scroll to zoom';
-    const legenda = ['you act in the environment', 'agent that executes and proves'];
+  // ?lang=pt: título, dica e legenda em pt-BR (a cena lê o mesmo parâmetro); sem ele, inglês
+  if (/^pt/i.test(q.get('lang') || '')) {
+    document.documentElement.lang = 'pt-BR';
+    document.title = 'Pipeline em blocos';
+    document.querySelector('.topo h1').textContent = 'Power Platform Kit · o caminho em blocos';
+    document.querySelector('.topo p').textContent = 'Arraste para girar · role para aproximar';
+    const legenda = ['você age no ambiente', 'agente que executa e prova'];
     document.querySelectorAll('.legenda > span').forEach((s, i) => { s.lastChild.nodeValue = legenda[i]; });
   } }
 import * as THREE from 'three';
@@ -320,8 +320,8 @@ const hopY = (t, t0, t1, h) => (t > t0 && t < t1) ? Math.sin((t - t0) / (t1 - t0
 
 const SHOT = new URLSearchParams(location.search).has('shot');
 const LARG = 1200, ALT = 720;
-// ?lang=en = rótulos do plugin pp-en; sem o parâmetro, o pt-BR de sempre
-const EN = new URLSearchParams(location.search).get('lang') === 'en';
+// sem o parâmetro, rótulos do plugin pp-en (o inglês é o padrão); ?lang=pt = pt-BR do plugin pp
+const EN = !/^pt/i.test(new URLSearchParams(location.search).get('lang') || '');
 const TXT = EN
   ? { ajuste: 'adjust', design: '/pp-en:design', falhou: 'failed', construir: 'build', noAr: 'app live',
       mudanca: '/pp-en:change', aprovado: 'approved?', orquestrador: 'orchestrator' }

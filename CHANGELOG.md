@@ -158,6 +158,17 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versão: s
 - **Apresentação em PDF** (`docs/Power-Platform-Kit.pdf`, 4 páginas), com miniaturas no README.
 
 ### Mudado
+- **Inglês como padrão da vitrine.** O `README.md` passa a ser o en-US e o pt-BR vai para
+  `README.pt-BR.md`; a raiz do site é o en-US e o pt-BR vai para `docs/pt-br/`, com `hreflang` e
+  `x-default`; `docs/en/` vira um redirecionamento para a raiz, para os links antigos não quebrarem. O
+  diagrama 3D abre em inglês e `?lang=pt` mostra o pt-BR (as quatro imagens saem idênticas às de
+  antes, pixel a pixel). Os PDFs apontam para o site no idioma de cada um, o `homepage` do `pp` vai
+  para `/pt-br/` e o do `pp-en` para a raiz, e a descrição do marketplace fica em inglês. As skills
+  não mudam: o pt-BR continua a fonte do mapa.
+- **Site no celular de 320 px:** abaixo de 360 px o cabeçalho mostra só o `pp`, porque o nome empurrava
+  o seletor de idioma e o botão de tema para fora da tela. O pt-BR acerta duas diferenças em relação ao
+  en-US: o herói diz "Em pt-BR e en-US" e a lista dos validadores tem um item por script (o item com
+  dois scripts não quebrava linha e alargava a página).
 - **PDF en-US sem o aviso de `pp-en` em tradução** (página 1) e miniaturas `pdf-en-*.jpg` de novo;
   o site pt-BR ganha a regra que o en-US já tinha (`.install > * { min-width: 0; }`): o bloco de
   instalação rola por dentro em vez de alargar a página no celular (546 px → 390 px).
